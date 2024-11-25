@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace RealEstateApp.Controllers
+namespace RealEstateApp.WebApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]

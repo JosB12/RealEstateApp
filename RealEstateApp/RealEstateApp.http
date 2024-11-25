@@ -1,6 +1,0 @@
-@RealEstateApp_HostAddress = http://localhost:5180
-
-GET {{RealEstateApp_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

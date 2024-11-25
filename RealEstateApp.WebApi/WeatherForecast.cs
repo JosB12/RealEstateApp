@@ -1,4 +1,4 @@
-namespace RealEstateApp
+namespace RealEstateApp.WebApi
 {
     public class WeatherForecast
     {
