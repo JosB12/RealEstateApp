@@ -1,5 +1,6 @@
 
 using RealEstateApp.Infrastructure.Identity;
+using RealEstateApp.Infrastructure.Persistence;
 
 namespace RealEstateApp;
 
@@ -12,7 +13,7 @@ public class Program
         // Add services to the container.
         builder.Services.AddControllersWithViews();
         builder.Services.AddSession();
-        //builder.Services.AddPersistenceInfrastructure(builder.Configuration);
+        builder.Services.AddPersistenceInfrastructure(builder.Configuration);
         builder.Services.AddIdentityInfrastructureForWebApp(builder.Configuration);
         //builder.Services.AddSharedInfrastructure(builder.Configuration);
         //builder.Services.AddApplicationLayerForWebApp();

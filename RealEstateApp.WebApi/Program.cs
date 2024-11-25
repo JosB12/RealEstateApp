@@ -1,6 +1,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Infrastructure.Identity;
+using RealEstateApp.Infrastructure.Persistence;
 
 namespace RealEstateApp.WebApi
 {
@@ -22,7 +23,7 @@ namespace RealEstateApp.WebApi
             });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            //builder.Services.AddPersistenceInfrastructure(builder.Configuration);
+            builder.Services.AddPersistenceInfrastructure(builder.Configuration);
             builder.Services.AddIdentityInfrastructureForWebApi(builder.Configuration);
             //builder.Services.AddSharedInfrastructure(builder.Configuration);
             //builder.Services.AddApplicationLayerForWebApi();
