@@ -1,0 +1,107 @@
+﻿@using RealEstateApp.Core.Application.ViewModels.User;
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Acceso a RealEstateApp";
+}
+
+<div class="container-fluid min-vh-100 d-flex justify-content-center align-items-center bg-real-estate">
+    <div class="glass-card p-5 shadow-lg">
+        <div class="text-center mb-4">
+            <h2 class="text-light mb-2">RealEstateApp</h2>
+            <p class="text-light-50 mb-0">Gestión de propiedades al alcance de tu mano</p>
+        </div>
+
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+        @if (Model.HasError)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <p>@Model.Error</p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <form method="post" asp-controller="Home" asp-action="Login">
+            <div class="mb-4">
+                <label asp-for="UserName" class="form-label text-light-50">Usuario</label>
+                <input class="form-control form-control-lg text-light border-0 bg-transparent shadow-sm" asp-for="UserName" placeholder="Ingrese su usuario" />
+            </div>
+            <div class="mb-4">
+                <label asp-for="Password" class="form-label text-light-50">Contraseña</label>
+                <input type="password" class="form-control form-control-lg text-light border-0 bg-transparent shadow-sm" asp-for="Password" placeholder="Ingrese su contraseña" />
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg w-100 mt-3 shadow-md">Iniciar sesión</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Fondo temático de bienes raíces */
+    .bg-real-estate {
+        background: url('https://www.transparenttextures.com/patterns/asfalt-light.png'), linear-gradient(120deg, #0d3b66, #1e81b0);
+        background-size: cover;
+        background-attachment: fixed;
+        min-height: 100vh;
+    }
+
+    /* Tarjeta de estilo glassmorphism */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        backdrop-filter: blur(15px);
+        padding: 40px;
+        max-width: 600px;
+        width: 100%;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Estilo de campos de formulario */
+    .form-control {
+        background-color: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        font-size: 1.1rem;
+    }
+
+        .form-control:focus {
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            border-color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+    /* Estilo de botones */
+    .btn-primary {
+        background: linear-gradient(90deg, #1e81b0, #2ec4b6);
+        color: white;
+        font-weight: bold;
+        transition: background 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background: #2ec4b6;
+            color: white;
+        }
+
+        .btn-primary:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+    /* Sombras en inputs y botones */
+    .shadow-sm {
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .shadow-md {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Texto claro */
+    .text-light-50 {
+        color: rgba(255, 255, 255, 0.7);
+    }
+</style>

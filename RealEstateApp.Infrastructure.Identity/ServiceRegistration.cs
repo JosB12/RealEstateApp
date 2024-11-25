@@ -7,10 +7,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using RealEstateApp.Core.Application.Dtos.Account;
+using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Domain.Settings;
 using RealEstateApp.Infrastructure.Identity.Contexts;
 using RealEstateApp.Infrastructure.Identity.Entities;
 using RealEstateApp.Infrastructure.Identity.Seeds;
+using RealEstateApp.Infrastructure.Identity.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,13 +63,13 @@ namespace RealEstateApp.Infrastructure.Identity
             .AddCookie(IdentityConstants.ApplicationScheme, options =>
             {
                 options.ExpireTimeSpan = TimeSpan.FromHours(24);
-                options.LoginPath = "/User";
-                options.AccessDeniedPath = "/User/AccessDenied";
+                options.LoginPath = "/Home/Login";
+                options.AccessDeniedPath = "/Home/AccessDenied";
             });
             #endregion
 
             #region Services
-            //services.AddTransient<IWebAppAccountService, AccountServiceForWebApp>();
+            services.AddTransient<IWebAppAccountService, AccountServiceForWebApp>();
             #endregion
         }
 
@@ -141,7 +143,7 @@ namespace RealEstateApp.Infrastructure.Identity
             #endregion
 
             #region Services
-           // services.AddTransient<IWebApiAccountService, AccountServiceForWebApi>();
+            //services.AddTransient<IWebAppAccountService, AccountServiceForWebApp>();
             #endregion
         }
 

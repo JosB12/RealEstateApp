@@ -1,5 +1,6 @@
 
 using Microsoft.AspNetCore.Mvc;
+using RealEstateApp.Core.Application;
 using RealEstateApp.Infrastructure.Identity;
 using RealEstateApp.Infrastructure.Persistence;
 
@@ -26,7 +27,7 @@ namespace RealEstateApp.WebApi
             builder.Services.AddPersistenceInfrastructure(builder.Configuration);
             builder.Services.AddIdentityInfrastructureForWebApi(builder.Configuration);
             //builder.Services.AddSharedInfrastructure(builder.Configuration);
-            //builder.Services.AddApplicationLayerForWebApi();
+            builder.Services.AddApplicationLayerForWebApp(builder.Configuration);
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddHealthChecks();
             //builder.Services.AddSwaggerExtension();

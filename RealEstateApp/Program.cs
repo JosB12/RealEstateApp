@@ -1,6 +1,9 @@
 
+using RealEstateApp.Core.Application;
 using RealEstateApp.Infrastructure.Identity;
 using RealEstateApp.Infrastructure.Persistence;
+using RealEstateApp.Infrastructure.Shared;
+using RealEstateApp.Middlewares;
 
 namespace RealEstateApp;
 
@@ -15,11 +18,11 @@ public class Program
         builder.Services.AddSession();
         builder.Services.AddPersistenceInfrastructure(builder.Configuration);
         builder.Services.AddIdentityInfrastructureForWebApp(builder.Configuration);
-        //builder.Services.AddSharedInfrastructure(builder.Configuration);
-        //builder.Services.AddApplicationLayerForWebApp();
-        //builder.Services.AddScoped<LoginAuthorize>();
+        builder.Services.AddSharedInfrastructure(builder.Configuration);
+        builder.Services.AddApplicationLayerForWebApp(builder.Configuration);
+        builder.Services.AddScoped<LoginAuthorize>();
         builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-        //builder.Services.AddTransient<ValidateUserSession, ValidateUserSession>();
+        builder.Services.AddTransient<ValidateUserSession, ValidateUserSession>();
 
         var app = builder.Build();
 
@@ -30,6 +33,7 @@ public class Program
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
+        await app.Services.RunAsyncSeed();
 
 
         app.UseSession();
