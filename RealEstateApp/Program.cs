@@ -1,13 +1,24 @@
+
+using RealEstateApp.Infrastructure.Identity;
+
 namespace RealEstateApp;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
         builder.Services.AddControllersWithViews();
+        builder.Services.AddSession();
+        //builder.Services.AddPersistenceInfrastructure(builder.Configuration);
+        builder.Services.AddIdentityInfrastructureForWebApp(builder.Configuration);
+        //builder.Services.AddSharedInfrastructure(builder.Configuration);
+        //builder.Services.AddApplicationLayerForWebApp();
+        //builder.Services.AddScoped<LoginAuthorize>();
+        builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        //builder.Services.AddTransient<ValidateUserSession, ValidateUserSession>();
 
         var app = builder.Build();
 
@@ -19,17 +30,20 @@ public class Program
             app.UseHsts();
         }
 
+
+        app.UseSession();
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 
         app.UseRouting();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
 
-        app.Run();
+        await app.RunAsync();
     }
 }
