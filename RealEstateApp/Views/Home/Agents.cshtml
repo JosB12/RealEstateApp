@@ -26,11 +26,14 @@
             <div class="col">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                        <img src="@agent.PhotoUrl" class="rounded-circle mb-3" width="80" height="80" alt="@agent.FirstName @agent.LastName">
-                        <h5 class="card-title mb-0">@agent.FirstName @agent.LastName</h5>
+                        <a href="@Url.Action("AgentProperties", "Home", new { agentId = agent.Id })">
+                            <img src="@agent.PhotoUrl" class="rounded-circle mb-3" width="80" height="80" alt="@agent.FirstName @agent.LastName">
+                            <h5 class="card-title mb-0">@agent.FirstName @agent.LastName</h5>
+                        </a>
                     </div>
                 </div>
             </div>
         }
+
     </div>
 </div>

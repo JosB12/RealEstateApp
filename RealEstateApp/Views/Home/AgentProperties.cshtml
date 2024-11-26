@@ -1,0 +1,32 @@
+﻿@model List<RealEstateApp.Core.Application.ViewModels.PropertyViewModel>
+
+@{
+    ViewData["Title"] = "Propiedades del Agente";
+}
+
+<div class="container">
+    <h2>@ViewData["Title"]</h2>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        @foreach (var property in Model)
+        {
+            <div class="col">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        @if (property.Images.Any())
+                        {
+                            <img src="@property.Images.First()" class="img-fluid mb-3" alt="Imagen de la propiedad" />
+                        }
+                        <p class="card-text">@property.PropertyType</p>
+                        <h5 class="card-title mb-0">Código: @property.PropertyCode</h5>
+                        <p class="card-text">@property.SaleType</p>
+                        <p class="card-text">DOP$ @property.Price</p>
+                        <p class="card-text">Habitaciones: @property.Bedrooms</p>
+                        <p class="card-text">Baños: @property.Bathrooms</p>
+                        <p class="card-text">Tamaño: @property.PropertySizeMeters m²</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

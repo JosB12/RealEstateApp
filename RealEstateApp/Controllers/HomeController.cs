@@ -14,11 +14,12 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly IUserService _userService;
-
-    public HomeController(ILogger<HomeController> logger, IUserService userService)
+    private readonly IPropertyService _propertyService;
+    public HomeController(IPropertyService propertyService, ILogger<HomeController> logger, IUserService userService)
     {
         _logger = logger;
         _userService = userService;
+        _propertyService = propertyService;
 
     }
 
@@ -151,12 +152,28 @@ public class HomeController : Controller
     #endregion
 
 
-    #region Agent List
+    #region Agent
     [HttpGet]
     public async Task<IActionResult> Agents(string searchQuery = "")
     {
         var agents = await _userService.GetActiveAgentsAsync(searchQuery);
         return View(agents);  
     }
+
+    [HttpGet]
+    public async Task<IActionResult> AgentProperties(string agentId)
+    {
+        Console.WriteLine($"Fetching properties for agentId: {agentId}");
+
+        var properties = await _propertyService.GetPropertiesByAgentIdAsync(agentId);
+        if (properties == null || !properties.Any())
+        {
+            Console.WriteLine("No properties found for this agent.");
+        }
+
+        return View(properties);  // Devolvemos las propiedades a la vista
+    }
     #endregion
+
+
 }
