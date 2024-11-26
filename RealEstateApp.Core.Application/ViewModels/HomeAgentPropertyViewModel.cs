@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RealEstateApp.Core.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RealEstateApp.Core.Application.ViewModels
 {
-    public class PropertyViewModel
+    public class HomeAgentPropertyViewModel
     {
         public string PropertyCode { get; set; }
         public string PropertyType { get; set; }
@@ -16,5 +17,6 @@ namespace RealEstateApp.Core.Application.ViewModels
         public int Bathrooms { get; set; }
         public double PropertySizeMeters { get; set; }
         public List<string> Images { get; set; }
+        public PropertyStatus Status { get; set; }
     }
 }

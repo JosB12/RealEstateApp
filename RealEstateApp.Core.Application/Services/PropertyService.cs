@@ -7,7 +7,7 @@ using RealEstateApp.Core.Domain.Entities;
 
 namespace RealEstateApp.Core.Application.Services
 {
-    public class PropertyService : GenericService<SavePropertyViewModel, PropertyViewModel, Property>, IPropertyService
+    public class PropertyService : GenericService<SavePropertyViewModel, PropertyAgentGeneralViewModel, Property>, IPropertyService
     {
         private readonly IPropertyRepository _propertyRepository;
         private readonly IMapper _mapper;
@@ -17,11 +17,19 @@ namespace RealEstateApp.Core.Application.Services
 
         }
 
-        public async Task<List<PropertyViewModel>> GetPropertiesByAgentIdAsync(string agentId)
+        //Properties availables
+        public async Task<List<PropertyAgentGeneralViewModel>> GetPropertiesAvailableByAgentIdAsync(string agentId)
+        {
+            var properties = await _propertyRepository.GetPropertiesAvailableByAgentIdAsync(agentId);
+
+            return properties;
+        }
+
+        //All Properties 
+        public async Task<List<HomeAgentPropertyViewModel>> GetPropertiesByAgentIdAsync(string agentId)
         {
             var properties = await _propertyRepository.GetPropertiesByAgentIdAsync(agentId);
 
-            Console.WriteLine($"Properties retrieved: {properties?.Count ?? 0}");
             return properties;
         }
     }

@@ -17,11 +17,11 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<List<PropertyViewModel>> GetPropertiesByAgentIdAsync(string agentId)
+        public async Task<List<PropertyAgentGeneralViewModel>> GetPropertiesAvailableByAgentIdAsync(string agentId)
         {
             var properties = await _dbContext.Properties
                 .Where(p => p.UserId == agentId && p.Status == (int)PropertyStatus.Available)
-                .Include(p => p.Images)  // Incluir las imágenes asociadas
+                .Include(p => p.Images)  
                 .Include(p => p.PropertyType)
                 .Include(p => p.SaleType)
                 .ToListAsync();
@@ -34,10 +34,10 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
 
             if (properties == null)
             {
-                return new List<PropertyViewModel>();
+                return new List<PropertyAgentGeneralViewModel>();
             }
 
-            var propertyViewModels = properties.Select(p => new PropertyViewModel
+            var propertyViewModels = properties.Select(p => new PropertyAgentGeneralViewModel
             {
                 PropertyCode = p.PropertyCode,
                 PropertyType = p.PropertyType.Name, 
@@ -51,6 +51,40 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
 
             return propertyViewModels;
         }
+        public async Task<List<HomeAgentPropertyViewModel>> GetPropertiesByAgentIdAsync(string agentId)
+        {
+            var properties = await _dbContext.Properties
+                .Where(p => p.UserId == agentId &&
+                      ((int)p.Status == (int)PropertyStatus.Available || p.Status == PropertyStatus.Sold))
+                .Include(p => p.Images) 
+                .Include(p => p.PropertyType)
+                .Include(p => p.SaleType)
+                .ToListAsync();
 
+            Console.WriteLine($"Properties retrieved for agent {agentId}: {properties.Count}");
+            if (!properties.Any())
+            {
+                Console.WriteLine("No properties found for this agent.");
+            }
+
+            if (properties == null)
+            {
+                return new List<HomeAgentPropertyViewModel>();
+            }
+
+            var propertyViewModels = properties.Select(p => new HomeAgentPropertyViewModel
+            {
+                PropertyCode = p.PropertyCode,
+                PropertyType = p.PropertyType.Name,
+                SaleType = p.SaleType.Name,
+                Price = p.Price,
+                Bedrooms = p.Bedrooms,
+                Bathrooms = p.Bathrooms,
+                PropertySizeMeters = p.PropertySizeMeters,
+                Images = p.Images.Select(i => i.ImageUrl).ToList()
+            }).ToList();
+
+            return propertyViewModels;
+        }
     }
 }

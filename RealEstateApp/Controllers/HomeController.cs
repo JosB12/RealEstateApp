@@ -165,7 +165,7 @@ public class HomeController : Controller
     {
         Console.WriteLine($"Fetching properties for agentId: {agentId}");
 
-        var properties = await _propertyService.GetPropertiesByAgentIdAsync(agentId);
+        var properties = await _propertyService.GetPropertiesAvailableByAgentIdAsync(agentId);
         if (properties == null || !properties.Any())
         {
             Console.WriteLine("No properties found for this agent.");
