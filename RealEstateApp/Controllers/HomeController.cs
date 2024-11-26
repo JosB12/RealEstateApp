@@ -149,4 +149,14 @@ public class HomeController : Controller
         return RedirectToRoute(new { controller = "Home", action = "Index" });
     }
     #endregion
+
+
+    #region Agent List
+    [HttpGet]
+    public async Task<IActionResult> Agents(string searchQuery = "")
+    {
+        var agents = await _userService.GetActiveAgentsAsync(searchQuery);
+        return View(agents);  
+    }
+    #endregion
 }

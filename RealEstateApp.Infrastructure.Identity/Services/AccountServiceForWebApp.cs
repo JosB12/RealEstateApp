@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using RealEstateApp.Core.Application.Dtos.Account;
 using RealEstateApp.Core.Application.Enums;
 using RealEstateApp.Core.Application.Interfaces.Services;
+using RealEstateApp.Core.Application.ViewModels;
 using RealEstateApp.Core.Domain.Settings;
 using RealEstateApp.Infrastructure.Identity.Entities;
 using System;
@@ -33,7 +35,7 @@ namespace RealEstateApp.Infrastructure.Identity.Services
             _emailService = emailService;
 
         }
-
+        #region login
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request)
         {
             AuthenticationResponse response = new();
@@ -77,7 +79,9 @@ namespace RealEstateApp.Infrastructure.Identity.Services
         {
             await _signInManager.SignOutAsync();
         }
+        #endregion
 
+        #region register (JoinApp)
         public async Task<RegisterResponse> RegisterBasicUserAsync(RegisterRequest request, string origin)
         {
             RegisterResponse response = new()
@@ -195,5 +199,38 @@ namespace RealEstateApp.Infrastructure.Identity.Services
                 return $"An error occurred while confirming {user.Email}.";
             }
         }
+        #endregion
+
+        #region Agent (General)
+        public async Task<List<AgentViewModel>> GetActiveAgentsAsync(string searchQuery = "")
+        {
+            var agentsQuery = _userManager.Users
+                .Where(u => u.UserType == Roles.Agent && u.IsActive);
+
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                agentsQuery = agentsQuery.Where(a =>
+                     a.FirstName.ToLower().Contains(searchQuery.ToLower()) ||
+                     a.LastName.ToLower().Contains(searchQuery.ToLower()));
+            }
+
+            var agents = await agentsQuery
+                .OrderBy(agent => agent.FirstName)
+                .ThenBy(agent => agent.LastName)
+                .ToListAsync();
+
+            var agentViewModels = agents.Select(agent => new AgentViewModel
+            {
+                FirstName = agent.FirstName,
+                LastName = agent.LastName,
+                PhotoUrl = agent.Photo,
+                Id = agent.Id
+            }).ToList();
+
+            return agentViewModels;
+        }
+
+
+        #endregion
     }
 }
