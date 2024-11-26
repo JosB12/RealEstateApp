@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Core.Application.Dtos.Account;
+using RealEstateApp.Core.Application.Enums;
 using RealEstateApp.Core.Application.Helpers;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.Services;
@@ -25,6 +26,7 @@ public class HomeController : Controller
     {
         return View();
     }
+
     #region login
     [ServiceFilter(typeof(LoginAuthorize))]
     public IActionResult Login()
@@ -77,10 +79,74 @@ public class HomeController : Controller
 
     #endregion
 
+    #region AccessDenied
     public IActionResult AccessDenied()
     {
         return View();
     }
+    #endregion
 
+    #region (Register)
 
+    [ServiceFilter(typeof(LoginAuthorize))]
+    public IActionResult JoinApp()
+    {
+        return View(new SaveUserViewModel());
+    }
+
+    [ServiceFilter(typeof(LoginAuthorize))]
+    [HttpPost]
+    public async Task<IActionResult> JoinApp(SaveUserViewModel vm)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(vm);
+        }
+
+        try
+        {
+            var origin = Request.Headers["origin"];
+            RegisterResponse response = await _userService.RegisterAsync(vm, origin);
+            if (response.HasError)
+            {
+                vm.HasError = response.HasError;
+                vm.Error = response.Error;
+                return View(vm);
+            }
+
+            if (vm.UserType == Roles.Client)
+            {
+                return RedirectToAction("ConfirmEmailInfo"); 
+            }
+        }
+
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("", "An error occurred trying to register the user. " + ex.Message);
+            return View(vm);
+        }
+        return RedirectToRoute(new { controller = "Home", action = "Index" });
+
+    }
+    public IActionResult ConfirmEmailInfo()
+    {
+        return View();
+    }
+
+    [ServiceFilter(typeof(LoginAuthorize))]
+    public async Task<IActionResult> ConfirmEmail(string userId, string token)
+    {
+        string response = await _userService.ConfirmEmailAsync(userId, token);
+        return View("ConfirmEmail", response);
+    }
+    #endregion
+
+    #region LogOut
+    public async Task<IActionResult> LogOut()
+    {
+        await _userService.SignOutAsync();
+        HttpContext.Session.Remove("user");
+        return RedirectToRoute(new { controller = "Home", action = "Index" });
+    }
+    #endregion
 }

@@ -25,5 +25,56 @@ namespace RealEstateApp.Core.Application.Services
         {
             await _accountService.SignOutAsync();
         }
+        public async Task<RegisterResponse> RegisterAsync(SaveUserViewModel vm, string origin)
+        {
+            RegisterRequest registerRequest = _mapper.Map<RegisterRequest>(vm);
+
+            if (string.IsNullOrEmpty(vm.PhotoUrl))
+            {
+                return new RegisterResponse
+                {
+                    HasError = true,
+                    Error = "La URL de la foto es obligatoria."
+                };
+            }
+
+            registerRequest.PhotoUrl = vm.PhotoUrl;
+
+            try
+            {
+                var response = await _accountService.RegisterBasicUserAsync(registerRequest, origin);
+                if (response.HasError)
+                {
+                    return new RegisterResponse
+                    {
+                        HasError = true,
+                        Error = response.Error 
+                    };
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = $"An error occurred while trying to register the user: {ex.Message}";
+
+                if (ex.InnerException != null)
+                {
+                    errorMessage += $"\nInner Exception: {ex.InnerException.Message}";
+                }
+
+                return new RegisterResponse
+                {
+                    HasError = true,
+                    Error = errorMessage
+                };
+            }
+        }
+
+
+        public async Task<string> ConfirmEmailAsync(string userId, string token)
+        {
+            return await _accountService.ConfirmAccountAsync(userId, token);
+        }
+
     }
 }

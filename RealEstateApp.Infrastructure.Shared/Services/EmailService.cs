@@ -31,6 +31,7 @@ namespace RealEstateApp.Infrastructure.Shared.Services
                 builder.HtmlBody = request.Body;
                 email.Body = builder.ToMessageBody();
                 using var smtp = new SmtpClient();
+                smtp.ServerCertificateValidationCallback = (s, c, h, e) => true;
                 smtp.Connect(MailSettings.SmtpHost, MailSettings.SmtpPort, SecureSocketOptions.StartTls);
                 smtp.Authenticate(MailSettings.SmtpUser, MailSettings.SmtpPass);
                 await smtp.SendAsync(email);

@@ -12,5 +12,7 @@ namespace RealEstateApp.Core.Application.Interfaces.Services
     {
         Task<AuthenticationResponse> LogginAsync(LoginViewModel vm);
         Task SignOutAsync();
+        Task<RegisterResponse> RegisterAsync(SaveUserViewModel vm, string origin);
+        Task<string> ConfirmEmailAsync(string userId, string token);
     }
 }

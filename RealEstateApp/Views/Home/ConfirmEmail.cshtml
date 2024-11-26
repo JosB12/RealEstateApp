@@ -1,0 +1,22 @@
+﻿@model string
+
+@{
+    ViewData["Title"] = "Confirmación de Correo";
+}
+
+<div class="container">
+    <h2>@ViewData["Title"]</h2>
+
+    @if (Model.Contains("confirmed"))
+    {
+        <div class="alert alert-success">
+            ¡Tu cuenta ha sido confirmada correctamente! Ahora puedes iniciar sesión.
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger">
+            <strong>@Model</strong>
+        </div>
+    }
+</div>
