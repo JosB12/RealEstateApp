@@ -1,4 +1,5 @@
 
+    
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Core.Application.Dtos.Account;
 using RealEstateApp.Core.Application.Helpers;
@@ -71,7 +72,7 @@ public class HomeController : Controller
         if (userVm != null && userVm.HasError != true)
         {
             HttpContext.Session.Set<AuthenticationResponse>("user", userVm); // Guardar el usuario en la sesión
-           
+
             // Redirigir según el rol del usuario
             if (userVm.Roles.Contains("Admin"))
             {
@@ -107,6 +108,97 @@ public class HomeController : Controller
     {
         return View();
     }
+
+
+}
+
+    #region (Register)
+
+    [ServiceFilter(typeof(LoginAuthorize))]
+    public IActionResult JoinApp()
+    {
+        return View(new SaveUserViewModel());
+    }
+
+    [ServiceFilter(typeof(LoginAuthorize))]
+    [HttpPost]
+    public async Task<IActionResult> JoinApp(SaveUserViewModel vm)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(vm);
+        }
+
+        try
+        {
+            var origin = Request.Headers["origin"];
+            RegisterResponse response = await _userService.RegisterAsync(vm, origin);
+            if (response.HasError)
+            {
+                vm.HasError = response.HasError;
+                vm.Error = response.Error;
+                return View(vm);
+            }
+
+            if (vm.UserType == Roles.Client)
+            {
+                return RedirectToAction("ConfirmEmailInfo"); 
+            }
+        }
+
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("", "An error occurred trying to register the user. " + ex.Message);
+            return View(vm);
+        }
+        return RedirectToRoute(new { controller = "Home", action = "Index" });
+
+    }
+    public IActionResult ConfirmEmailInfo()
+    {
+        return View();
+    }
+
+    [ServiceFilter(typeof(LoginAuthorize))]
+    public async Task<IActionResult> ConfirmEmail(string userId, string token)
+    {
+        string response = await _userService.ConfirmEmailAsync(userId, token);
+        return View("ConfirmEmail", response);
+    }
+    #endregion
+
+    #region LogOut
+    public async Task<IActionResult> LogOut()
+    {
+        await _userService.SignOutAsync();
+        HttpContext.Session.Remove("user");
+        return RedirectToRoute(new { controller = "Home", action = "Index" });
+    }
+    #endregion
+
+
+    #region Agent
+    [HttpGet]
+    public async Task<IActionResult> Agents(string searchQuery = "")
+    {
+        var agents = await _userService.GetActiveAgentsAsync(searchQuery);
+        return View(agents);  
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> AgentProperties(string agentId)
+    {
+        Console.WriteLine($"Fetching properties for agentId: {agentId}");
+
+        var properties = await _propertyService.GetPropertiesAvailableByAgentIdAsync(agentId);
+        if (properties == null || !properties.Any())
+        {
+            Console.WriteLine("No properties found for this agent.");
+        }
+
+        return View(properties);  // Devolvemos las propiedades a la vista
+    }
+    #endregion
 
 
 }

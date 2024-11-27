@@ -1,0 +1,39 @@
+﻿@model List<RealEstateApp.Core.Application.ViewModels.AgentViewModel>
+
+@{
+    ViewData["Title"] = "Listado de Agentes";
+}
+
+<div class="container">
+    <div class="row align-items-center my-5">
+        <div class="col-12">
+            <h1 class="text-center">Listado de agentes</h1>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mb-5">
+        <div class="col-12 col-md-8 col-lg-6">
+            <form method="get" asp-action="Agents" class="input-group">
+                <input type="text" class="form-control" name="searchQuery" placeholder="Buscar por nombre" value="@Context.Request.Query["searchQuery"]" />
+                <button class="btn btn-primary" type="submit">Buscar</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        @foreach (var agent in Model)
+        {
+            <div class="col">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <a href="@Url.Action("AgentProperties", "Home", new { agentId = agent.Id })">
+                            <img src="@agent.PhotoUrl" class="rounded-circle mb-3" width="80" height="80" alt="@agent.FirstName @agent.LastName">
+                            <h5 class="card-title mb-0">@agent.FirstName @agent.LastName</h5>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>

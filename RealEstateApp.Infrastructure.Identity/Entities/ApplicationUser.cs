@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿    using Microsoft.AspNetCore.Identity;
 using RealEstateApp.Core.Application.Enums;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ namespace RealEstateApp.Infrastructure.Identity.Entities
         public string LastName { get; set; }
         public string? Photo { get; set; }
         public string Identification { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = false;
         public Roles UserType { get; set; }
     }
 }

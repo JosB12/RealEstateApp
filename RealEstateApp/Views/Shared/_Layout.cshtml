@@ -34,12 +34,23 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
+
+                       
 
                         @if (User == null)
                         {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Home" asp-action="Agents">Agentes</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Home" asp-action="JoinApp">Unete A La App</a>
+                            </li>
+
                             <li class="nav-item">
                                 <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Home" asp-action="Login">Login</a>
                             </li>
@@ -51,6 +62,9 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Admin" asp-action="Index">Admin Dashboard</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Admin" asp-action="AgentList">Listado de los Agentes</a>
+                                </li>
                             }
                             @if (User.Roles.Contains("Client"))
                             {
@@ -61,7 +75,10 @@
                             @if (User.Roles.Contains("Agent"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Agent" asp-action="Index">Agent Dashboard</a>
+                                    <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Agent" asp-action="Index">Home</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Agent" asp-action="PropertyMaintenance">Mantenimiento de propiedades</a>
                                 </li>
                             }
 
