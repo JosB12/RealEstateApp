@@ -40,10 +40,10 @@ namespace RealEstateApp.Infrastructure.Identity.Services
             _userManager = userManager;
             _signInManager = signInManager;
             _propertyRepository = propertyRepository;
-        }
             _emailService = emailService;
-
         }
+
+        
         #region login
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request)
         {
@@ -234,7 +234,7 @@ namespace RealEstateApp.Infrastructure.Identity.Services
             }
 
             // 2. Obtener las propiedades asociadas al agente
-            var properties = await _propertyRepository.GetPropertiesByAgentIdAsync(agentId); // Suponiendo que tienes un método para obtener las propiedades del agente
+            var properties = await _propertyRepository.GetPropertiesJustByAgentIdAsync(agentId); // Suponiendo que tienes un método para obtener las propiedades del agente
             if (properties.Any())
             {
                 // Eliminar todas las propiedades asociadas al agente
@@ -290,6 +290,8 @@ namespace RealEstateApp.Infrastructure.Identity.Services
             }
 
             user.IsActive = true;
+            user.EmailConfirmed = true;
+            user.PhoneNumberConfirmed = true;
             var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
             {
@@ -329,6 +331,8 @@ namespace RealEstateApp.Infrastructure.Identity.Services
             }
 
             user.IsActive = false;
+            user.EmailConfirmed = false;
+            user.PhoneNumberConfirmed = false;
             var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
             {

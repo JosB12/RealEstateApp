@@ -111,7 +111,7 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
             _dbContext.Properties.RemoveRange(properties);
             _dbContext.SaveChanges();
         }
-        public async Task<List<Property>> GetPropertiesByAgentIdAsync(string agentId)
+        public async Task<List<Property>> GetPropertiesJustByAgentIdAsync(string agentId)
         {
             return await _dbContext.Properties
                                    .Where(p => p.UserId == agentId)  // Filtra propiedades por el ID del agente

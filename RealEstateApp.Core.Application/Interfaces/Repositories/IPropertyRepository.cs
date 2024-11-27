@@ -15,7 +15,7 @@ namespace RealEstateApp.Core.Application.Interfaces.Repositories
         Task<int> GetTotalQuantityPropertyAvailableAsync();
         Task<int> GetTotalQuantityPropertySoldAsync();
         Task<int> GetCountByAgentIdAsync(string agentId);
-        Task<List<Property>> GetPropertiesByAgentIdAsync(string agentId);
+        Task<List<Property>> GetPropertiesJustByAgentIdAsync(string agentId);
         void DeleteProperties(List<Property> properties);
 
 
