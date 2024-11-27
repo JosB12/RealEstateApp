@@ -37,6 +37,8 @@ namespace RealEstateApp.Core.Application.Mappings
             CreateMap<PropertyType, PropertyTypeViewModel>().ReverseMap();
             CreateMap<PropertyTypeSaveViewModel, PropertyType>().ReverseMap();
             #endregion
+
+
             CreateMap<AgentDto, AgentListViewModel>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
              .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))

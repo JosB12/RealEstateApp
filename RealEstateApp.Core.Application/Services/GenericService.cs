@@ -63,7 +63,7 @@ namespace RealEstateApp.Core.Application.Services
         }
         public async Task<List<SaveViewModel>> AddRange(List<SaveViewModel> vms)
         {
-            var entities = _mapper.Map<List<Model>>(vms);
+            var entities = _mapper.Map<List<Entity>>(vms);
             var addedEntities = await _repository.AddRangeAsync(entities);
             return _mapper.Map<List<SaveViewModel>>(addedEntities);
         }

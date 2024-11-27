@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using RealEstateApp.Core.Application.ViewModels.PropertyType;
 using System.ComponentModel.DataAnnotations;
 
 

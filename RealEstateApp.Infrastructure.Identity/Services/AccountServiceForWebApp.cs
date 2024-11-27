@@ -14,6 +14,7 @@ using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.ViewModels;
 using RealEstateApp.Core.Domain.Settings;
 using RealEstateApp.Infrastructure.Identity.Entities;
+using System.Text;
 
 
 namespace RealEstateApp.Infrastructure.Identity.Services

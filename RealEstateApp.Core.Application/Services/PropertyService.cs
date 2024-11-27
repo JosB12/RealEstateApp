@@ -40,17 +40,22 @@ namespace RealEstateApp.Core.Application.Services
 
             _mapper = mapper;
         }
+       
         public async Task<List<PropertyViewModel>> GetAvailablePropertiesAsync()
         {
-            var properties = await _propertyRepository.GetAllAsync();
-            var availableProperties = properties.Where(p => p.Status == PropertyStatus.Available)
-                                                .OrderByDescending(p => p.Created)
-                                                .ToList();
-            var propertyViewModels = _mapper.Map<List<PropertyViewModel>>(availableProperties);
+            var properties = await _propertyRepository.GetAllAsQueryable()
+                                        .Where(p => p.Status == PropertyStatus.Available)
+                                        .Include(p => p.Images)
+                                        .Include(p => p.PropertyType)
+                                        .Include(p => p.SaleType)
+                                        .OrderByDescending(p => p.Created)
+                                        .ToListAsync();
+
+            var propertyViewModels = _mapper.Map<List<PropertyViewModel>>(properties);
 
             foreach (var property in propertyViewModels)
             {
-                var entity = availableProperties.FirstOrDefault(p => p.Id == property.Id);
+                var entity = properties.FirstOrDefault(p => p.Id == property.Id);
                 property.ImageUrl = entity?.Images?.FirstOrDefault()?.ImageUrl;
                 property.PropertyType = entity?.PropertyType?.Name;
                 property.SaleType = entity?.SaleType?.Name;

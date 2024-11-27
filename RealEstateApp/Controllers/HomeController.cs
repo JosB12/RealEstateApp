@@ -2,6 +2,7 @@
     
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Core.Application.Dtos.Account;
+using RealEstateApp.Core.Application.Enums;
 using RealEstateApp.Core.Application.Helpers;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.Services;
@@ -108,10 +109,6 @@ public class HomeController : Controller
     {
         return View();
     }
-
-
-}
-
     #region (Register)
 
     [ServiceFilter(typeof(LoginAuthorize))]
@@ -142,7 +139,7 @@ public class HomeController : Controller
 
             if (vm.UserType == Roles.Client)
             {
-                return RedirectToAction("ConfirmEmailInfo"); 
+                return RedirectToAction("ConfirmEmailInfo");
             }
         }
 
@@ -182,7 +179,7 @@ public class HomeController : Controller
     public async Task<IActionResult> Agents(string searchQuery = "")
     {
         var agents = await _userService.GetActiveAgentsAsync(searchQuery);
-        return View(agents);  
+        return View(agents);
     }
 
     [HttpGet]
@@ -200,5 +197,10 @@ public class HomeController : Controller
     }
     #endregion
 
-
 }
+
+   
+
+
+
+

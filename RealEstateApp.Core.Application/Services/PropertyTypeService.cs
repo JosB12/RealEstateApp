@@ -1,14 +1,8 @@
 ﻿using AutoMapper;
 using RealEstateApp.Core.Application.Interfaces.Repositories;
 using RealEstateApp.Core.Application.Interfaces.Services;
-using RealEstateApp.Core.Application.ViewModels;
 using RealEstateApp.Core.Application.ViewModels.PropertyType;
 using RealEstateApp.Core.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RealEstateApp.Core.Application.Services
 {
@@ -19,6 +13,7 @@ namespace RealEstateApp.Core.Application.Services
         public PropertyTypeService(IPropertyTypeRepository propertyTypeRepository, IMapper mapper) : base(propertyTypeRepository, mapper)
         {
             _propertyTypeRepository = propertyTypeRepository;
+            _mapper = mapper;
         }
 
         public async Task<List<PropertyTypeViewModel>> GetAllPropertyTypesNameAsync()
@@ -30,14 +25,15 @@ namespace RealEstateApp.Core.Application.Services
                 Name = p.Name
             }).ToList();
         }
-    }
-    public async Task<List<PropertyTypeViewModel>> GetAllAsync()
-    {
-        var propertyTypes = await _propertyTypeRepository.GetAllAsync();
-        return _mapper.Map<List<PropertyTypeViewModel>>(propertyTypes);
+        public async Task<List<PropertyTypeViewModel>> GetAllAsync()
+        {
+            var propertyTypes = await _propertyTypeRepository.GetAllAsync();
+            return _mapper.Map<List<PropertyTypeViewModel>>(propertyTypes);
+        }
+
     }
 
 
 }
 
-}
+
