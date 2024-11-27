@@ -1,9 +1,10 @@
-using System.Diagnostics;
+
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Core.Application.Dtos.Account;
 using RealEstateApp.Core.Application.Helpers;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.Services;
+using RealEstateApp.Core.Application.ViewModels.Property;
 using RealEstateApp.Core.Application.ViewModels.User;
 using RealEstateApp.Middlewares;
 
@@ -13,18 +14,43 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly IUserService _userService;
+    private readonly IPropertyService _propertyService;
+    private readonly IPropertyTypeService _propertyTypeService;
 
-    public HomeController(ILogger<HomeController> logger, IUserService userService)
+
+    public HomeController(ILogger<HomeController> logger, IUserService userService, IPropertyService propertyService, IPropertyTypeService propertyTypeService)
     {
         _logger = logger;
         _userService = userService;
+        _propertyService = propertyService;
+        _propertyTypeService = propertyTypeService;
 
     }
-
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var properties = await _propertyService.GetAvailablePropertiesAsync();
+        ViewBag.PropertyTypes = await _propertyTypeService.GetAllAsync();
+        return View(properties);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> Filter(PropertyFilterViewModel filter)
+    {
+        var properties = await _propertyService.FilterPropertiesAsync(filter);
+        ViewBag.PropertyTypes = await _propertyTypeService.GetAllAsync();
+        return View("FilterResults", properties);
+    }
+
+    public async Task<IActionResult> Details(int id)
+    {
+        var property = await _propertyService.GetByIdSaveViewModel(id);
+        if (property == null)
+        {
+            return NotFound();
+        }
+        return View(property);
+    }
+
     #region login
     [ServiceFilter(typeof(LoginAuthorize))]
     public IActionResult Login()

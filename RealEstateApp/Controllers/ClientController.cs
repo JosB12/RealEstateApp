@@ -1,18 +1,42 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RealEstateApp.Core.Application.Interfaces.Services;
+using RealEstateApp.Core.Application.ViewModels.Property;
 
 namespace RealEstateApp.Controllers
 {
     public class ClientController : Controller
     {
-        public IActionResult Index()
+        private readonly IPropertyService _propertyService;
+
+        public ClientController(IPropertyService propertyService)
         {
-            return View();
+            _propertyService = propertyService;
         }
-        //public async Task<IActionResult> LogOut()
-        //{
-        //    await _userService.SignOutAsync();
-        //    HttpContext.Session.Remove("user");
-        //    return RedirectToRoute(new { controller = "Home", action = "Index" });
-        //}
+
+        // Acción para mostrar la lista de propiedades disponibles
+        public async Task<IActionResult> Index()
+        {
+            var properties = await _propertyService.GetAvailablePropertiesAsync();
+            return View(properties);
+        }
+
+        // Acción para filtrar las propiedades
+        [HttpPost]
+        public async Task<IActionResult> Filter(PropertyFilterViewModel filter)
+        {
+            var properties = await _propertyService.FilterPropertiesAsync(filter);
+            return View("Index", properties);
+        }
+
+        // Acción para mostrar los detalles de una propiedad específica
+        public async Task<IActionResult> Details(int id)
+        {
+            var property = await _propertyService.GetByIdSaveViewModel(id);
+            if (property == null)
+            {
+                return NotFound();
+            }
+            return View(property);
+        }
     }
 }

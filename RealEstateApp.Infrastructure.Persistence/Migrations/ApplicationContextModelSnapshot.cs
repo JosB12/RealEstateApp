@@ -34,7 +34,7 @@ namespace RealEstateApp.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("PropertiesId");
 
-                    b.ToTable("ImprovementProperty");
+                    b.ToTable("ImprovementProperty", (string)null);
                 });
 
             modelBuilder.Entity("RealEstateApp.Core.Domain.Entities.Chat", b =>

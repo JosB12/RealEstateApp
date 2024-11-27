@@ -4,11 +4,7 @@ using RealEstateApp.Core.Application.Dtos.Account;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Domain.Settings;
 using RealEstateApp.Infrastructure.Identity.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace RealEstateApp.Infrastructure.Identity.Services
 {
@@ -70,6 +66,27 @@ namespace RealEstateApp.Infrastructure.Identity.Services
         public async Task SignOutAsync()
         {
             await _signInManager.SignOutAsync();
+        }
+
+        //Obtener Usuario
+
+        public async Task<UserDto> GetUserByIdAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return null;
+            }
+
+            return new UserDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                Photo = user.Photo,
+                Email = user.Email
+            };
         }
     }
 }

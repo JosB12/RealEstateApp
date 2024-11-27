@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using RealEstateApp.Core.Application.Enums;
 using RealEstateApp.Infrastructure.Identity.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RealEstateApp.Infrastructure.Identity.Seeds
 {

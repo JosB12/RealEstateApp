@@ -25,5 +25,7 @@ namespace RealEstateApp.Core.Application.Services
         {
             await _accountService.SignOutAsync();
         }
+
+
     }
 }

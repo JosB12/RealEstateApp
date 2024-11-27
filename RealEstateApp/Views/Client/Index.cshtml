@@ -1,6 +1,48 @@
-﻿@{
-    ViewData["Title"] = "Index";
+﻿@model IEnumerable<RealEstateApp.Core.Application.ViewModels.Property.PropertyViewModel>
+
+@{
+    ViewData["Title"] = "Properties";
 }
 
-<h1>Client</h1>
+<h2>Properties</h2>
 
+<form asp-action="Filter" method="post">
+    <input type="text" name="PropertyCode" placeholder="Property Code" />
+    <input type="number" name="MinPrice" placeholder="Min Price" />
+    <input type="number" name="MaxPrice" placeholder="Max Price" />
+    <input type="number" name="Bedrooms" placeholder="Bedrooms" />
+    <input type="number" name="Bathrooms" placeholder="Bathrooms" />
+    <button type="submit">Filter</button>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Property Code</th>
+            <th>Property Type</th>
+            <th>Sale Type</th>
+            <th>Price</th>
+            <th>Bedrooms</th>
+            <th>Bathrooms</th>
+            <th>Size (m²)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var property in Model)
+        {
+                <tr>
+                    <td><img src="@property.ImageUrl" alt="Property Image" width="100" /></td>
+                    <td>@property.PropertyCode</td>
+                    <td>@property.PropertyType</td>
+                    <td>@property.SaleType</td>
+                    <td>@property.Price</td>
+                    <td>@property.Bedrooms</td>
+                    <td>@property.Bathrooms</td>
+                    <td>@property.PropertySizeMeters</td>
+                    <td><a asp-action="Details" asp-route-id="@property.Id">Details</a></td>
+                </tr>
+        }
+    </tbody>
+</table>

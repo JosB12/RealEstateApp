@@ -11,5 +11,7 @@ namespace RealEstateApp.Core.Application.Interfaces.Services
     {
         Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request);
         Task SignOutAsync();
+
+        Task<UserDto> GetUserByIdAsync(string userId);
     }
 }

@@ -1,0 +1,54 @@
+﻿@model RealEstateApp.Core.Application.ViewModels.Property.PropertySaveViewModel
+
+@{
+    ViewData["Title"] = "Property Details";
+}
+
+<h2>Property Details</h2>
+
+<div>
+    <h3>@Model.PropertyCode</h3>
+    <p>Type: @Model.PropertyType</p>
+    <p>Sale Type: @Model.SaleType</p>
+    <p>Price: @Model.Price</p>
+    <p>Bedrooms: @Model.Bedrooms</p>
+    <p>Bathrooms: @Model.Bathrooms</p>
+    <p>Size: @Model.PropertySizeMeters m²</p>
+    <p>Description: @Model.Description</p>
+    <p>Improvements:</p>
+    <ul>
+        @foreach (var improvement in Model.Improvements)
+        {
+            <li>@improvement</li>
+        }
+    </ul>
+    <h3>Agent Information</h3>
+    <p>Name: @Model.AgentName</p>
+    <p>Phone: @Model.AgentPhoneNumber</p>
+    <p>Email: @Model.AgentEmail</p>
+    <img src="@Model.AgentPhotoUrl" alt="Agent Photo" />
+
+    <h3>Property Images</h3>
+    <div id="property-images-slider" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            @for (int i = 0; i < Model.ImageUrls.Count && i < 4; i++)
+            {
+                <div class="carousel-item @(i == 0 ? "active" : "")">
+                    <img src="@Model.ImageUrls[i]" class="d-block w-100" alt="Property Image @(i + 1)">
+                </div>
+            }
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#property-images-slider" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#property-images-slider" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+}
