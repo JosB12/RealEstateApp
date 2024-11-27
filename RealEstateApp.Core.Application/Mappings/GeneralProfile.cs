@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using RealEstateApp.Core.Application.Dtos.Account;
 using RealEstateApp.Core.Application.Dtos.Account.Get;
+using RealEstateApp.Core.Application.ViewModels;
 using RealEstateApp.Core.Application.ViewModels.User;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using RealEstateApp.Core.Domain.Entities;
+using RealEstateApp.Core.Domain.Enums;
 
 namespace RealEstateApp.Core.Application.Mappings
 {
@@ -34,6 +33,17 @@ namespace RealEstateApp.Core.Application.Mappings
                 .ForMember(x => x.Error, opt => opt.Ignore())
                 .ForMember(dest => dest.UserType, opt => opt.MapFrom(src => src.UserType))
                 .ReverseMap();
+
+
+            CreateMap<SavePropertyViewModel, Property>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => PropertyStatus.Available))
+                .ForMember(dest => dest.Images, opt => opt.Ignore())
+                .ForMember(dest => dest.PropertyCode, opt => opt.Ignore());
+
+            CreateMap<IFormFile, Image>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom((src, dest) => "/Imagenes/Propiedades/" + src.FileName));
+
+
         }
     }
 }

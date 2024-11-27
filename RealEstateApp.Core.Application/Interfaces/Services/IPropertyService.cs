@@ -1,4 +1,5 @@
-﻿using RealEstateApp.Core.Application.ViewModels;
+﻿using RealEstateApp.Core.Application.Dtos.Property;
+using RealEstateApp.Core.Application.ViewModels;
 using RealEstateApp.Core.Domain.Entities;
 
 namespace RealEstateApp.Core.Application.Interfaces.Services
@@ -7,5 +8,6 @@ namespace RealEstateApp.Core.Application.Interfaces.Services
     {
         Task<List<PropertyAgentGeneralViewModel>> GetPropertiesAvailableByAgentIdAsync(string agentId);
         Task<List<HomeAgentPropertyViewModel>> GetPropertiesByAgentIdAsync(string agentId);
+        Task<CreatePropertyResponse> CreatePropertyAsync(SavePropertyViewModel model);
     }
 }

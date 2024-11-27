@@ -5,11 +5,6 @@ using RealEstateApp.Core.Domain.Entities;
 using RealEstateApp.Core.Domain.Enums;
 using RealEstateApp.Infrastructure.Persistence.Contexts;
 using RealEstateApp.Infrastructure.Persistence.Repositories.Generic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace RealEstateApp.Infrastructure.Persistence.Repositories
@@ -86,11 +81,47 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
                 Bedrooms = p.Bedrooms,
                 Bathrooms = p.Bathrooms,
                 PropertySizeMeters = p.PropertySizeMeters,
-                Images = p.Images.Select(i => i.ImageUrl).ToList()
+                Images = p.Images.Select(i => i.ImageUrl).ToList(),
+                Status = (PropertyStatus)p.Status
             }).ToList();
 
             return propertyViewModels;
         }
+        public async Task<Property> AddPropertyAsync(Property property)
+        {
+            _dbContext.Properties.Add(property);
+            await _dbContext.SaveChangesAsync();
+            return property;  // Retorna la propiedad recién creada (con su Id generado)
+        }
+
+        public async Task AddImagesAsync(List<Image> images)
+        {
+            _dbContext.Images.AddRange(images);
+            await _dbContext.SaveChangesAsync();
+        }
+
+
+        public async Task<string> GenerateUniquePropertyCodeAsync()
+        {
+            Random random = new Random();
+            string propertyCode;
+
+            bool codeIsUnique;
+
+            do
+            {
+                propertyCode = random.Next(100000, 999999).ToString();
+
+                codeIsUnique = !await _dbContext.Properties
+                    .AnyAsync(p => p.PropertyCode == propertyCode); 
+
+            } while (!codeIsUnique); 
+
+            return propertyCode;
+        }
+
+
+
         public async Task<int> GetTotalQuantityPropertyAvailableAsync()
         {
             return await _dbContext.Properties
@@ -117,6 +148,7 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
                                    .Where(p => p.UserId == agentId)  // Filtra propiedades por el ID del agente
                                    .ToListAsync();
         }
+
 
     }
 }

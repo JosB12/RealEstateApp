@@ -18,11 +18,11 @@
         <div class="col-12 mb-4">
             <h3>Propiedades Disponibles</h3>
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-                @foreach (var property in Model.Where(p => p.Status == PropertyStatus.Available))
+                @foreach (var property in Model.Where(p => p.Status == (int)PropertyStatus.Available))
                 {
                     <div class="col">
                         <div class="card border-0 shadow-sm h-100">
-                            <img src="@property.Images.FirstOrDefault()" class="card-img-top" alt="Imagen de la propiedad">
+                            <img src="@property.Images.FirstOrDefault()" class="card-img-top img-property" alt="Imagen de la propiedad">
                             <div class="card-body">
                                 <p class="card-text">@property.PropertyType</p>
                                 <h5 class="card-title">Código: @property.PropertyCode</h5>
@@ -46,7 +46,7 @@
                 {
                     <div class="col">
                         <div class="card border-0 shadow-sm h-100">
-                            <img src="@property.Images.FirstOrDefault()" class="card-img-top" alt="Imagen de la propiedad">
+                            <img src="@property.Images.FirstOrDefault()" class="card-img-top img-property" alt="Imagen de la propiedad">
                             <div class="card-body">
                                 <p class="card-text">@property.PropertyType</p>
                                 <h5 class="card-title">Código: @property.PropertyCode</h5>
@@ -65,3 +65,10 @@
     </div>
 </div>
 
+<style>
+    .img-property {
+        width: 100%;
+        height: 200px;
+        object-fit: contain;
+    }
+</style>
