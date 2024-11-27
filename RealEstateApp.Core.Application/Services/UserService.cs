@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Core.Application.Dtos.Account;
+using RealEstateApp.Core.Application.Dtos.Update;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.ViewModels;
 using RealEstateApp.Core.Application.ViewModels.User;
@@ -90,6 +91,44 @@ namespace RealEstateApp.Core.Application.Services
             return await _accountService.GetActiveAgentsAsync(searchQuery);
         }
         #endregion
+
+
+
+        #region Agent
+        public async Task<List<AgentListViewModel>> GetAllAgentForViewAsync()
+        {
+            try
+            {
+                var agent = await _accountService.GetAllAgentsAsync();
+                var agentList = _mapper.Map<List<AgentListViewModel>>(agent);
+                return agentList;
+            }
+            catch (Exception ex)
+            {
+                // Manejar el error, como registrar el error y/o retornar un mensaje
+                throw new ApplicationException("Error al obtener usuarios", ex);
+            }
+        }
+        public async Task<UpdateUserResponse> DeleteAgentWithProperiesAsync(string agentId)
+        {
+            return await _accountService.DeleteAgentAsync(agentId);
+        }
+        #endregion
+
+        #region activate/desactivate users
+        public async Task<UpdateUserResponse> DeactivateUserAsync(string userId, string loggedInUserId)
+        {
+            return await _accountService.DeactivateUserAsync(userId, loggedInUserId);
+        }
+
+        public async Task<UpdateUserResponse> ActivateUserAsync(string userId, string loggedInUserId)
+        {
+            return await _accountService.ActivateUserAsync(userId, loggedInUserId);
+        }
+
+        
+        #endregion
+
 
 
     }

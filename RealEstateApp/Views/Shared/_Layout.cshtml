@@ -61,6 +61,9 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Admin" asp-action="Index">Admin Dashboard</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Admin" asp-action="AgentList">Listado de los Agentes</a>
+                                </li>
                             }
                             @if (User.Roles.Contains("Client"))
                             {

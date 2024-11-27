@@ -40,7 +40,7 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories.Generic
 
         public virtual async Task<List<Entity>> GetAllAsync()
         {
-            return await _dbContext.Set<Entity>().ToListAsync();
+            return await _dbContext.Set<Entity>().ToListAsync();//Deferred execution
         }
 
         public virtual async Task<List<Entity>> GetAllWithIncludeAsync(List<string> properties)

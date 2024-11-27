@@ -22,3 +22,4 @@ namespace RealEstateApp.Core.Application.Interfaces.Services
         Task<List<ViewModel>> GetAllViewModel();
     }
 }
+
