@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using RealEstateApp.Core.Application.Dtos.Account;
+using RealEstateApp.Core.Application.ViewModels.Offer;
 using RealEstateApp.Core.Application.ViewModels.Property;
 using RealEstateApp.Core.Application.ViewModels.PropertyType;
 using RealEstateApp.Core.Application.ViewModels.User;
@@ -47,11 +48,18 @@ namespace RealEstateApp.Core.Application.Mappings
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Property.Images.FirstOrDefault().ImageUrl))
                 .ForMember(dest => dest.Improvements, opt => opt.MapFrom(src => src.Property.Improvements.Select(i => i.Name).ToList()))
                 .ForMember(dest => dest.AgentName, opt => opt.Ignore())
-                .ForMember(dest => dest.AgentPhoneNumber, opt => opt.Ignore()) // Remove this line if the property does not exist
+                .ForMember(dest => dest.AgentPhoneNumber, opt => opt.Ignore()) 
                 .ForMember(dest => dest.AgentPhotoUrl, opt => opt.Ignore())
                 .ForMember(dest => dest.AgentEmail, opt => opt.Ignore())
                 .ForMember(dest => dest.IsFavorite, opt => opt.MapFrom(src => true));
             #endregion
+
+            #region Offers
+            CreateMap<Offer, OfferViewModel>().ReverseMap();
+            CreateMap<OfferSaveViewModel, Offer>().ReverseMap();
+            #endregion
+
+
         }
     }
 }

@@ -4,6 +4,7 @@ using RealEstateApp.Core.Application.Dtos.Account;
 using RealEstateApp.Core.Application.Helpers;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.Services;
+using RealEstateApp.Core.Application.ViewModels.Offer;
 using RealEstateApp.Core.Application.ViewModels.Property;
 using RealEstateApp.Core.Application.ViewModels.User;
 using RealEstateApp.Middlewares;
@@ -17,15 +18,19 @@ public class HomeController : Controller
     private readonly IPropertyService _propertyService;
     private readonly IPropertyTypeService _propertyTypeService;
     private readonly IFavoriteService _favoriteService;
+    private readonly IOfferService _offerService;
 
 
-    public HomeController(ILogger<HomeController> logger, IUserService userService, IPropertyService propertyService, IPropertyTypeService propertyTypeService, IFavoriteService favoriteService)
+    public HomeController(ILogger<HomeController> logger, IUserService userService, 
+        IPropertyService propertyService, IPropertyTypeService propertyTypeService, 
+        IFavoriteService favoriteService, IOfferService offerService)
     {
         _logger = logger;
         _userService = userService;
         _propertyService = propertyService;
         _propertyTypeService = propertyTypeService;
         _favoriteService = favoriteService;
+        _offerService = offerService;
     }
     public async Task<IActionResult> Index()
     {
@@ -83,6 +88,17 @@ public class HomeController : Controller
             return Json(new { isFavorite = !isFavorite });
         }
         return Json(new { isFavorite = false });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateOffer(OfferSaveViewModel offer)
+    {
+        if (ModelState.IsValid)
+        {
+            await _offerService.Add(offer);
+            return Json(new { success = true });
+        }
+        return Json(new { success = false, message = "Invalid data" });
     }
 
     #region login

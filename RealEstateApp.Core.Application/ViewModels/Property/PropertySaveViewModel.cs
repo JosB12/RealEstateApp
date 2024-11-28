@@ -1,8 +1,11 @@
 ﻿
+using RealEstateApp.Core.Application.ViewModels.Offer;
+
 namespace RealEstateApp.Core.Application.ViewModels.Property
 {
     public class PropertySaveViewModel
     {
+        public int Id { get; set; }
         public string PropertyCode { get; set; }
         public int PropertyTypeId { get; set; }
         public string PropertyType { get; set; }
@@ -19,5 +22,6 @@ namespace RealEstateApp.Core.Application.ViewModels.Property
         public string AgentPhotoUrl { get; set; }
         public string AgentEmail { get; set; }
         public List<string> ImageUrls { get; set; } = new List<string>();
+        public List<OfferViewModel> Offers { get; set; } = new List<OfferViewModel>();
     }
 }

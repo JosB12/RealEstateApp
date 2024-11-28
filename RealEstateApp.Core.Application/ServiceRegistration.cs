@@ -21,6 +21,7 @@ namespace RealEstateApp.Core.Application
             services.AddTransient<IPropertyService, PropertyService>();
             services.AddTransient<IPropertyTypeService, PropertyTypeService>();
             services.AddTransient<IFavoriteService, FavoriteService>();
+            services.AddTransient<IOfferService, OfferService>();
 
 
 
