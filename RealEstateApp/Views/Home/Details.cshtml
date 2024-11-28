@@ -35,7 +35,7 @@
         <h3>@Model.PropertyCode</h3>
         <p><i class="fas fa-home"></i> <strong>Tipo de Propiedad:</strong> @Model.PropertyType</p>
         <p><i class="fas fa-tags"></i> <strong>Tipo de Venta:</strong> @Model.SaleType</p>
-        <p><i class="fas fa-dollar-sign"></i> <strong>Precio:</strong> RD$ @Model.Price</p>
+        <p><i class="fas fa-dollar-sign"></i> <strong>Precio:</strong> RD$ @Model.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO"))</p>
         <p><i class="fas fa-bed"></i> <strong>Habitaciones:</strong> @Model.Bedrooms</p>
         <p><i class="fas fa-bath"></i> <strong>Baños:</strong> @Model.Bathrooms</p>
         <p><i class="fas fa-ruler-combined"></i> <strong>Tamaño:</strong> @Model.PropertySizeMeters m²</p>

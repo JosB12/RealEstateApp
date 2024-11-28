@@ -104,6 +104,8 @@ namespace RealEstateApp.Core.Application.Services
                 query = query.Where(p => p.Bathrooms == filter.Bathrooms.Value);
             }
 
+            query = query.OrderByDescending(p => p.Created);
+
             var properties = await query.Include(p => p.Images)
                                         .Include(p => p.Improvements)
                                         .Include(p => p.PropertyType)

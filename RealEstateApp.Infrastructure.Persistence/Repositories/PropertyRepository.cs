@@ -167,7 +167,7 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
         }
         public async Task<List<Property>> GetAllAsync()
         {
-            return await _dbcontext.Properties
+            return await _dbContext.Properties
                                  .Include(p => p.PropertyType)
                                  .Include(p => p.SaleType)
                                  .Include(p => p.Images)

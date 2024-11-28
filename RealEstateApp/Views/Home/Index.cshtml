@@ -83,7 +83,7 @@
                         <div class="card-body">
                             <p class="property-type"><strong>@property.PropertyType</strong></p>
                             <p class="property-code">Código: @property.PropertyCode</p>
-                            <p class="property-price">RD$ @property.Price</p>
+                            <p class="property-price">RD$ @property.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO"))</p>
                             <ul class="list-unstyled">
                                 <li><i class="fas fa-bed"></i> <strong>Habitaciones:</strong> @property.Bedrooms</li>
                                 <li><i class="fas fa-bath"></i> <strong>Baños:</strong> @property.Bathrooms</li>

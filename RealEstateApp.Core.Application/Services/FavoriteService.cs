@@ -38,7 +38,7 @@ public class FavoriteService : GenericService<FavoriteSaveViewModel, FavoriteVie
         var favorite = await _favoriteRepository.GetByUserIdAndPropertyIdAsync(userId, propertyId);
         if (favorite != null)
         {
-            await _favoriteRepository.DeleteAsync(favorite.Id);
+            await _favoriteRepository.DeleteINTAsync(favorite.Id);
         }
     }
 
