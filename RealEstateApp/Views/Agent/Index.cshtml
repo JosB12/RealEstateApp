@@ -27,7 +27,7 @@
                                 <p class="card-text">@property.PropertyType</p>
                                 <h5 class="card-title">Código: @property.PropertyCode</h5>
                                 <p class="card-text">@property.SaleType</p>
-                                <p class="card-text">Precio: @property.Price</p>
+                                <p class="card-text">Precio: @property.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO"))</p>
                                 <p class="card-text">Habitaciones: @property.Bedrooms</p>
                                 <p class="card-text">Baños: @property.Bathrooms</p>
                                 <p class="card-text">Tamaño: @property.PropertySizeMeters m²</p>

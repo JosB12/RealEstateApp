@@ -21,6 +21,5 @@ namespace RealEstateApp.Core.Application.Interfaces.Repositories
         Task AddImagesAsync(List<Image> images);
         Task<string> GenerateUniquePropertyCodeAsync();
 
-
     }
 }

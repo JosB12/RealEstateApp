@@ -150,6 +150,15 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
                                    .ToListAsync();
         }
 
+        public override async Task<Property> GetByIdAsync(int id)
+        {
+            return await _dbContext.Properties
+                .Include(p => p.Images)
+                .Include(p => p.Improvements)
+                .Include(p => p.PropertyType)
+                .Include(p => p.SaleType)
+                .FirstOrDefaultAsync(p => p.Id == id);
+        }
 
     }
 }

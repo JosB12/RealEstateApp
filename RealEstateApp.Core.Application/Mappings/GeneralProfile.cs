@@ -47,7 +47,45 @@ namespace RealEstateApp.Core.Application.Mappings
              .ForMember(dest => dest.NumberOfProperties, opt => opt.MapFrom(src => src.NumberOfProperties))
              .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive));
 
+            CreateMap<Property, SavePropertyViewModel>()
+            .ForMember(dest => dest.Images, opt => opt.Ignore()) // Si no necesitas mapear las imágenes de vuelta al ViewModel
+            .ForMember(dest => dest.SelectedImprovements, opt => opt.MapFrom(src => src.Improvements.Select(i => i.Id)))
+            .ForMember(dest => dest.PropertyTypeId, opt => opt.MapFrom(src => src.PropertyTypeId))
+            .ForMember(dest => dest.SaleTypeId, opt => opt.MapFrom(src => src.SaleTypeId))
+            .ReverseMap();
 
+            CreateMap<Property, PropertySaveViewModel>()
+                .ForMember(dest => dest.PropertyCode, opt => opt.MapFrom(src => src.PropertyCode))
+                .ForMember(dest => dest.PropertyTypeId, opt => opt.MapFrom(src => src.PropertyTypeId))
+                .ForMember(dest => dest.PropertyType, opt => opt.MapFrom(src => src.PropertyType.Name))
+                .ForMember(dest => dest.SaleTypeId, opt => opt.MapFrom(src => src.SaleTypeId))
+                .ForMember(dest => dest.SaleType, opt => opt.MapFrom(src => src.SaleType.Name))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.Bedrooms, opt => opt.MapFrom(src => src.Bedrooms))
+                .ForMember(dest => dest.Bathrooms, opt => opt.MapFrom(src => src.Bathrooms))
+                .ForMember(dest => dest.PropertySizeMeters, opt => opt.MapFrom(src => src.PropertySizeMeters))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.Improvements, opt => opt.MapFrom(src => src.Improvements.Select(i => i.Name).ToList()))
+                .ForMember(dest => dest.AgentName, opt => opt.Ignore())  // Si es necesario, mapea manualmente
+                .ForMember(dest => dest.AgentPhoneNumber, opt => opt.Ignore())
+                .ForMember(dest => dest.AgentPhotoUrl, opt => opt.Ignore())
+                .ForMember(dest => dest.AgentEmail, opt => opt.Ignore())
+                .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.Images.Select(i => i.ImageUrl).ToList()))
+                .ReverseMap();
+
+
+
+            CreateMap<Improvement, ImprovementViewModel>().ReverseMap();
+
+            CreateMap<Property, SavePropertyViewModel>()
+                .ForMember(dest => dest.Images, opt => opt.Ignore())
+                .ForMember(dest => dest.Improvements,
+                           opt => opt.MapFrom(src => src.Improvements.Select(im => new ImprovementViewModel
+                           {
+                               Id = im.Id,
+                               Name = im.Name
+                           }).ToList()))
+                .ReverseMap();
 
             CreateMap<RegisterRequest, SaveUserViewModel>()
                 .ForMember(x => x.HasError, opt => opt.Ignore())

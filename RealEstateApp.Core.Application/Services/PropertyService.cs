@@ -63,6 +63,7 @@ namespace RealEstateApp.Core.Application.Services
 
             return propertyViewModels;
         }
+       
 
         public async Task<List<PropertyViewModel>> FilterPropertiesAsync(PropertyFilterViewModel filter)
         {
@@ -130,6 +131,7 @@ namespace RealEstateApp.Core.Application.Services
                                                     .Include(p => p.PropertyType)
                                                     .Include(p => p.SaleType)
                                                     .FirstOrDefaultAsync(p => p.Id == id);
+
             var propertyViewModel = _mapper.Map<PropertySaveViewModel>(property);
 
             propertyViewModel.Improvements = property.Improvements?.Select(i => i.Name).ToList() ?? new List<string>();
@@ -144,6 +146,7 @@ namespace RealEstateApp.Core.Application.Services
 
             return propertyViewModel;
         }
+
 
         //Properties availables
         public async Task<List<PropertyAgentGeneralViewModel>> GetPropertiesAvailableByAgentIdAsync(string agentId)

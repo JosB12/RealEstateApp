@@ -1,68 +1,81 @@
 ﻿@model IEnumerable<RealEstateApp.Core.Application.ViewModels.Property.PropertyViewModel>
+
 @{
     ViewData["Title"] = "Properties";
 }
-<h2>Properties</h2>
-<form asp-action="Filter" method="post">
-    <div>
-        <label>Property Code:</label>
-        <input type="text" name="PropertyCode" placeholder="Property Code" />
-    </div>
-    <div>
-        <label>Price Range:</label>
-        <div id="price-range"></div>
-        <input type="hidden" id="minPrice" name="MinPrice" />
-        <input type="hidden" id="maxPrice" name="MaxPrice" />
-        <div>
-            <span id="minPriceOutput">0</span> - <span id="maxPriceOutput">35000000+</span>
+
+<h2 class="text-center my-4">@ViewData["Title"]</h2>
+
+<form asp-action="Filter" method="post" class="mb-5">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <label>Property Code</label>
+            <input type="text" name="PropertyCode" class="form-control" placeholder="Property Code" />
+        </div>
+        <div class="col-md-4">
+            <label>Price Range</label>
+            <div id="price-range"></div>
+            <input type="hidden" id="minPrice" name="MinPrice" />
+            <input type="hidden" id="maxPrice" name="MaxPrice" />
+            <div class="d-flex justify-content-between">
+                <span id="minPriceOutput">0</span> - <span id="maxPriceOutput">35000000+</span>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <label>Bedrooms</label>
+            <input type="number" name="Bedrooms" class="form-control" placeholder="Bedrooms" />
+        </div>
+        <div class="col-md-2">
+            <label>Bathrooms</label>
+            <input type="number" name="Bathrooms" class="form-control" placeholder="Bathrooms" />
         </div>
     </div>
-    <div>
-        <label>Bedrooms:</label>
-        <input type="number" name="Bedrooms" placeholder="Bedrooms" />
+
+    <div class="mb-4">
+        <label>Property Types</label>
+        <div class="row">
+            @foreach (var type in ViewBag.PropertyTypes)
+            {
+                <div class="col-md-3">
+                    <div class="form-check">
+                        <input type="checkbox" name="PropertyTypeIds" class="form-check-input" value="@type.Id" />
+                        <label class="form-check-label">@type.Name</label>
+                    </div>
+                </div>
+            }
+        </div>
     </div>
-    <div>
-        <label>Bathrooms:</label>
-        <input type="number" name="Bathrooms" placeholder="Bathrooms" />
-    </div>
-    <div>
-        <label>Property Types:</label>
-        @foreach (var type in ViewBag.PropertyTypes)
-        {
-            <div>
-                <input type="checkbox" name="PropertyTypeIds" value="@type.Id" />
-                <label>@type.Name</label>
-            </div>
-        }
-    </div>
-    <button type="submit">Filter</button>
+
+    <button type="submit" class="btn btn-primary">Filtrar</button>
 </form>
-<div class="row">
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
     @foreach (var property in Model)
     {
-        <div class="col-md-4">
-            <div class="card mb-4 shadow-sm">
-                <img class="card-img-top" src="@property.ImageUrl" alt="Property Image">
+        <div class="col">
+            <div class="card shadow-sm">
+                <!-- Property Image Carousel -->
+                <img class="card-img-top" src="@property.ImageUrl" alt="Property Image" style="height: 200px; object-fit: cover;">
+
                 <div class="card-body">
                     <h5 class="card-title">@property.PropertyCode</h5>
                     <p class="card-text">
                         <strong>Type:</strong> @property.PropertyType<br>
                         <strong>Sale Type:</strong> @property.SaleType<br>
-                        <strong>Price:</strong> @property.Price<br>
+                        <strong>Price:</strong> @property.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO"))<br>
                         <strong>Bedrooms:</strong> @property.Bedrooms<br>
                         <strong>Bathrooms:</strong> @property.Bathrooms<br>
                         <strong>Size:</strong> @property.PropertySizeMeters m²
                     </p>
                     <div class="d-flex justify-content-between align-items-center">
-                        <div class="btn-group">
-                            <a asp-action="Details" asp-route-id="@property.Id" class="btn btn-sm btn-outline-secondary">View</a>
-                        </div>
+                        <a asp-action="Details" asp-route-id="@property.Id" class="btn btn-sm btn-outline-secondary">View</a>
                     </div>
                 </div>
             </div>
         </div>
     }
 </div>
+
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.5.0/nouislider.min.js"></script>
     <script>
