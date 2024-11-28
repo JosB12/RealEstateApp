@@ -2,12 +2,13 @@
 using RealEstateApp.Core.Application.ViewModels.PropertyType;
 using System.ComponentModel.DataAnnotations;
 
-
 namespace RealEstateApp.Core.Application.ViewModels
 {
-    public class SavePropertyViewModel
+    public class EditPropertyViewModel
     {
+        // Propiedades básicas
         public int Id { get; set; }
+
         [Required(ErrorMessage = "Debe seleccionar un tipo de propiedad")]
         public int PropertyTypeId { get; set; }
 
@@ -34,19 +35,19 @@ namespace RealEstateApp.Core.Application.ViewModels
         public int Bathrooms { get; set; }
 
         [Required(ErrorMessage = "Debe seleccionar al menos una mejora")]
-        public List<int> SelectedImprovements { get; set; }
+        public List<int> SelectedImprovements { get; set; } = new List<int>();
 
-        [Required(ErrorMessage = "Debe seleccionar al menos una imagen")]
-        public List<IFormFile> Images { get; set; } = new List<IFormFile>();
+        public List<string> CurrentImageUrls { get; set; } = new List<string>();
 
-        public string UserId { get; set; }
+        public List<IFormFile>? NewImages { get; set; }
+
+        public List<string> DeleteImages { get; set; } = new List<string>();
 
         public List<PropertyTypeViewModel> PropertyTypes { get; set; } = new List<PropertyTypeViewModel>();
         public List<SaleTypeViewModel> SaleTypes { get; set; } = new List<SaleTypeViewModel>();
         public List<ImprovementViewModel> Improvements { get; set; } = new List<ImprovementViewModel>();
 
-        public bool HasError { get; set; }
-        public string Error { get; set; }
+        public bool HasError { get; set; } = false;
+        public string Error { get; set; } = string.Empty;
     }
-
 }

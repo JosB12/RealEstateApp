@@ -32,6 +32,7 @@ namespace RealEstateApp.Infrastructure.Persistence
             services.AddTransient<ISalesTypeRepository, SalesTypeRepository>();
             services.AddTransient<IImprovementRepository, ImprovementRepository>();
             services.AddTransient<IImprovementPropertyRepository, ImprovementPropertyRepository>();
+            services.AddTransient<IImageRepository, ImageRepository>();
 
 
             #endregion

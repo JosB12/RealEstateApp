@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Core.Application.Dtos.Account;
 using RealEstateApp.Core.Application.Helpers;
+using RealEstateApp.Core.Application.Interfaces.Repositories;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.Services;
 using RealEstateApp.Core.Application.ViewModels;
+using RealEstateApp.Core.Domain.Entities;
+using RealEstateApp.Infrastructure.Persistence.Repositories;
 
 namespace RealEstateApp.Controllers
 {
@@ -16,13 +19,15 @@ namespace RealEstateApp.Controllers
         private readonly IImprovementService _improvementService;
         private readonly AuthenticationResponse userViewModel;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IPropertyRepository _propertyRepository;
 
         public AgentController(
             IHttpContextAccessor httpContextAccessor,
             IPropertyService propertyService,
             IPropertyTypeService propertyTypeService,
             IImprovementService improvementService,
-            ISalesTypeService salesTypeService)
+            ISalesTypeService salesTypeService,
+            IPropertyRepository propertyRepository)
         {
             _httpContextAccessor = httpContextAccessor;
             _propertyService = propertyService;
@@ -30,9 +35,11 @@ namespace RealEstateApp.Controllers
             _improvementService = improvementService;
             _salesTypeService = salesTypeService;
             userViewModel = _httpContextAccessor.HttpContext.Session.Get<AuthenticationResponse>("user");
+            _propertyRepository = propertyRepository;
 
         }
 
+        #region home
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -65,6 +72,9 @@ namespace RealEstateApp.Controllers
             return View(properties);
         }
 
+        #endregion
+
+        #region Maintenance Properties
         [HttpGet]
         public async Task<IActionResult> PropertyMaintenance()
         {
@@ -77,7 +87,10 @@ namespace RealEstateApp.Controllers
             var properties = await _propertyService.GetPropertiesAvailableByAgentIdAsync(user.Id);
             return View(properties);
         }
-        // Método para mostrar el formulario de creación de propiedad
+        #endregion
+
+        #region create property
+        //mostrar el formulario de creación de propiedad
         [HttpGet]
         public async Task<IActionResult> CreateProperty()
         {
@@ -87,12 +100,10 @@ namespace RealEstateApp.Controllers
                 return RedirectToAction("AccessDenied", "Home");
             }
 
-            // Obtener los tipos de propiedad, tipos de venta y mejoras para llenar los select
             var propertyTypes = await _propertyTypeService.GetAllPropertyTypesNameAsync();
             var saleTypes = await _salesTypeService.GetAllSaleTypesNamesAsync();
             var improvements = await _improvementService.GetAllImprovementsNamesAsync();
 
-            // Verificar si no existen tipos de propiedad, tipos de venta o mejoras
             if (!propertyTypes.Any() || !saleTypes.Any() || !improvements.Any())
             {
                 return View("Error", new { Message = "No hay tipos de propiedad, tipos de venta o mejoras disponibles." });
@@ -106,15 +117,15 @@ namespace RealEstateApp.Controllers
                 Improvements = improvements
             };
 
+     
             return View(model);
         }
 
-        // Método para crear la propiedad
+        // Crear la propiedad
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateProperty(SavePropertyViewModel model)
         {
-
             var user = HttpContext.Session.Get<AuthenticationResponse>("user");
             if (user == null || !user.Roles.Contains("Agent"))
             {
@@ -123,7 +134,28 @@ namespace RealEstateApp.Controllers
 
             model.UserId = user.Id;
 
-          
+            if (model.Images.Count == 0)
+            {
+                model.PropertyTypes = await _propertyTypeService.GetAllPropertyTypesNameAsync();
+                model.SaleTypes = await _salesTypeService.GetAllSaleTypesNamesAsync();
+                model.Improvements = await _improvementService.GetAllImprovementsNamesAsync();
+
+                model.HasError = true;
+                model.Error = "Debe seleccionar al menos una imagen.";
+                return View(model);
+            }
+
+            if (model.Images.Count > 4)
+            {
+                model.PropertyTypes = await _propertyTypeService.GetAllPropertyTypesNameAsync();
+                model.SaleTypes = await _salesTypeService.GetAllSaleTypesNamesAsync();
+                model.Improvements = await _improvementService.GetAllImprovementsNamesAsync();
+
+                model.HasError = true;
+                model.Error = "No puede seleccionar más de 4 imágenes.";
+                return View(model);
+            }
+
             var response = await _propertyService.CreatePropertyAsync(model);
 
             if (response.Success)
@@ -132,12 +164,155 @@ namespace RealEstateApp.Controllers
             }
             else
             {
-                model.HasError = true; 
-                model.Error = response.Error; 
+                model.PropertyTypes = await _propertyTypeService.GetAllPropertyTypesNameAsync();
+                model.SaleTypes = await _salesTypeService.GetAllSaleTypesNamesAsync();
+                model.Improvements = await _improvementService.GetAllImprovementsNamesAsync();
+
+                model.HasError = true;
+                model.Error = response.Error;
                 return View(model);
             }
         }
 
+
+        #endregion
+
+        #region delete property
+        [HttpGet]
+        public async Task<IActionResult> DeleteProperty(int id)
+        {
+            var user = HttpContext.Session.Get<AuthenticationResponse>("user");
+            if (user == null || !user.Roles.Contains("Agent"))
+            {
+                return RedirectToAction("AccessDenied", "Home");
+            }
+
+            var property = await _propertyService.GetByIdForDeleteAsync(id);
+            if (property == null)
+            {
+                return NotFound();
+            }
+
+            return View(property);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmDelete(int id)
+        {
+            var user = HttpContext.Session.Get<AuthenticationResponse>("user");
+            if (user == null || !user.Roles.Contains("Agent"))
+            {
+                return RedirectToAction("AccessDenied", "Home");
+            }
+
+            var property = await _propertyService.GetByIdForDeleteAsync(id);
+            if (property == null)
+            {
+                return NotFound();
+            }
+
+            var response = await _propertyService.DeletePropertyAsync(id);
+
+            if (response)
+            {
+                return RedirectToAction("PropertyMaintenance");
+            }
+
+            ModelState.AddModelError("", "No se pudo eliminar la propiedad.");
+            return View(property);
+        }
+
+        #endregion
+
+        #region Edit Property
+        [HttpGet]
+        public async Task<IActionResult> EditProperty(int id)
+        {
+            var user = HttpContext.Session.Get<AuthenticationResponse>("user");
+            if (user == null || !user.Roles.Contains("Agent"))
+            {
+                return RedirectToAction("AccessDenied", "Home");
+            }
+
+            // Obtén la propiedad para editar
+            var editPropertyViewModel = await _propertyService.GetByIdForEditAsync(id);
+            if (editPropertyViewModel == null)
+            {
+                return NotFound();
+            }
+
+            // Obtén los datos adicionales para los selects
+            editPropertyViewModel.PropertyTypes = await _propertyTypeService.GetAllPropertyTypesNameAsync();
+            editPropertyViewModel.SaleTypes = await _salesTypeService.GetAllSaleTypesNamesAsync();
+            editPropertyViewModel.Improvements = await _improvementService.GetAllImprovementsNamesAsync();
+
+            // Verifica si faltan datos necesarios
+            if (!editPropertyViewModel.PropertyTypes.Any() ||
+                !editPropertyViewModel.SaleTypes.Any() ||
+                !editPropertyViewModel.Improvements.Any())
+            {
+                ViewBag.ErrorMessage = "No hay tipos de propiedades, tipos de venta o mejoras disponibles para la edición.";
+                return View("Error");
+            }
+
+            return View(editPropertyViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProperty(EditPropertyViewModel model)
+        {
+            var user = HttpContext.Session.Get<AuthenticationResponse>("user");
+            if (user == null || !user.Roles.Contains("Agent"))
+            {
+                return RedirectToAction("AccessDenied", "Home");
+            }
+
+            var editPropertyViewModel = await _propertyService.GetByIdForEditAsync(model.Id);
+
+            model.CurrentImageUrls = editPropertyViewModel.CurrentImageUrls;
+
+            model.PropertyTypes = await _propertyTypeService.GetAllPropertyTypesNameAsync();
+            model.SaleTypes = await _salesTypeService.GetAllSaleTypesNamesAsync();
+            model.Improvements = await _improvementService.GetAllImprovementsNamesAsync();
+
+            // Limpiar el error
+            model.HasError = false;
+            model.Error = string.Empty;
+
+            // Si el modelo no es válido, recargar los datos de los selects
+            if (!ModelState.IsValid)
+            {
+                model.CurrentImageUrls = editPropertyViewModel.CurrentImageUrls;
+                model.PropertyTypes = await _propertyTypeService.GetAllPropertyTypesNameAsync();
+                model.SaleTypes = await _salesTypeService.GetAllSaleTypesNamesAsync();
+                model.Improvements = await _improvementService.GetAllImprovementsNamesAsync();
+
+                return View(model);
+            }
+
+            // Llamar al servicio para actualizar la propiedad
+            var result = await _propertyService.EditPropertyAsync(model);
+
+            if (result.Success)
+            {
+                return RedirectToAction("PropertyMaintenance");
+            }
+            else
+            {
+                // Recargar los datos en caso de error
+                model.CurrentImageUrls = editPropertyViewModel.CurrentImageUrls;
+                model.PropertyTypes = await _propertyTypeService.GetAllPropertyTypesNameAsync();
+                model.SaleTypes = await _salesTypeService.GetAllSaleTypesNamesAsync();
+                model.Improvements = await _improvementService.GetAllImprovementsNamesAsync();
+
+                ModelState.AddModelError(string.Empty, result.ErrorMessage);
+                return View(model);
+            }
+        }
+        #endregion
 
     }
 }

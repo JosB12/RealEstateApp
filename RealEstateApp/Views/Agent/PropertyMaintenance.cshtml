@@ -46,10 +46,10 @@
                                 <strong>Tamaño:</strong> @property.PropertySizeMeters m²
                             </p>
                             <div class="mt-auto">
-                                <a href="@Url.Action("EditProperty", "Agent", new { id = property.PropertyCode })" class="btn btn-outline-primary btn-sm">
+                                <a href="@Url.Action("EditProperty", "Agent", new { id = property.Id })" class="btn btn-outline-primary btn-sm">
                                     <i class="bi bi-pencil"></i> Editar
                                 </a>
-                                <a href="@Url.Action("DeleteProperty", "Agent", new { id = property.PropertyCode })" class="btn btn-outline-danger btn-sm">
+                                <a href="@Url.Action("DeleteProperty", "Agent", new { id = property.Id })" class="btn btn-outline-danger btn-sm">
                                     <i class="bi bi-trash"></i> Eliminar
                                 </a>
                             </div>

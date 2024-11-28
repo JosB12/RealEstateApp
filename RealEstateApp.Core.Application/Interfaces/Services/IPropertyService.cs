@@ -13,5 +13,9 @@ namespace RealEstateApp.Core.Application.Interfaces.Services
         Task<List<HomeAgentPropertyViewModel>> GetPropertiesByAgentIdAsync(string agentId);
         Task<CreatePropertyResponse> CreatePropertyAsync(SavePropertyViewModel model);
         Task<PropertySaveViewModel> GetByIdSaveViewModel(int id);
+        Task<SavePropertyViewModel> GetByIdForDeleteAsync(int id);
+        Task<bool> DeletePropertyAsync(int id);
+        Task<EditPropertyViewModel> GetByIdForEditAsync(int id);
+        Task<EditPropertyResponse> EditPropertyAsync(EditPropertyViewModel model);
     }
 }

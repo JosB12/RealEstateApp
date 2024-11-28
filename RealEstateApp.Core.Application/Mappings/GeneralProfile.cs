@@ -48,6 +48,7 @@ namespace RealEstateApp.Core.Application.Mappings
              .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive));
 
             CreateMap<Property, SavePropertyViewModel>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Images, opt => opt.Ignore()) // Si no necesitas mapear las imágenes de vuelta al ViewModel
             .ForMember(dest => dest.SelectedImprovements, opt => opt.MapFrom(src => src.Improvements.Select(i => i.Id)))
             .ForMember(dest => dest.PropertyTypeId, opt => opt.MapFrom(src => src.PropertyTypeId))
@@ -66,7 +67,7 @@ namespace RealEstateApp.Core.Application.Mappings
                 .ForMember(dest => dest.PropertySizeMeters, opt => opt.MapFrom(src => src.PropertySizeMeters))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.Improvements, opt => opt.MapFrom(src => src.Improvements.Select(i => i.Name).ToList()))
-                .ForMember(dest => dest.AgentName, opt => opt.Ignore())  // Si es necesario, mapea manualmente
+                .ForMember(dest => dest.AgentName, opt => opt.Ignore())  
                 .ForMember(dest => dest.AgentPhoneNumber, opt => opt.Ignore())
                 .ForMember(dest => dest.AgentPhotoUrl, opt => opt.Ignore())
                 .ForMember(dest => dest.AgentEmail, opt => opt.Ignore())
@@ -101,6 +102,9 @@ namespace RealEstateApp.Core.Application.Mappings
 
             CreateMap<IFormFile, Image>()
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom((src, dest) => "/Imagenes/Propiedades/" + src.FileName));
+
+
+
         }
     }
 }

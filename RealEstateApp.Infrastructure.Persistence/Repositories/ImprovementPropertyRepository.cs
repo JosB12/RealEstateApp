@@ -1,4 +1,5 @@
-﻿using RealEstateApp.Core.Application.Interfaces.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using RealEstateApp.Core.Application.Interfaces.Repositories;
 using RealEstateApp.Core.Domain.Entities;
 using RealEstateApp.Infrastructure.Persistence.Contexts;
 using RealEstateApp.Infrastructure.Persistence.Repositories.Generic;
@@ -17,6 +18,18 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
         public ImprovementPropertyRepository(ApplicationContext dbContext) : base(dbContext)
         {
             _dbContext = dbContext;
+        }
+        public override async Task DeleteAsync(ImprovementProperty improvementProperty)
+        {
+            _dbContext.ImprovementProperties.Remove(improvementProperty);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<List<ImprovementProperty>> GetByPropertyIdAsync(int propertyId)
+        {
+            return await _dbContext.ImprovementProperties
+                                    .Where(ip => ip.PropertyId == propertyId)
+                                    .ToListAsync();
         }
     }
 }

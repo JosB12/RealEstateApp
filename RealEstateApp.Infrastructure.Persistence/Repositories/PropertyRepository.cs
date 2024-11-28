@@ -40,6 +40,7 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
 
             var propertyViewModels = properties.Select(p => new PropertyAgentGeneralViewModel
             {
+                Id = p.Id,
                 PropertyCode = p.PropertyCode,
                 PropertyType = p.PropertyType.Name,
                 SaleType = p.SaleType.Name,
@@ -158,6 +159,12 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
                 .Include(p => p.PropertyType)
                 .Include(p => p.SaleType)
                 .FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public override async Task DeleteAsync(Property property)
+        {
+            _dbContext.Properties.Remove(property);
+            await _dbContext.SaveChangesAsync();
         }
 
     }

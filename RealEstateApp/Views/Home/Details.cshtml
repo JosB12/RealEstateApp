@@ -19,14 +19,21 @@
                 </div>
                 @if (Model.ImageUrls.Count > 1)
                 {
-                    <button class="carousel-control-prev" type="button" data-bs-target="#propertyImagesCarousel" data-bs-slide="prev">
+                    <button class="carousel-control-prev" type="button" data-bs-target="#propertyImagesCarousel" data-bs-slide="prev" style="background-color: rgba(128, 128, 128, 0.5); border-color: rgba(128, 128, 128, 0.5); transition: background-color 0.3s, border-color 0.3s;">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                         <span class="visually-hidden">Previous</span>
                     </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#propertyImagesCarousel" data-bs-slide="next">
+                    <button class="carousel-control-next" type="button" data-bs-target="#propertyImagesCarousel" data-bs-slide="next" style="background-color: rgba(128, 128, 128, 0.5); border-color: rgba(128, 128, 128, 0.5); transition: background-color 0.3s, border-color 0.3s;">
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                         <span class="visually-hidden">Next</span>
                     </button>
+                    <style>
+                        .carousel-control-prev:hover,
+                        .carousel-control-next:hover {
+                            background-color: rgba(128, 128, 128, 0.8);
+                            border-color: rgba(128, 128, 128, 0.8);
+                        }
+                    </style>
                 }
             </div>
 
