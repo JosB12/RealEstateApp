@@ -16,19 +16,33 @@ public class HomeController : Controller
     private readonly IUserService _userService;
     private readonly IPropertyService _propertyService;
     private readonly IPropertyTypeService _propertyTypeService;
+    private readonly IFavoriteService _favoriteService;
 
 
-    public HomeController(ILogger<HomeController> logger, IUserService userService, IPropertyService propertyService, IPropertyTypeService propertyTypeService)
+    public HomeController(ILogger<HomeController> logger, IUserService userService, IPropertyService propertyService, IPropertyTypeService propertyTypeService, IFavoriteService favoriteService)
     {
         _logger = logger;
         _userService = userService;
         _propertyService = propertyService;
         _propertyTypeService = propertyTypeService;
-
+        _favoriteService = favoriteService;
     }
     public async Task<IActionResult> Index()
     {
+        var user = HttpContext.Session.Get<AuthenticationResponse>("user");
         var properties = await _propertyService.GetAvailablePropertiesAsync();
+
+        if (user != null && user.Roles.Contains("Client"))
+        {
+            var favoriteProperties = await _favoriteService.GetFavoritePropertiesAsync(user.Id);
+            var favoritePropertyIds = favoriteProperties.Select(p => p.Id).ToHashSet();
+
+            foreach (var property in properties)
+            {
+                property.IsFavorite = favoritePropertyIds.Contains(property.Id);
+            }
+        }
+
         ViewBag.PropertyTypes = await _propertyTypeService.GetAllAsync();
         return View(properties);
     }
@@ -49,6 +63,26 @@ public class HomeController : Controller
             return NotFound();
         }
         return View(property);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ToggleFavorite(int propertyId)
+    {
+        var user = HttpContext.Session.Get<AuthenticationResponse>("user");
+        if (user != null && user.Roles.Contains("Client"))
+        {
+            var isFavorite = await _favoriteService.IsFavoriteAsync(user.Id, propertyId);
+            if (isFavorite)
+            {
+                await _favoriteService.UnmarkAsFavoriteAsync(user.Id, propertyId);
+            }
+            else
+            {
+                await _favoriteService.MarkAsFavoriteAsync(user.Id, propertyId);
+            }
+            return Json(new { isFavorite = !isFavorite });
+        }
+        return Json(new { isFavorite = false });
     }
 
     #region login
@@ -106,6 +140,13 @@ public class HomeController : Controller
     public IActionResult AccessDenied()
     {
         return View();
+    }
+
+    public async Task<IActionResult> LogOut()
+    {
+        await _userService.SignOutAsync();
+        HttpContext.Session.Remove("user");
+        return RedirectToRoute(new { controller = "Home", action = "Index" });
     }
 
 

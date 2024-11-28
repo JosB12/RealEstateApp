@@ -34,8 +34,23 @@ namespace RealEstateApp.Core.Application.Mappings
             CreateMap<PropertyTypeSaveViewModel, PropertyType>().ReverseMap();
             #endregion
 
-            #region ApplicationUser
-
+            #region Favorites
+            CreateMap<Favorite, PropertyViewModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Property.Id))
+                .ForMember(dest => dest.PropertyCode, opt => opt.MapFrom(src => src.Property.PropertyCode))
+                .ForMember(dest => dest.PropertyType, opt => opt.MapFrom(src => src.Property.PropertyType.Name))
+                .ForMember(dest => dest.SaleType, opt => opt.MapFrom(src => src.Property.SaleType.Name))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Property.Price))
+                .ForMember(dest => dest.Bedrooms, opt => opt.MapFrom(src => src.Property.Bedrooms))
+                .ForMember(dest => dest.Bathrooms, opt => opt.MapFrom(src => src.Property.Bathrooms))
+                .ForMember(dest => dest.PropertySizeMeters, opt => opt.MapFrom(src => src.Property.PropertySizeMeters))
+                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Property.Images.FirstOrDefault().ImageUrl))
+                .ForMember(dest => dest.Improvements, opt => opt.MapFrom(src => src.Property.Improvements.Select(i => i.Name).ToList()))
+                .ForMember(dest => dest.AgentName, opt => opt.Ignore())
+                .ForMember(dest => dest.AgentPhoneNumber, opt => opt.Ignore()) // Remove this line if the property does not exist
+                .ForMember(dest => dest.AgentPhotoUrl, opt => opt.Ignore())
+                .ForMember(dest => dest.AgentEmail, opt => opt.Ignore())
+                .ForMember(dest => dest.IsFavorite, opt => opt.MapFrom(src => true));
             #endregion
         }
     }

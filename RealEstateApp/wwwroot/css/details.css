@@ -1,0 +1,92 @@
+﻿/* Estilos para la vista de detalles */
+.details-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.property-info {
+    flex: 1 1 60%;
+    margin-right: 20px;
+}
+
+.property-details-title{
+    font-weight:bold;
+    margin-top:45px;
+    margin-bottom:25px;
+}
+
+.agent-info {
+    flex: 1 1 25%;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    background-color: rgb(37, 203, 20, 0.24);
+    margin-left: 100px;
+}
+
+.agent-info h4 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 25px;
+    color: dimgray;
+}
+
+    .agent-info h3 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        color: #28a745;
+    }
+
+.agent-info img {
+    border-radius: 50%;
+    width: 170px;
+    height: 170px;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.property-info h3, .property-info p {
+    margin-bottom: 10px;
+}
+
+.property-info p {
+    font-size: 1.1rem;
+}
+
+.property-info ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.property-info ul li {
+    margin-bottom: 5px;
+}
+
+.improvements-container {
+    margin-top: 40px; /* Más separación de la información de la propiedad */
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.improvements-container .improvement-item {
+    display: inline-block;
+    margin: 5px;
+    padding: 5px 10px; /* Tamaño más pequeño */
+    border: 1px solid #28a745; /* Color verde */
+    border-radius: 10px;
+    background-color: lightgreen;
+    font-size: 0.9rem; /* Tamaño de texto más pequeño */
+}
+
+.improvements-container .improvement-item i {
+    color: #28a745; /* Color verde */
+    margin-right: 5px;
+}
+
+.carousel-inner img {
+    height: 400px;
+    object-fit: cover;
+}

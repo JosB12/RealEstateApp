@@ -1,0 +1,76 @@
+﻿@model IEnumerable<RealEstateApp.Core.Application.ViewModels.Property.PropertyViewModel>
+@{
+    ViewData["Title"] = "Mis Propiedades Favoritas";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<link rel="stylesheet" href="~/css/home.css" />
+
+<div class="container">
+    <h2 class="favorites-title">Mis Propiedades Favoritas</h2>
+    <div class="row properties-container">
+        @if (Model != null)
+
+        {
+            @foreach (var property in Model)
+
+            {
+                <div class="col-sm-6 col-md-4 mb-4 property-card" data-property-id="@property.Id">
+                    <a asp-controller="Home" asp-action="Details" asp-route-id="@property.Id" class="card-link">
+                        <div class="card h-100 shadow-sm">
+                            <div class="sale-type-badge">
+                                @property.SaleType.ToUpper()
+                            </div>
+                            <img class="card-img-top" src="@property.ImageUrl" alt="Property Image" style="object-fit: cover; height: 200px;">
+                            <div class="card-body">
+                                <p class="property-type"><strong>@property.PropertyType</strong></p>
+                                <p class="property-code">Código: @property.PropertyCode</p>
+                                <p class="property-price">RD$ @property.Price</p>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-bed"></i> <strong>Habitaciones:</strong> @property.Bedrooms</li>
+                                    <li><i class="fas fa-bath"></i> <strong>Baños:</strong> @property.Bathrooms</li>
+                                    <li><i class="fas fa-ruler-combined"></i> <strong>Tamaño:</strong> @property.PropertySizeMeters m²</li>
+                                </ul>
+                                <button class="star-btn" data-property-id="@property.Id" aria-label="Mark as favorite">
+                                    <i class="fas fa-star @(property.IsFavorite ? "marked" : "unmarked")"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        }
+
+        else
+
+        {
+            <p>No hay propiedades favoritas.</p>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.star-btn').on('click', function (e) {
+                e.preventDefault();
+                var $button = $(this);
+                var propertyId = $button.data('property-id');
+
+                $.ajax({
+                    url: '@Url.Action("ToggleFavorite", "Home")',
+                    type: 'POST',
+                    data: { propertyId: propertyId },
+                    success: function (response) {
+                        if (response.isFavorite) {
+                            $button.find('i').removeClass('unmarked').addClass('marked');
+                        } else {
+                            $button.find('i').removeClass('marked').addClass('unmarked');
+                            // Remove the property card from the DOM
+                            $button.closest('.property-card').remove();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

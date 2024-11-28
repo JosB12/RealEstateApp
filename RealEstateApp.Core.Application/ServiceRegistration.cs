@@ -4,12 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RealEstateApp.Core.Application
 {
@@ -25,6 +20,8 @@ namespace RealEstateApp.Core.Application
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IPropertyService, PropertyService>();
             services.AddTransient<IPropertyTypeService, PropertyTypeService>();
+            services.AddTransient<IFavoriteService, FavoriteService>();
+
 
 
 

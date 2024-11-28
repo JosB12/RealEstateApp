@@ -4,48 +4,64 @@
     ViewData["Title"] = "Property Details";
 }
 
-<h2>Property Details</h2>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<link rel="stylesheet" href="~/css/details.css" />
 
-<div>
-    <h3>@Model.PropertyCode</h3>
-    <p>Type: @Model.PropertyType</p>
-    <p>Sale Type: @Model.SaleType</p>
-    <p>Price: @Model.Price</p>
-    <p>Bedrooms: @Model.Bedrooms</p>
-    <p>Bathrooms: @Model.Bathrooms</p>
-    <p>Size: @Model.PropertySizeMeters m²</p>
-    <p>Description: @Model.Description</p>
-    <p>Improvements:</p>
-    <ul>
+<h2 class="property-details-title">Detalles de la Propiedad</h2>
+
+<div class="details-container">
+    <div class="property-info">
+        <!-- Slider de imágenes de la propiedad -->
+        <div id="property-images-slider" class="carousel slide mb-4" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                @for (int i = 0; i < Model.ImageUrls.Count && i < 4; i++)
+                {
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        <img src="@Model.ImageUrls[i]" class="d-block w-100" alt="Property Image @(i + 1)">
+                    </div>
+                }
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#property-images-slider" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#property-images-slider" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+
+        <!-- Información de la propiedad -->
+        <h3>@Model.PropertyCode</h3>
+        <p><i class="fas fa-home"></i> <strong>Tipo de Propiedad:</strong> @Model.PropertyType</p>
+        <p><i class="fas fa-tags"></i> <strong>Tipo de Venta:</strong> @Model.SaleType</p>
+        <p><i class="fas fa-dollar-sign"></i> <strong>Precio:</strong> RD$ @Model.Price</p>
+        <p><i class="fas fa-bed"></i> <strong>Habitaciones:</strong> @Model.Bedrooms</p>
+        <p><i class="fas fa-bath"></i> <strong>Baños:</strong> @Model.Bathrooms</p>
+        <p><i class="fas fa-ruler-combined"></i> <strong>Tamaño:</strong> @Model.PropertySizeMeters m²</p>
+        <p><i class="fas fa-align-left"></i> <strong>Descripción:</strong> @Model.Description</p>
+    </div>
+
+    <!-- Información del agente -->
+    <div class="agent-info">
+        <h4>Agente Inmobiliario</h4>
+        <img src="@Model.AgentPhotoUrl" alt="Agent Photo" />
+        <h3>@Model.AgentName</h3>
+        <p><i class="fas fa-phone"></i> @Model.AgentPhoneNumber</p>
+        <p><i class="fas fa-envelope"></i> @Model.AgentEmail</p>
+    </div>
+</div>
+
+<!-- Mejoras de la propiedad -->
+<div class="improvements-container">
+    <h4><i class="fas fa-tools"></i> Mejoras</h4>
+    <div>
         @foreach (var improvement in Model.Improvements)
         {
-            <li>@improvement</li>
+            <div class="improvement-item">
+                <i class="fas fa-check"></i> @improvement
+            </div>
         }
-    </ul>
-    <h3>Agent Information</h3>
-    <p>Name: @Model.AgentName</p>
-    <p>Phone: @Model.AgentPhoneNumber</p>
-    <p>Email: @Model.AgentEmail</p>
-    <img src="@Model.AgentPhotoUrl" alt="Agent Photo" />
-
-    <h3>Property Images</h3>
-    <div id="property-images-slider" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            @for (int i = 0; i < Model.ImageUrls.Count && i < 4; i++)
-            {
-                <div class="carousel-item @(i == 0 ? "active" : "")">
-                    <img src="@Model.ImageUrls[i]" class="d-block w-100" alt="Property Image @(i + 1)">
-                </div>
-            }
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#property-images-slider" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#property-images-slider" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
     </div>
 </div>
 
