@@ -1,0 +1,22 @@
+﻿@using RealEstateApp.Core.Application.ViewModels.User
+@model AgentListViewModel
+
+@{
+    ViewData["Title"] = "Confirmar eliminación";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>¿Está seguro que desea eliminar este agente y todas sus propiedades?</p>
+
+<!-- Mostrar el ID del agente para confirmación -->
+<p><strong>Agente ID: </strong>@Model.Id</p>
+
+<div class="text-center">
+    <!-- Botón para cancelar la eliminación, redirige a la lista de agentes -->
+    <a href="@Url.Action("Index", "Admin")" class="btn btn-secondary">Cancelar</a>
+
+    <!-- Botón para confirmar la eliminación, redirige a la acción de eliminación -->
+    <!-- Cambiar userId a agentId aquí -->
+    <a href="@Url.Action("DeleteAgent", "Admin", new { agentId = Model.Id })" class="btn btn-danger">Aceptar</a>
+</div>

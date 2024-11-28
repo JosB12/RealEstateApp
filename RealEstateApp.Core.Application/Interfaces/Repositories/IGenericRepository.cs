@@ -1,17 +1,25 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 using System.Linq.Expressions;
 
 namespace RealEstateApp.Core.Application.Interfaces.Repositories
 {
-    public interface IGenericRepository<T> where T : class
+    public interface IGenericRepository<Entity> where Entity : class
     {
-        Task<T> AddAsync(T entity);
-        Task<List<T>> AddRangeAsync(List<T> entities);
-        Task UpdateAsync(T entity, int id);
-        Task DeleteAsync(int id);
-        Task<T> GetByIdAsync(int id);
-        Task<List<T>> GetAllAsync();
-        IQueryable<T> GetAllAsQueryable();
-        Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
+        Task<Entity> AddAsync(Entity entity);
+        Task UpdateAsync(Entity entity, int id);
+        Task DeleteAsync(Entity entity);
+        Task<List<Entity>> GetAllAsync();
+        Task<Entity> GetByIdAsync(int id);
+        Task<List<Entity>> GetAllWithIncludeAsync(List<string> properties);
+        Task<List<Entity>> AddRangeAsync(List<Entity> entities);
+        Task DeleteINTAsync(int id);
+        IQueryable<Entity> GetAllAsQueryable();
+        Task<bool> ExistsAsync(Expression<Func<Entity, bool>> predicate);
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RealEstateApp.Core.Application.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,9 @@ namespace RealEstateApp.Core.Application.Dtos.Account
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }
         public string Phone { get; set; }
+        public string Identification { get; set; }
         public string? PhotoUrl { get; set; }
+        public Roles UserType { get; set; }
 
     }
 }

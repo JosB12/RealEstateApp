@@ -1,7 +1,74 @@
-﻿
+﻿@using RealEstateApp.Core.Domain.Enums
+@model List<RealEstateApp.Core.Application.ViewModels.HomeAgentPropertyViewModel>
+
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Home del Agente";
 }
 
-<h1>Agent</h1>
+<div class="container">
+    <h2>Propiedades de @ViewData["AgentName"]</h2>
 
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-warning">No se encontraron propiedades para este agente.</div>
+    }
+
+    <div class="row">
+        <!-- Propiedades Disponibles -->
+        <div class="col-12 mb-4">
+            <h3>Propiedades Disponibles</h3>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                @foreach (var property in Model.Where(p => p.Status == (int)PropertyStatus.Available))
+                {
+                    <div class="col">
+                        <div class="card border-0 shadow-sm h-100">
+                            <img src="@property.Images.FirstOrDefault()" class="card-img-top img-property" alt="Imagen de la propiedad">
+                            <div class="card-body">
+                                <p class="card-text">@property.PropertyType</p>
+                                <h5 class="card-title">Código: @property.PropertyCode</h5>
+                                <p class="card-text">@property.SaleType</p>
+                                <p class="card-text">Precio: @property.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO"))</p>
+                                <p class="card-text">Habitaciones: @property.Bedrooms</p>
+                                <p class="card-text">Baños: @property.Bathrooms</p>
+                                <p class="card-text">Tamaño: @property.PropertySizeMeters m²</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Propiedades Vendidas -->
+        <div class="col-12">
+            <h3>Propiedades Vendidas</h3>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                @foreach (var property in Model.Where(p => p.Status == PropertyStatus.Sold))
+                {
+                    <div class="col">
+                        <div class="card border-0 shadow-sm h-100">
+                            <img src="@property.Images.FirstOrDefault()" class="card-img-top img-property" alt="Imagen de la propiedad">
+                            <div class="card-body">
+                                <p class="card-text">@property.PropertyType</p>
+                                <h5 class="card-title">Código: @property.PropertyCode</h5>
+                                <p class="card-text">@property.SaleType</p>
+                                <p class="card-text">Precio: @property.Price</p>
+                                <p class="card-text">Habitaciones: @property.Bedrooms</p>
+                                <p class="card-text">Baños: @property.Bathrooms</p>
+                                <p class="card-text">Tamaño: @property.PropertySizeMeters m²</p>
+                                <span class="badge bg-danger">Vendida</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .img-property {
+        width: 100%;
+        height: 200px;
+        object-fit: contain;
+    }
+</style>

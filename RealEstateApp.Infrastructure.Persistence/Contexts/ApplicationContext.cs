@@ -14,6 +14,7 @@ namespace RealEstateApp.Infrastructure.Persistence.Contexts
         public DbSet<Improvement> Improvements { get; set; }
         public DbSet<Offer> Offers { get; set; }
         public DbSet<PropertyType> PropertyTypes { get; set; }
+        public DbSet<ImprovementProperty> ImprovementProperties { get; set; }
         public DbSet<SaleType> SaleTypes { get; set; }
         public DbSet<Chat> Chats { get; set; }
         public DbSet<Favorite> Favorites { get; set; }
@@ -73,7 +74,18 @@ namespace RealEstateApp.Infrastructure.Persistence.Contexts
 
             modelBuilder.Entity<Property>()
                 .HasMany(p => p.Improvements)
-                .WithMany(im => im.Properties);
+                .WithMany(im => im.Properties)
+                .UsingEntity<ImprovementProperty>(
+                    j => j.HasOne(ip => ip.Improvement)
+                            .WithMany()
+                            .HasForeignKey(ip => ip.ImprovementId),
+                    j => j.HasOne(ip => ip.Property)
+                            .WithMany()
+                            .HasForeignKey(ip => ip.PropertyId),
+                    j =>
+                    {
+                        j.HasKey(t => new { t.PropertyId, t.ImprovementId });
+                    });
 
             modelBuilder.Entity<PropertyType>()
                 .HasMany(pt => pt.Properties)

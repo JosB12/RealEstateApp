@@ -16,25 +16,25 @@ html, body {
     margin-left: 140px;
 }
 
- .filters-container .form-group {
-    margin-bottom: 2.5rem; 
-}
+    .filters-container .form-group {
+        margin-bottom: 2.5rem;
+    }
 
-.filters-container .d-flex.align-items-end {
-  margin-top: 3.9rem; 
- }
+    .filters-container .d-flex.align-items-end {
+        margin-top: 3.9rem;
+    }
 
-.filters-container .btn-filter {
-        background-color: #28a745; 
-        color: #fff; 
+    .filters-container .btn-filter {
+        background-color: #28a745;
+        color: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
- }
+    }
 
- .filters-container .btn-filter i {
-    margin-right: 0.5rem; /* Space between icon and text */
- }
+        .filters-container .btn-filter i {
+            margin-right: 0.5rem; /* Space between icon and text */
+        }
 
 .filtered-results{
     margin-left: 140px;
@@ -76,9 +76,9 @@ html, body {
 }
 
 
-    .properties-container .card:hover {
-        transform: translateY(-5px);
-    }
+.properties-container .card:hover {
+    transform: translateY(-5px);
+}
 
 /* Styles for property cards */
 .property-code {
@@ -178,7 +178,7 @@ html, body {
 }
 
 
-
+    ����� ����
 .favorites-title {
     font-family: 'Roboto', sans-serif; 
     font-size: 2rem;
