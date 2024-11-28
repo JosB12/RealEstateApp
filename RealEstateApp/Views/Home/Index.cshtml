@@ -8,7 +8,7 @@
 <div class="header-section">
     <div class="header-content">
         <h1>Real Estate</h1>
-        <p>Bienvenido a esta página donde podrás encontrar la propiedad de tu sueños. Explora entre nuestras diversas opciones.</p>
+        <p>Bienvenido a esta página donde podrás encontrar la propiedad de tus sueños. Explora entre nuestras diversas opciones.</p>
     </div>
 </div>
 
@@ -39,12 +39,19 @@
                                 Seleccionar
                             </button>
                             <div class="dropdown-menu w-100 p-3" id="PropertyTypesMenu">
-                                @foreach (var type in ViewBag.PropertyTypes)
+                                @if (ViewBag.PropertyTypes != null)
                                 {
-                                    <div class="form-check">
-                                        <input type="checkbox" name="PropertyTypeIds" value="@type.Id" class="form-check-input" id="type-@type.Id" />
-                                        <label class="form-check-label" for="type-@type.Id">@type.Name</label>
-                                    </div>
+                                    @foreach (var type in ViewBag.PropertyTypes)
+                                    {
+                                        <div class="form-check">
+                                            <input type="checkbox" name="PropertyTypeIds" value="@type.Id" class="form-check-input" id="type-@type.Id" />
+                                            <label class="form-check-label" for="type-@type.Id">@type.Name</label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p>No hay tipos de propiedad disponibles</p>
                                 }
                             </div>
                         </div>
@@ -143,6 +150,39 @@
         for (var i = 0; i < connect.length; i++) {
             connect[i].style.backgroundColor = '#28a745';
         }
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const dropdownButton = document.getElementById("PropertyTypesDropdown");
+            const dropdownMenu = document.getElementById("PropertyTypesMenu");
+
+            // Mostrar/ocultar el menú desplegable
+            dropdownButton.addEventListener("click", function () {
+                const isVisible = dropdownMenu.style.display === "block";
+                dropdownMenu.style.display = isVisible ? "none" : "block";
+            });
+
+            // Cerrar el menú si se hace clic fuera de él
+            document.addEventListener("click", function (event) {
+                if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                    dropdownMenu.style.display = "none";
+                }
+            });
+
+            // Actualizar texto del botón con los tipos seleccionados
+            const checkboxes = dropdownMenu.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach((checkbox) => {
+                checkbox.addEventListener("change", function () {
+                    const selected = Array.from(checkboxes)
+                        .filter((chk) => chk.checked)
+                        .map((chk) => chk.parentElement.textContent.trim());
+                    dropdownButton.textContent = selected.length
+                        ? selected.join(", ")
+                        : "Seleccionar";
+                });
+            });
+        });
     </script>
 
     <script>

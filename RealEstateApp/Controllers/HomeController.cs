@@ -38,6 +38,8 @@ public class HomeController : Controller
     {
         var user = HttpContext.Session.Get<AuthenticationResponse>("user");
         var properties = await _propertyService.GetAvailablePropertiesAsync();
+        var propertyTypes = await _propertyTypeService.GetAllAsync();
+        ViewBag.PropertyTypes = propertyTypes;
 
         if (user != null && user.Roles.Contains("Client"))
         {
@@ -50,7 +52,6 @@ public class HomeController : Controller
             }
         }
 
-        ViewBag.PropertyTypes = await _propertyTypeService.GetAllAsync();
         return View(properties);
     }
 
