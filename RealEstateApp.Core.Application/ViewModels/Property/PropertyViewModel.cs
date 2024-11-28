@@ -18,5 +18,8 @@ namespace RealEstateApp.Core.Application.ViewModels.Property
         public string AgentPhoneNumber { get; set; }
         public string AgentPhotoUrl { get; set; }
         public string AgentEmail { get; set; }
+        public bool IsFavorite { get; set; }
+
+        
     }
 }

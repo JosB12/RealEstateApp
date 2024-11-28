@@ -1,0 +1,161 @@
+/* Reset margins and padding for body and html */
+html, body {
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+/* General layout adjustments */
+.filters-container label {
+    margin-bottom: 0.5rem;
+    display: block;
+    font-weight: bold;
+}
+
+.filters-container {
+    margin-top: 4rem;
+    margin-bottom: 2.5rem;
+    margin-left: 140px;
+}
+
+    .filters-container .form-group {
+        margin-bottom: 2.5rem;
+    }
+
+    .filters-container .d-flex.align-items-end {
+        margin-top: 3.9rem;
+    }
+
+    .filters-container .btn-filter {
+        background-color: #28a745;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .filters-container .btn-filter i {
+            margin-right: 0.5rem; /* Space between icon and text */
+        }
+
+.filtered-results {
+    margin-left: 140px;
+    font-weight: bold;
+}
+
+.properties-container .card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.properties-container {
+    margin-left: 145px;
+}
+
+    .properties-container .card:hover {
+        transform: translateY(-5px);
+    }
+
+/* Sale type badge */
+.sale-type-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #28a745;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-transform: uppercase;
+    z-index: 1;
+}
+
+/* Property type styling */
+.property-type {
+    font-size: 1.2rem;
+    color: #343a40;
+    margin-bottom: 0.5rem;
+}
+
+
+.properties-container .card:hover {
+    transform: translateY(-5px);
+}
+
+/* Styles for property cards */
+.property-code {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.property-price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #28a745;
+    margin-bottom: 1rem;
+}
+
+/* Quitar subrayado y color del enlace */
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+    .card-link:hover {
+        color: inherit;
+        text-decoration: none;
+    }
+
+        /* Cambiar el cursor al pasar por encima */
+        .card-link:hover .card {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transform: scale(1.02);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+/* Cambiar el color del range slider a verde */
+.noUi-connect {
+    background: #28a745 !important;
+}
+
+/* Background image and text styling */
+.header-section {
+    position: relative;
+    text-align: center;
+    color: white;
+    margin: 0;
+    padding: 0;
+    width: 1800px;
+    height: 450px;
+    background: linear-gradient(rgb(18, 114, 18, 0.20), rgb(39, 117, 21, 0.40)), url('../images/background2.jpeg') no-repeat center;
+    background-size: cover;
+    margin-bottom: 30px;
+}
+
+
+
+    .header-section .header-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .header-section h1 {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-right: 150px;
+    }
+
+    .header-section p {
+        font-size: 1.2rem;
+        margin-right: 150px;
+    }
+
+
+.container {
+    margin: 0px;
+    padding: 0px;
+              
+}
