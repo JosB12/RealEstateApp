@@ -89,16 +89,29 @@ public class HomeController : Controller
         }
         return Json(new { isFavorite = false });
     }
-
     [HttpPost]
     public async Task<IActionResult> CreateOffer(OfferSaveViewModel offer)
     {
+        var user = HttpContext.Session.Get<AuthenticationResponse>("user");
+        if (user == null || !user.Roles.Contains("Client"))
+        {
+            return Json(new { success = false, message = "User not authenticated or not a client" });
+        }
+
+        offer.UserId = user.Id; 
+
+        
+        ModelState.Clear();
+        TryValidateModel(offer);
+
         if (ModelState.IsValid)
         {
             await _offerService.Add(offer);
             return Json(new { success = true });
         }
-        return Json(new { success = false, message = "Invalid data" });
+
+        var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+        return Json(new { success = false, message = "Invalid data", errors });
     }
 
     #region login

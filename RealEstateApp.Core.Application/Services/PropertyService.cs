@@ -14,13 +14,16 @@ namespace RealEstateApp.Core.Application.Services
         private readonly IPropertyRepository _propertyRepository;
         private readonly IMapper _mapper;
         private readonly IWebAppAccountService _accountService;
+        private readonly IOfferService _offerService;
 
-        public PropertyService(IPropertyRepository propertyRepository, IMapper mapper, IWebAppAccountService accountService)
+
+        public PropertyService(IPropertyRepository propertyRepository, IMapper mapper, IWebAppAccountService accountService, IOfferService offerService)
             : base(propertyRepository, mapper)
         {
             _propertyRepository = propertyRepository;
             _mapper = mapper;
             _accountService = accountService;
+            _offerService = offerService;
         }
 
         public async Task<List<PropertyViewModel>> GetAvailablePropertiesAsync()
@@ -108,6 +111,11 @@ namespace RealEstateApp.Core.Application.Services
                                                     .Include(p => p.PropertyType)
                                                     .Include(p => p.SaleType)
                                                     .FirstOrDefaultAsync(p => p.Id == id);
+            if (property == null)
+            {
+                return null;
+            }
+
             var propertyViewModel = _mapper.Map<PropertySaveViewModel>(property);
 
             propertyViewModel.Improvements = property.Improvements?.Select(i => i.Name).ToList() ?? new List<string>();
@@ -119,6 +127,9 @@ namespace RealEstateApp.Core.Application.Services
             propertyViewModel.ImageUrls = property.Images?.Select(i => i.ImageUrl).ToList() ?? new List<string>();
             propertyViewModel.PropertyType = property.PropertyType.Name;
             propertyViewModel.SaleType = property.SaleType.Name;
+
+            var offers = await _offerService.GetOffersByPropertyIdAsync(id);
+            propertyViewModel.Offers = offers;
 
             return propertyViewModel;
         }

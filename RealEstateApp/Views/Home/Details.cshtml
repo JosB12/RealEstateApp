@@ -4,6 +4,8 @@
     ViewData["Title"] = "Property Details";
 }
 
+@using RealEstateApp.Core.Domain.Enums
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 <link rel="stylesheet" href="~/css/details.css" />
 
@@ -70,14 +72,16 @@
 {
         <div class="offers-container">
             <h4>Ofertas</h4>
-            <button id="new-offer-btn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newOfferModal">Nueva Oferta</button>
+            <button id="new-offer-btn" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#newOfferModal" @(Model.Offers.Any(o => o.Status == OfferStatus.Pending || o.Status == OfferStatus.Accepted) ? "disabled" : "")>
+                <i class="fas fa-plus"></i> Nueva Oferta
+            </button>
             <ul class="list-group mt-3">
             @foreach (var offer in Model.Offers)
             {
                         <li class="list-group-item">
-                            <p><strong>Fecha:</strong> @offer.CreateDate.ToString("dd/MM/yyyy")</p>
-                            <p><strong>Cifra:</strong> RD$ @offer.Amount</p>
-                            <p><strong>Estado:</strong> @offer.Status</p>
+                            <p><i class="fas fa-calendar-alt"></i> <strong>Fecha:</strong> @offer.CreateDate.ToString("dd/MM/yyyy")</p>
+                            <p><i class="fas fa-dollar-sign"></i> <strong>Cifra:</strong> RD$ @offer.Amount</p>
+                            <p><i class="fas fa-clock"></i> <strong>Estado:</strong> @offer.Status</p>
                         </li>
             }
             </ul>
@@ -96,7 +100,8 @@
                 <form id="new-offer-form">
                     <div class="mb-3">
                         <label for="offer-amount" class="form-label">Cifra de la Oferta</label>
-                        <input type="number" class="form-control" id="offer-amount" required>
+                        <input type="number" class="form-control" id="offer-amount" name="Amount" required>
+                        <input type="hidden" id="property-id" name="PropertyId" value="@Model.Id">
                     </div>
                     <button type="submit" class="btn btn-primary">Enviar Oferta</button>
                 </form>
@@ -112,7 +117,9 @@
                 $('#new-offer-form').on('submit', function (e) {
                     e.preventDefault();
                     var amount = $('#offer-amount').val();
-                    var propertyId = @Model.Id;
+                    var propertyId = $('#property-id').val();
+
+                    console.log("Submitting offer with amount: " + amount + " and propertyId: " + propertyId);
 
                     $.ajax({
                         url: '@Url.Action("CreateOffer", "Home")',
@@ -123,10 +130,15 @@
                         },
                         success: function (response) {
                             if (response.success) {
+                                console.log("Offer created successfully");
                                 location.reload();
                             } else {
+                                console.log("Error creating offer: " + response.message);
                                 alert(response.message);
                             }
+                        },
+                        error: function (xhr, status, error) {
+                            console.log("AJAX error: " + error);
                         }
                     });
                 });
