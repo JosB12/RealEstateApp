@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RealEstateApp.Core.Application.ViewModels;
+using RealEstateApp.Core.Application.Dtos.Account.Edit;
 
 
 namespace RealEstateApp.Core.Application.Interfaces.Services
@@ -20,6 +21,7 @@ namespace RealEstateApp.Core.Application.Interfaces.Services
         Task<int> GetTotalDeveloperAssetsAsync();
         Task<int> GetTotalDeveloperInactiveAsync();
         Task<List<AgentDto>> GetAllAgentsAsync();
+        Task<EditProfileResponse> UpdateUserAsync(string userId, EditProfileRequest request);
         Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request);
 
         Task<UpdateUserResponse> DeactivateUserAsync(string userId, string loggedInUserId);
@@ -30,7 +32,7 @@ namespace RealEstateApp.Core.Application.Interfaces.Services
         Task<string> ConfirmAccountAsync(string userId, string token);
         Task<List<AgentViewModel>> GetActiveAgentsAsync(string searchQuery = "");
         Task SignOutAsync();
-
+        Task<EditProfileRequest> GetUserByIdForEditiAsync(string userId);
         Task<UserDto> GetUserByIdAsync(string userId);
     }
 }

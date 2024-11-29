@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Core.Application.Dtos.Account;
+using RealEstateApp.Core.Application.Dtos.Account.Edit;
 using RealEstateApp.Core.Application.Dtos.Update;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.ViewModels;
@@ -17,6 +18,7 @@ namespace RealEstateApp.Core.Application.Services
             _accountService = accountService;
             _mapper = mapper;
         }
+
         #region login - SignOut
         public async Task<AuthenticationResponse> LogginAsync(LoginViewModel vm)
         {
@@ -36,45 +38,39 @@ namespace RealEstateApp.Core.Application.Services
         {
             RegisterRequest registerRequest = _mapper.Map<RegisterRequest>(vm);
 
-            if (string.IsNullOrEmpty(vm.PhotoUrl))
+            if (vm.Photo != null && vm.Photo.Length > 0)
             {
-                return new RegisterResponse
+                try
                 {
-                    HasError = true,
-                    Error = "La URL de la foto es obligatoria."
-                };
-            }
+                    string fileName = $"{Guid.NewGuid()}{Path.GetExtension(vm.Photo.FileName)}";
 
-            registerRequest.PhotoUrl = vm.PhotoUrl;
+                    string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Imagenes", "Usuarios");
 
-            try
-            {
-                var response = await _accountService.RegisterBasicUserAsync(registerRequest, origin);
-                if (response.HasError)
+                    if (!Directory.Exists(directoryPath))
+                    {
+                        Directory.CreateDirectory(directoryPath);
+                    }
+
+                    string imagePath = Path.Combine(directoryPath, fileName);
+
+                    using (var stream = new FileStream(imagePath, FileMode.Create))
+                    {
+                        await vm.Photo.CopyToAsync(stream);
+                    }
+
+                    registerRequest.PhotoUrl = $"/Imagenes/Usuarios/{fileName}";
+                }
+                catch (Exception ex)
                 {
                     return new RegisterResponse
                     {
                         HasError = true,
-                        Error = response.Error 
+                        Error = $"Error al subir la imagen: {ex.Message}"
                     };
                 }
-                return response;
             }
-            catch (Exception ex)
-            {
-                var errorMessage = $"An error occurred while trying to register the user: {ex.Message}";
 
-                if (ex.InnerException != null)
-                {
-                    errorMessage += $"\nInner Exception: {ex.InnerException.Message}";
-                }
-
-                return new RegisterResponse
-                {
-                    HasError = true,
-                    Error = errorMessage
-                };
-            }
+            return await _accountService.RegisterBasicUserAsync(registerRequest, origin);
         }
 
 
@@ -91,7 +87,6 @@ namespace RealEstateApp.Core.Application.Services
             return await _accountService.GetActiveAgentsAsync(searchQuery);
         }
         #endregion
-
 
 
         #region Agent
@@ -115,6 +110,7 @@ namespace RealEstateApp.Core.Application.Services
         }
         #endregion
 
+
         #region activate/desactivate users
         public async Task<UpdateUserResponse> DeactivateUserAsync(string userId, string loggedInUserId)
         {
@@ -126,9 +122,21 @@ namespace RealEstateApp.Core.Application.Services
             return await _accountService.ActivateUserAsync(userId, loggedInUserId);
         }
 
-        
+
         #endregion
 
+        #region Update(Edit) Profile
+
+        public async Task<EditProfileRequest> GetUserProfileToEditAsync(string userId)
+        {
+            return await _accountService.GetUserByIdForEditiAsync(userId);
+        }
+
+        public async Task<EditProfileResponse> UpdateUserProfileAsync(string userId, EditProfileRequest request)
+        {
+            return await _accountService.UpdateUserAsync(userId, request);
+        }
+        #endregion
 
 
     }

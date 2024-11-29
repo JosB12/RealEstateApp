@@ -24,9 +24,8 @@ namespace RealEstateApp.Core.Application.ViewModels.User
         public string Phone { get; set; }
 
         [Required(ErrorMessage = "Debe colocar una foto")]
-        [Url(ErrorMessage = "La URL proporcionada no es válida.")]
-        [DataType(DataType.Text)]
-        public string PhotoUrl { get; set; }
+        [DataType(DataType.Upload)]
+        public IFormFile Photo { get; set; }
 
         [Required(ErrorMessage = "Debe colocar un nombre de usuario")]
         [DataType(DataType.Text)]

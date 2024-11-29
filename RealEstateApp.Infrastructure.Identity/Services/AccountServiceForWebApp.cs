@@ -2,19 +2,18 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using RealEstateApp.Core.Application.Dtos.Account;
 using RealEstateApp.Core.Application.Enums;
 using RealEstateApp.Core.Application.Dtos.Account.Get;
 using RealEstateApp.Core.Application.Dtos.Update;
-using RealEstateApp.Core.Application.Enums;
 using RealEstateApp.Core.Application.Interfaces.Repositories;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.ViewModels;
 using RealEstateApp.Core.Domain.Settings;
 using RealEstateApp.Infrastructure.Identity.Entities;
 using System.Text;
+using RealEstateApp.Core.Application.Dtos.Account.Edit;
 
 
 namespace RealEstateApp.Infrastructure.Identity.Services
@@ -381,7 +380,7 @@ namespace RealEstateApp.Infrastructure.Identity.Services
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 PhoneNumber = request.Phone,
-                Photo = request.PhotoUrl ?? "default_profile_image_url",
+                Photo = request.PhotoUrl,
                 UserName = request.UserName,
                 Email = request.Email,
                 UserType = request.UserType,
@@ -392,7 +391,6 @@ namespace RealEstateApp.Infrastructure.Identity.Services
             if (!result.Succeeded)
             {
                 response.HasError = true;
-                //response.Error = "Error creating user.";
                 response.Error = $"Error creating user: {string.Join(", ", result.Errors.Select(e => e.Description))}";
                 return response;
             }
@@ -503,6 +501,66 @@ namespace RealEstateApp.Infrastructure.Identity.Services
 
 
         #endregion
+
+
+        #region Edit profile
+        public async Task<EditProfileResponse> UpdateUserAsync(string userId, EditProfileRequest request)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return new EditProfileResponse { HasError = true, Error = "Usuario no encontrado." };
+            }
+
+            user.FirstName = request.FirstName;
+            user.LastName = request.LastName;
+            user.PhoneNumber = request.Phone;
+
+            if (request.Photo != null && request.Photo.Length > 0)
+            {
+                string fileName = $"{Guid.NewGuid()}{Path.GetExtension(request.Photo.FileName)}";
+                string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Imagenes", "Usuarios");
+
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                string imagePath = Path.Combine(directoryPath, fileName);
+
+                using (var stream = new FileStream(imagePath, FileMode.Create))
+                {
+                    await request.Photo.CopyToAsync(stream);
+                }
+
+                user.Photo = $"/Imagenes/Usuarios/{fileName}";
+            }
+
+            var result = await _userManager.UpdateAsync(user);
+
+            return new EditProfileResponse
+            {
+                HasError = !result.Succeeded,
+                Error = result.Succeeded ? null : "Error al actualizar el perfil."
+            };
+        }
+
+        public async Task<EditProfileRequest> GetUserByIdForEditiAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) return null;
+
+            return new EditProfileRequest
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Phone = user.PhoneNumber,
+            };
+        }
+
+        #endregion
+
+
         public async Task<UserDto> GetUserByIdAsync(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
