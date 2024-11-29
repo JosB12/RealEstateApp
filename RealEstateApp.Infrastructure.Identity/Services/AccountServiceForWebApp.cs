@@ -558,8 +558,6 @@ namespace RealEstateApp.Infrastructure.Identity.Services
                 Email = request.Email,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
-                PhoneNumber = request.Phone,
-                Photo = request.PhotoUrl,
                 UserName = request.UserName,
                 Identification = request.Identification,
                 IsActive = true,
