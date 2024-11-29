@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Core.Application.Dtos.Account;
+using RealEstateApp.Core.Application.Dtos.Account.Create;
 using RealEstateApp.Core.Application.Dtos.Update;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.ViewModels;
@@ -126,10 +127,48 @@ namespace RealEstateApp.Core.Application.Services
             return await _accountService.ActivateUserAsync(userId, loggedInUserId);
         }
 
-        
+
         #endregion
 
 
+
+        #region Admin
+        public async Task<List<AdminListViewModel>> GetAllAdminForViewAsync()
+        {
+            try
+            {
+                var admin = await _accountService.GetAllAdminsAsync();
+                var adminList = _mapper.Map<List<AdminListViewModel>>(admin);
+                return adminList;
+            }
+            catch (Exception ex)
+            {
+                // Manejar el error, como registrar el error y/o retornar un mensaje
+                throw new ApplicationException("Error al obtener usuarios", ex);
+            }
+        }
+
+        public async Task<RegisterAdminResponse> RegisterAdminAsync(SaveAdminViewModel vm)
+        {
+            var registerAdminRequest = _mapper.Map<RegisterAdminRequest>(vm);
+
+            return await _accountService.CreateAdminAsync(registerAdminRequest);
+        }
+
+        public async Task<EditAdminViewModel> GetAdminForEditViewAsync(string userId)
+        {
+            var dto = await _accountService.GetAdminForEditAsync(userId);
+            return _mapper.Map<EditAdminViewModel>(dto);
+        }
+
+        public async Task<UpdateUserResponse> EditAdminAsync(EditAdminViewModel vm, string loggedInUserId)
+        {
+            return await _accountService.UpdateAdminAsync(vm, loggedInUserId);
+
+        }
+
+
+        #endregion
 
     }
 }

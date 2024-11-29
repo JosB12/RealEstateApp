@@ -1,4 +1,5 @@
 ﻿using RealEstateApp.Core.Application.Dtos.Account;
+using RealEstateApp.Core.Application.Dtos.Account.Create;
 using RealEstateApp.Core.Application.Dtos.Update;
 using RealEstateApp.Core.Application.ViewModels;
 using RealEstateApp.Core.Application.ViewModels.User;
@@ -12,6 +13,12 @@ namespace RealEstateApp.Core.Application.Interfaces.Services
         Task SignOutAsync();
 
         Task<List<AgentListViewModel>> GetAllAgentForViewAsync();
+        Task<List<AdminListViewModel>> GetAllAdminForViewAsync();
+        Task<RegisterAdminResponse> RegisterAdminAsync(SaveAdminViewModel vm);
+
+        Task<EditAdminViewModel> GetAdminForEditViewAsync(string userId);
+        Task<UpdateUserResponse> EditAdminAsync(EditAdminViewModel vm, string loggedInUserId);
+
 
         Task<UpdateUserResponse> DeactivateUserAsync(string userId, string loggedInUserId);
         Task<UpdateUserResponse> ActivateUserAsync(string userId, string loggedInUserId);
