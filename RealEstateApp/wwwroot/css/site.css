@@ -21,29 +21,35 @@ body {
     margin-bottom: 60px;
 }
 
-/* Estilos para el navbar */
 .navbar {
-    background-color: #e6f7e6; 
-    height:60px;
+    background-color: #e6f7e6;
+    height: auto;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.navbar-collapse {
+    max-height: none;
+    overflow-y: auto;
 }
 
 .navbar-nav .nav-item {
-    margin-right: 90px; 
-    font-size:1.2rem;
+    margin-right: 90px;
+    font-size: 1.2rem;
 }
 
 .navbar-brand {
     display: flex;
     align-items: center;
-    font-family:Rockwell;
-    font-weight:bold;
-    font-size:1.8rem;
+    font-family: Rockwell;
+    font-weight: bold;
+    font-size: 1.8rem;
     margin-right: 125px;
     margin-left: 35px;
 }
 
     .navbar-brand i {
-        margin-right: 10px; 
+        margin-right: 10px;
     }
 
 .mb-3 {
