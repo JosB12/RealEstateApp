@@ -27,6 +27,8 @@ namespace RealEstateApp.Core.Application
 
             services.AddTransient<ISalesTypeService, SalesTypeService>();
             services.AddTransient<IImprovementService, ImprovementService>();
+            services.AddTransient<IChatService, ChatService>();
+
 
 
 

@@ -20,6 +20,7 @@ namespace RealEstateApp.Core.Application.Services
         private readonly IImprovementPropertyRepository _improvementPropertyRepository;
         private readonly ISalesTypeRepository _saleTypeRepository;
         private readonly IWebAppAccountService _accountService;
+        private readonly IOfferService _offerService;
         private readonly IImprovementRepository _improvementRepository;
         private readonly IImageRepository _imageRepository;
         private readonly IMapper _mapper;
@@ -32,9 +33,10 @@ namespace RealEstateApp.Core.Application.Services
         IImprovementPropertyRepository improvementPropertyRepository,
         ISalesTypeRepository saleTypeRepository,
         IImprovementRepository improvementRepository,
-        IImageRepository imageRepository,
+        IImageRepository imageRepository,IOfferService offerService,
         IMapper mapper) :
             base(propertyRepository, mapper)
+
         {
             _propertyRepository = propertyRepository;
             _improvementPropertyRepository = improvementPropertyRepository;
@@ -42,8 +44,13 @@ namespace RealEstateApp.Core.Application.Services
             _saleTypeRepository = saleTypeRepository;
             _improvementRepository = improvementRepository;
             _accountService = accountService;
+
+
+            _offerService = offerService;
+
             _imageRepository = imageRepository;
             _mapper = mapper;
+
         }
         #region mostrar-filtrar-Home-Crear
         public async Task<List<PropertyViewModel>> GetAvailablePropertiesAsync()
@@ -139,6 +146,12 @@ namespace RealEstateApp.Core.Application.Services
                                                     .Include(p => p.SaleType)
                                                     .FirstOrDefaultAsync(p => p.Id == id);
 
+            if (property == null)
+            {
+                return null;
+            }
+
+
             var propertyViewModel = _mapper.Map<PropertySaveViewModel>(property);
 
             propertyViewModel.Improvements = property.Improvements?.Select(i => i.Name).ToList() ?? new List<string>();
@@ -150,6 +163,9 @@ namespace RealEstateApp.Core.Application.Services
             propertyViewModel.ImageUrls = property.Images?.Select(i => i.ImageUrl).ToList() ?? new List<string>();
             propertyViewModel.PropertyType = property.PropertyType.Name;
             propertyViewModel.SaleType = property.SaleType.Name;
+
+            var offers = await _offerService.GetOffersByPropertyIdAsync(id);
+            propertyViewModel.Offers = offers;
 
             return propertyViewModel;
         }

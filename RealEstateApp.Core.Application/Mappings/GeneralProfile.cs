@@ -12,6 +12,7 @@ using RealEstateApp.Core.Application.ViewModels.PropertyType;
 using RealEstateApp.Core.Application.ViewModels.User;
 using RealEstateApp.Core.Domain.Entities;
 using RealEstateApp.Core.Domain.Enums;
+using RealEstateApp.Core.Application.ViewModels.Chat;
 
 
 namespace RealEstateApp.Core.Application.Mappings
@@ -152,6 +153,11 @@ namespace RealEstateApp.Core.Application.Mappings
             #region Offers
             CreateMap<Offer, OfferViewModel>().ReverseMap();
             CreateMap<OfferSaveViewModel, Offer>().ReverseMap();
+            #endregion
+
+
+            #region Chat
+            CreateMap<Chat, ChatMessageViewModel>().ReverseMap();
             #endregion
 
 

@@ -11,5 +11,8 @@ namespace RealEstateApp.Core.Domain.Entities
         public bool IsAgent { get; set; }
         public DateTime SendDate { get; set; }
 
+        public string? ReceiverId { get; set; }
+
+
     }
 }

@@ -7,6 +7,6 @@ namespace RealEstateApp.Core.Application.Interfaces.Services
 {
     public interface IOfferService : IGenericService<OfferSaveViewModel, OfferViewModel, Offer>
     {
-        Task<List<OfferViewModel>> GetOffersByPropertyIdAsync(int propertyId, string userId);
+        Task<List<OfferViewModel>> GetOffersByPropertyIdAsync(int propertyId);
     }
 }

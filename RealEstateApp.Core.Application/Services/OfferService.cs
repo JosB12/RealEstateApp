@@ -18,10 +18,10 @@ namespace RealEstateApp.Core.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<List<OfferViewModel>> GetOffersByPropertyIdAsync(int propertyId, string userId)
+        public async Task<List<OfferViewModel>> GetOffersByPropertyIdAsync(int propertyId)
         {
             var offers = await _offerRepository.GetAllAsync();
-            var propertyOffers = offers.Where(o => o.PropertyId == propertyId && o.UserId == userId).ToList();
+            var propertyOffers = offers.Where(o => o.PropertyId == propertyId).ToList();
             return _mapper.Map<List<OfferViewModel>>(propertyOffers);
         }
     }

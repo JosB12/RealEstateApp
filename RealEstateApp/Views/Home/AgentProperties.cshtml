@@ -3,27 +3,33 @@
 @{
     ViewData["Title"] = "Propiedades del Agente";
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<link rel="stylesheet" href="~/css/home.css" />
 
 <div class="container">
-    <h2>@ViewData["Title"]</h2>
+    <h2 class="agent-properties-title">@ViewData["Title"]</h2>
 
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+    <div class="row properties-container">
         @foreach (var property in Model)
         {
-            <div class="col">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                        @if (property.Images.Any())
-                        {
-                            <img src="@property.Images.First()" class="img-fluid mb-3" alt="Imagen de la propiedad" />
-                        }
-                        <p class="card-text">@property.PropertyType</p>
-                        <h5 class="card-title mb-0">Código: @property.PropertyCode</h5>
-                        <p class="card-text">@property.SaleType</p>
-                        <p class="card-text">DOP$ @property.Price</p>
-                        <p class="card-text">Habitaciones: @property.Bedrooms</p>
-                        <p class="card-text">Baños: @property.Bathrooms</p>
-                        <p class="card-text">Tamaño: @property.PropertySizeMeters m²</p>
+            <div class="col-sm-6 col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="sale-type-badge">
+                        @property.SaleType.ToUpper()
+                    </div>
+                    @if (property.Images.Any())
+                    {
+                        <img class="card-img-top" src="@property.Images.First()" alt="Imagen de la propiedad" style="object-fit: cover; height: 200px;">
+                    }
+                    <div class="card-body">
+                        <p class="property-type"><strong>@property.PropertyType</strong></p>
+                        <p class="property-code">Código: @property.PropertyCode</p>
+                        <p class="property-price">DOP$ @property.Price</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-bed"></i> <strong>Habitaciones:</strong> @property.Bedrooms</li>
+                            <li><i class="fas fa-bath"></i> <strong>Baños:</strong> @property.Bathrooms</li>
+                            <li><i class="fas fa-ruler-combined"></i> <strong>Tamaño:</strong> @property.PropertySizeMeters m²</li>
+                        </ul>
                     </div>
                 </div>
             </div>
