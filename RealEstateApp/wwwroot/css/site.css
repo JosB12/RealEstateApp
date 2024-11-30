@@ -21,10 +21,16 @@ body {
     margin-bottom: 60px;
 }
 
-/* Estilos para el navbar */
 .navbar {
-    background-color: #e6f7e6; 
-    height:60px;
+    background-color: #e6f7e6;
+    height: auto; 
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.navbar-collapse {
+    max-height: none; 
+    overflow-y: auto; 
 }
 
 .navbar-nav .nav-item {
