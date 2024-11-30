@@ -6,6 +6,7 @@ using RealEstateApp.Core.Application.Enums;
 using RealEstateApp.Core.Application.Helpers;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.Services;
+using RealEstateApp.Core.Application.ViewModels.Chat;
 using RealEstateApp.Core.Application.ViewModels.Offer;
 using RealEstateApp.Core.Application.ViewModels.Property;
 using RealEstateApp.Core.Application.ViewModels.User;
@@ -21,11 +22,12 @@ public class HomeController : Controller
     private readonly IPropertyTypeService _propertyTypeService;
     private readonly IFavoriteService _favoriteService;
     private readonly IOfferService _offerService;
+    private readonly IChatService _chatService;
 
 
     public HomeController(ILogger<HomeController> logger, IUserService userService, 
-        IPropertyService propertyService, IPropertyTypeService propertyTypeService, 
-        IFavoriteService favoriteService, IOfferService offerService)
+        IPropertyService propertyService, IPropertyTypeService propertyTypeService,
+        IFavoriteService favoriteService, IOfferService offerService, IChatService chatService)
     {
         _logger = logger;
         _userService = userService;
@@ -33,6 +35,7 @@ public class HomeController : Controller
         _propertyTypeService = propertyTypeService;
         _favoriteService = favoriteService;
         _offerService = offerService;
+        _chatService = chatService;
     }
     public async Task<IActionResult> Index()
     {
@@ -62,7 +65,6 @@ public class HomeController : Controller
         ViewBag.PropertyTypes = await _propertyTypeService.GetAllAsync();
         return View("FilterResults", properties);
     }
-
     public async Task<IActionResult> Details(int id)
     {
         var property = await _propertyService.GetByIdSaveViewModel(id);
@@ -70,6 +72,16 @@ public class HomeController : Controller
         {
             return NotFound();
         }
+
+        var user = HttpContext.Session.Get<AuthenticationResponse>("user");
+        if (user == null || !user.Roles.Contains("Client"))
+        {
+            ViewBag.Chats = new List<ChatMessageViewModel>();
+            return View(property);
+        }
+
+        var chats = await _chatService.GetChatsByPropertyAndUserIdAsync(id, user.Id);
+        ViewBag.Chats = chats ?? new List<ChatMessageViewModel>();
         return View(property);
     }
 
@@ -92,16 +104,51 @@ public class HomeController : Controller
         }
         return Json(new { isFavorite = false });
     }
-
     [HttpPost]
     public async Task<IActionResult> CreateOffer(OfferSaveViewModel offer)
     {
+        var user = HttpContext.Session.Get<AuthenticationResponse>("user");
+        if (user == null || !user.Roles.Contains("Client"))
+        {
+            return Json(new { success = false, message = "User not authenticated or not a client" });
+        }
+
+        offer.UserId = user.Id; 
+
+        
+        ModelState.Clear();
+        TryValidateModel(offer);
+
         if (ModelState.IsValid)
         {
             await _offerService.Add(offer);
             return Json(new { success = true });
         }
-        return Json(new { success = false, message = "Invalid data" });
+
+        var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+        return Json(new { success = false, message = "Invalid data", errors });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> SendMessage(int propertyId, string message)
+    {
+        var user = HttpContext.Session.Get<AuthenticationResponse>("user");
+        if (user == null || !user.Roles.Contains("Client"))
+        {
+            return Json(new { success = false, message = "User not authenticated or not a client" });
+        }
+
+        var chat = new ChatMessageViewModel
+        {
+            UserId = user.Id,
+            PropertyId = propertyId,
+            Message = message,
+            IsAgent = false,
+            SendDate = DateTime.Now
+        };
+
+        await _chatService.SendMessageAsync(chat);
+        return Json(new { success = true });
     }
 
     #region login

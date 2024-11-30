@@ -10,10 +10,10 @@
     margin-right: 20px;
 }
 
-.property-details-title{
-    font-weight:bold;
-    margin-top:45px;
-    margin-bottom:25px;
+.property-details-title {
+    font-weight: bold;
+    margin-top: 45px;
+    margin-bottom: 25px;
 }
 
 .agent-info {
@@ -47,7 +47,8 @@
         margin-bottom: 10px;
     }
 
-.property-info h3, .property-info p {
+.property-info h3,
+.property-info p {
     margin-bottom: 10px;
 }
 
@@ -65,11 +66,27 @@
     }
 
 .improvements-container {
-    margin-top: 40px; /* M�s separaci�n de la informaci�n de la propiedad */
+    margin-top: 40px;
     border: 1px solid #ddd;
     padding: 20px;
     border-radius: 10px;
 }
+
+
+    .improvements-container .improvement-item {
+        display: inline-block;
+        margin: 5px;
+        padding: 5px 10px;
+        border: 1px solid #28a745;
+        border-radius: 10px;
+        background-color: lightgreen;
+        font-size: 0.9rem;
+    }
+
+        .improvements-container .improvement-item i {
+            color: #28a745;
+            margin-right: 5px;
+        }
 
     .improvements-container .improvement-item {
         display: inline-block;
@@ -86,7 +103,90 @@
             margin-right: 5px;
         }
 
+
 .carousel-inner img {
     height: 400px;
     object-fit: cover;
 }
+
+
+/* Estilos para la sección de ofertas */
+.offers-container {
+    margin-top: 60px;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+    .offers-container h4 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+
+    .offers-container .btn-success {
+        background-color: #28a740;
+        border-color: #28a745;
+    }
+
+    .offers-container .list-group-item {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+        .offers-container .list-group-item p {
+            margin-bottom: 5px;
+        }
+
+        .offers-container .list-group-item i {
+            margin-right: 5px;
+        }
+
+/*Chat*/
+
+.chat-container {
+    margin-top: 60px;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+    .chat-container h4 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+
+.chat-messages {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.chat-message {
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    max-width: 60%;
+}
+
+.client-message {
+    background-color: #d1e7dd;
+    margin-left: auto;
+    text-align: right;
+}
+
+.agent-message {
+    background-color: #72cfeb68;
+    margin-right: auto;
+    text-align: left;
+}
+
+.chat-input {
+    display: flex;
+    flex-direction: column;
+}
+
+    .chat-input textarea {
+        resize: none;
+        margin-bottom: 10px;
+    }
