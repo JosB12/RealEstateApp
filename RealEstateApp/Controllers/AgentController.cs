@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Core.Application.Dtos.Account;
+using RealEstateApp.Core.Application.Dtos.Account.Edit;
 using RealEstateApp.Core.Application.Helpers;
 using RealEstateApp.Core.Application.Interfaces.Repositories;
 using RealEstateApp.Core.Application.Interfaces.Services;
@@ -7,6 +8,7 @@ using RealEstateApp.Core.Application.Services;
 using RealEstateApp.Core.Application.ViewModels;
 using RealEstateApp.Core.Domain.Entities;
 using RealEstateApp.Infrastructure.Persistence.Repositories;
+using System.Security.Claims;
 
 namespace RealEstateApp.Controllers
 {
@@ -20,6 +22,8 @@ namespace RealEstateApp.Controllers
         private readonly AuthenticationResponse userViewModel;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IPropertyRepository _propertyRepository;
+        private readonly IUserService _userService;
+
 
         public AgentController(
             IHttpContextAccessor httpContextAccessor,
@@ -27,7 +31,8 @@ namespace RealEstateApp.Controllers
             IPropertyTypeService propertyTypeService,
             IImprovementService improvementService,
             ISalesTypeService salesTypeService,
-            IPropertyRepository propertyRepository)
+            IPropertyRepository propertyRepository,
+            IUserService userService)
         {
             _httpContextAccessor = httpContextAccessor;
             _propertyService = propertyService;
@@ -36,6 +41,7 @@ namespace RealEstateApp.Controllers
             _salesTypeService = salesTypeService;
             userViewModel = _httpContextAccessor.HttpContext.Session.Get<AuthenticationResponse>("user");
             _propertyRepository = propertyRepository;
+            _userService = userService;
 
         }
 
@@ -314,5 +320,31 @@ namespace RealEstateApp.Controllers
         }
         #endregion
 
+
+        #region My Profile (Edit profile)
+        public async Task<IActionResult> EditProfile()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var profile = await _userService.GetUserProfileToEditAsync(userId);
+            return View(profile);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditProfile(EditProfileRequest request)
+        {
+            if (ModelState.IsValid)
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var response = await _userService.UpdateUserProfileAsync(userId, request);
+                if (!response.HasError)
+                {
+                    TempData["ShowReloginModal"] = true;
+                    return RedirectToAction("EditProfile");
+                }
+                ModelState.AddModelError("", response.Error);
+            }
+            return View(request);
+        }
+        #endregion
     }
 }

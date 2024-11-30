@@ -24,13 +24,13 @@
                         </div>
                     }
 
-                    <!-- Formulario de registro -->
-                    <form method="post" asp-action="JoinApp">
-                        <div class="form-group mb-3 joinapp-form-group">
-                            <label asp-for="FirstName" class="form-label joinapp-label">Nombre</label>
-                            <input asp-for="FirstName" class="form-control joinapp-input" />
-                            <span asp-validation-for="FirstName" class="text-danger joinapp-validation"></span>
-                        </div>
+            <!-- Formulario de registro -->
+            <form method="post" asp-action="JoinApp" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label asp-for="FirstName">Nombre</label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
 
                         <div class="form-group mb-3 joinapp-form-group">
                             <label asp-for="LastName" class="form-label joinapp-label">Apellido</label>
@@ -44,11 +44,11 @@
                             <span asp-validation-for="Phone" class="text-danger joinapp-validation"></span>
                         </div>
 
-                        <div class="form-group mb-3 joinapp-form-group">
-                            <label asp-for="PhotoUrl" class="form-label joinapp-label">Foto de Usuario (URL)</label>
-                            <input asp-for="PhotoUrl" class="form-control joinapp-input" />
-                            <span asp-validation-for="PhotoUrl" class="text-danger joinapp-validation"></span>
-                        </div>
+                <div class="mb-3">
+                    <label asp-for="Photo" class="form-label">Foto</label>
+                    <input type="file" asp-for="Photo" class="form-control" />
+                    <span asp-validation-for="Photo" class="text-danger"></span>
+                </div>
 
                         <div class="form-group mb-3 joinapp-form-group">
                             <label asp-for="Username" class="form-label joinapp-label">Nombre de Usuario</label>
@@ -98,8 +98,3 @@
     </div>
 </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}

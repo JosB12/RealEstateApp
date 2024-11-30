@@ -62,6 +62,21 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Admin" asp-action="AgentList">Listado de los Agentes</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Admin" asp-action="AdminList">Mantenimiento de Administradores</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Admin" asp-action="DeveloperList">Mantenimiento de desarrolladores</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Admin" asp-action="Propiedades">Mantenimiento de tipo de propiedades</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Admin" asp-action="Ventas">Mantenimiento de tipo de ventas</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Admin" asp-action="mejoras">Mantenimiento de  mejoras</a>
+                                </li>
                             }
                             @if (User.Roles.Contains("Client"))
                             {
@@ -79,6 +94,10 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Agent" asp-action="PropertyMaintenance">Mantenimiento de propiedades</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Agent" asp-action="EditProfile">Mi Perfil</a>
                                 </li>
                             }
                             <li class="nav-item align-content-end">

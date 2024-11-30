@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using RealEstateApp.Core.Application.Enums;
+﻿using RealEstateApp.Core.Application.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RealEstateApp.Core.Application.ViewModels.User
 {
-    public class SaveUserViewModel
+    public class SaveDeveloperViewModel
     {
         [Required(ErrorMessage = "Debe colocar el nombre del usuario")]
         [DataType(DataType.Text)]
@@ -18,24 +17,9 @@ namespace RealEstateApp.Core.Application.ViewModels.User
         [Required(ErrorMessage = "Debe colocar el apellido del usuario")]
         [DataType(DataType.Text)]
         public string LastName { get; set; }
-
-        [Required(ErrorMessage = "Debe colocar un telefono")]
-        [DataType(DataType.Text)]
-        public string Phone { get; set; }
-
-        [Required(ErrorMessage = "Debe colocar una foto")]
-        [DataType(DataType.Upload)]
-        public IFormFile Photo { get; set; }
-
         [Required(ErrorMessage = "Debe colocar un nombre de usuario")]
         [DataType(DataType.Text)]
-        public string Username { get; set; }
-
-
-        [Required(ErrorMessage = "Debe colocar un correo")]
-        [DataType(DataType.EmailAddress)]
-        public string Email { get; set; }
-
+        public string UserName { get; set; }
         [Required(ErrorMessage = "Debe colocar una contraseña")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
@@ -45,13 +29,14 @@ namespace RealEstateApp.Core.Application.ViewModels.User
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
 
-        [Required(ErrorMessage = "Debe seleccionar un tipo de usuario")]
-        public Roles UserType { get; set; }
-
         [Required(ErrorMessage = "Debe colocar una cedula")]
         public string Identification { get; set; }
 
+        [Required(ErrorMessage = "Debe colocar un correo")]
+        [DataType(DataType.EmailAddress)]
+        public string Email { get; set; }
 
+        public Roles UserRol { get; set; }
         public bool HasError { get; set; }
         public string? Error { get; set; }
     }

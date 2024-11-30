@@ -1,0 +1,232 @@
+﻿@using RealEstateApp.Core.Application.ViewModels.User
+@model List<AdminListViewModel>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<div class="container">
+    <h1 class="text-center mb-4">Gestión de Administradores</h1>
+
+    <!-- Botón para agregar nuevo administrador -->
+    <div class="mb-4 text-end">
+        <a href="@Url.Action("CreateAdmin", "Admin")" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Crear Administrador
+        </a>
+    </div>
+
+    <!-- Tarjetas de administradores -->
+    <div class="user-cards-container">
+        @foreach (var admin in Model)
+        {
+            <div class="user-card">
+                <h5>@admin.FirstName @admin.LastName</h5>
+                <p>Usuario: @admin.UserName</p>
+                <p>Correo: @admin.Email</p>
+                <p>Cédula: @admin.Identification</p>
+                <p class="user-status">@(admin.IsActive ? "Activo" : "Inactivo")</p>
+
+                <div>
+                    <!-- Botón de editar administrador -->
+                    <a href="@Url.Action("EditAdmin", "Admin", new { adminId = admin.Id })" class="btn btn-info">Editar</a>
+
+                    @if (admin.IsActive)
+                    {
+                        <button class="btn btn-warning" onclick="confirmDeactivate('@admin.Id')">Desactivar</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-success" onclick="confirmActivate('@admin.Id')">Activar</button>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Modal de confirmación -->
+<div id="confirmationModal" class="modal">
+    <div class="modal-content">
+        <h4 id="confirmationMessage" class="modal-header"></h4>
+        <div class="modal-footer">
+            <form id="actionForm" method="post">
+                <input type="hidden" name="adminId" id="adminIdInput" />
+                <button type="submit" class="btn btn-danger">Sí</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">No</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function confirmDeactivate(adminId) {
+        document.getElementById('confirmationMessage').textContent = "¿Estás seguro de que deseas desactivar este administrador?";
+        document.getElementById('actionForm').action = '@Url.Action("DesactivateAdmin", "Admin")';
+        document.getElementById('adminIdInput').value = adminId;
+        document.getElementById('confirmationModal').style.display = 'block';
+    }
+
+    function confirmActivate(adminId) {
+        document.getElementById('confirmationMessage').textContent = "¿Estás seguro de que deseas activar este administrador?";
+        document.getElementById('actionForm').action = '@Url.Action("ActivateAdmin", "Admin")';
+        document.getElementById('adminIdInput').value = adminId;
+        document.getElementById('confirmationModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('confirmationModal').style.display = 'none';
+    }
+
+    window.onclick = function (event) {
+        var modal = document.getElementById('confirmationModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    };
+</script>
+
+<style>
+    /* Estilos para la vista */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: 1050;
+    }
+
+    .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        color: #333;
+        border-radius: 10px;
+        padding: 30px;
+        width: 400px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: space-between;
+        padding-top: 15px;
+    }
+
+    .alert {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+    }
+
+    .user-cards-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .user-card {
+        background-color: #fff;
+        border: 2px solid #ecf0f1;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .user-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-card h5 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .user-card p {
+            margin-bottom: 15px;
+            color: #7f8c8d;
+        }
+
+        .user-card .user-status {
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .user-card .btn {
+            width: 100%;
+            padding: 10px 0;
+            margin: 5px 0;
+            font-size: 14px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .user-card .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+            .user-card .btn-danger:hover {
+                background-color: #c0392b;
+            }
+
+        .user-card .btn-warning {
+            background-color: #f39c12;
+            color: white;
+        }
+
+            .user-card .btn-warning:hover {
+                background-color: #e67e22;
+            }
+
+        .user-card .btn-success {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+            .user-card .btn-success:hover {
+                background-color: #27ae60;
+            }
+</style>
