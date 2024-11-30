@@ -630,14 +630,12 @@ namespace RealEstateApp.Infrastructure.Identity.Services
                 };
             }
 
-            // Actualizar los campos del administrador solo si son válidos
-            admin.FirstName = !string.IsNullOrWhiteSpace(vm.FirstName) ? vm.FirstName : admin.FirstName;
-            admin.LastName = !string.IsNullOrWhiteSpace(vm.LastName) ? vm.LastName : admin.LastName;
-            admin.Identification = !string.IsNullOrWhiteSpace(vm.Identification) ? vm.Identification : admin.Identification;
-            admin.Email = !string.IsNullOrWhiteSpace(vm.Email) ? vm.Email : admin.Email;
-            admin.UserName = !string.IsNullOrWhiteSpace(vm.UserName) ? vm.UserName : admin.UserName;
+            admin.FirstName = vm.FirstName;
+            admin.LastName = vm.LastName;
+            admin.Identification =  vm.Identification;
+            admin.Email =  vm.Email;
+            admin.UserName =  vm.UserName;
 
-            // Si se proporciona una nueva contraseña, se valida y actualiza
             if (!string.IsNullOrWhiteSpace(vm.Password) && !string.IsNullOrWhiteSpace(vm.ConfirmPassword))
             {
                 if (vm.Password == vm.ConfirmPassword)
@@ -683,6 +681,165 @@ namespace RealEstateApp.Infrastructure.Identity.Services
 
 
 
+
+
+        #endregion
+
+        #region Developer
+        public async Task<List<DeveloperDto>> GetlAllDeveloperAsync()
+        {
+            var users = await _userManager.Users
+                .Where(u => u.UserType == Roles.Developer)
+                .OrderBy(u => u.Id)
+                .ToListAsync();
+
+            var developerDtoList = new List<DeveloperDto>();
+
+            foreach (var user in users)
+            {
+
+                developerDtoList.Add(new DeveloperDto
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    UserName = user.UserName,
+                    Identification = user.Identification,
+                    Email = user.Email,
+                    IsActive = user.IsActive
+                });
+            }
+
+            return developerDtoList;
+
+        }
+
+        public async Task<RegisterDeveloperResponse> CreateDeveloperAsync(RegisterDeveloperRequest request)
+        {
+            var response = new RegisterDeveloperResponse { HasError = false };
+
+            // Verificar si el nombre de usuario ya existe
+            var existingUser = await _userManager.FindByNameAsync(request.UserName);
+            if (existingUser != null)
+            {
+                response.HasError = true;
+                response.Error = "El nombre de usuario ya está en uso.";
+                return response;
+            }
+
+            // Crear el objeto ApplicationUser
+            var user = new ApplicationUser
+            {
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                UserName = request.UserName,
+                Identification = request.Identification,
+                IsActive = true,
+                UserType = Roles.Developer,
+            };
+
+
+            var result = await _userManager.CreateAsync(user, request.Password);
+            if (!result.Succeeded)
+            {
+                response.HasError = true;
+                response.Error = $"Error creating user: {string.Join(", ", result.Errors.Select(e => e.Description))}";
+                return response;
+            }
+
+            // Asignar el rol de administrador
+            var roleResult = await _userManager.AddToRoleAsync(user, "Developer");
+
+            if (!roleResult.Succeeded)
+            {
+                response.HasError = true;
+                response.Error = "Hubo un error al asignar el rol de Developer.";
+                return response;
+            }
+            return response;
+        }
+        public async Task<EditDeveloperDto> GetDeveloperForEditAsync(string developerId)
+        {
+            var user = await _userManager.FindByIdAsync(developerId);
+            if (user == null) return null;
+
+            return new EditDeveloperDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Identification = user.Identification,
+                Email = user.Email,
+                UserName = user.UserName,
+
+            };
+        }
+
+        public async Task<UpdateUserResponse> UpdateDeveloperAsync(EditDeveloperViewModel vm)
+        {
+            
+            var developer = await _userManager.FindByIdAsync(vm.Id);
+            if (developer == null)
+            {
+                return new UpdateUserResponse
+                {
+                    HasError = true,
+                    Error = "Administrador no encontrado"
+                };
+            }
+
+            developer.FirstName =  vm.FirstName ;
+            developer.LastName =  vm.LastName ;
+            developer.Identification = vm.Identification ;
+            developer.Email =  vm.Email ;
+            developer.UserName =  vm.UserName ;
+
+            // Si se proporciona una nueva contraseña, se valida y actualiza
+            if (!string.IsNullOrWhiteSpace(vm.Password) && !string.IsNullOrWhiteSpace(vm.ConfirmPassword))
+            {
+                if (vm.Password == vm.ConfirmPassword)
+                {
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(developer);
+                    var passwordResult = await _userManager.ResetPasswordAsync(developer, token, vm.Password);
+                    if (!passwordResult.Succeeded)
+                    {
+                        return new UpdateUserResponse
+                        {
+                            HasError = true,
+                            Error = "Error al actualizar la contraseña"
+                        };
+                    }
+                }
+                else
+                {
+                    return new UpdateUserResponse
+                    {
+                        HasError = true,
+                        Error = "La contraseña y su confirmación no coinciden"
+                    };
+                }
+            }
+
+            // Intentar actualizar los cambios del usuario
+            var result = await _userManager.UpdateAsync(developer);
+            if (!result.Succeeded)
+            {
+                return new UpdateUserResponse
+                {
+                    HasError = true,
+                    Error = "Error al actualizar el developer"
+                };
+            }
+
+            // Retornar respuesta exitosa
+            return new UpdateUserResponse
+            {
+                HasError = false
+            };
+
+
+        }
 
 
         #endregion

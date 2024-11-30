@@ -15,10 +15,18 @@ namespace RealEstateApp.Core.Application.Interfaces.Services
 
         Task<List<AgentListViewModel>> GetAllAgentForViewAsync();
         Task<List<AdminListViewModel>> GetAllAdminForViewAsync();
+        Task<List<DeveloperListViewModel>> GetAllDeveloperForViewAsync();
+
         Task<RegisterAdminResponse> RegisterAdminAsync(SaveAdminViewModel vm);
+        Task<RegisterDeveloperResponse> RegisterDeveloperAsync(SaveDeveloperViewModel vm);
+
 
         Task<EditAdminViewModel> GetAdminForEditViewAsync(string userId);
+        Task<EditDeveloperViewModel> GetDeveloperForEditViewAsync(string userId);
+
         Task<UpdateUserResponse> EditAdminAsync(EditAdminViewModel vm, string loggedInUserId);
+        Task<UpdateUserResponse> EditDeveloperAsync(EditDeveloperViewModel vm);
+
 
 
         Task<UpdateUserResponse> DeactivateUserAsync(string userId, string loggedInUserId);
