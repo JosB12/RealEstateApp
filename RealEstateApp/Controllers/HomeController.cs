@@ -1,9 +1,12 @@
 
+    
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Core.Application.Dtos.Account;
+using RealEstateApp.Core.Application.Enums;
 using RealEstateApp.Core.Application.Helpers;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.Services;
+using RealEstateApp.Core.Application.ViewModels.Chat;
 using RealEstateApp.Core.Application.ViewModels.Offer;
 using RealEstateApp.Core.Application.ViewModels.Property;
 using RealEstateApp.Core.Application.ViewModels.User;
@@ -19,11 +22,12 @@ public class HomeController : Controller
     private readonly IPropertyTypeService _propertyTypeService;
     private readonly IFavoriteService _favoriteService;
     private readonly IOfferService _offerService;
+    private readonly IChatService _chatService;
 
 
     public HomeController(ILogger<HomeController> logger, IUserService userService, 
-        IPropertyService propertyService, IPropertyTypeService propertyTypeService, 
-        IFavoriteService favoriteService, IOfferService offerService)
+        IPropertyService propertyService, IPropertyTypeService propertyTypeService,
+        IFavoriteService favoriteService, IOfferService offerService, IChatService chatService)
     {
         _logger = logger;
         _userService = userService;
@@ -31,11 +35,14 @@ public class HomeController : Controller
         _propertyTypeService = propertyTypeService;
         _favoriteService = favoriteService;
         _offerService = offerService;
+        _chatService = chatService;
     }
     public async Task<IActionResult> Index()
     {
         var user = HttpContext.Session.Get<AuthenticationResponse>("user");
         var properties = await _propertyService.GetAvailablePropertiesAsync();
+        var propertyTypes = await _propertyTypeService.GetAllAsync();
+        ViewBag.PropertyTypes = propertyTypes;
 
         if (user != null && user.Roles.Contains("Client"))
         {
@@ -48,7 +55,6 @@ public class HomeController : Controller
             }
         }
 
-        ViewBag.PropertyTypes = await _propertyTypeService.GetAllAsync();
         return View(properties);
     }
 
@@ -59,7 +65,6 @@ public class HomeController : Controller
         ViewBag.PropertyTypes = await _propertyTypeService.GetAllAsync();
         return View("FilterResults", properties);
     }
-
     public async Task<IActionResult> Details(int id)
     {
         var property = await _propertyService.GetByIdSaveViewModel(id);
@@ -67,6 +72,16 @@ public class HomeController : Controller
         {
             return NotFound();
         }
+
+        var user = HttpContext.Session.Get<AuthenticationResponse>("user");
+        if (user == null || !user.Roles.Contains("Client"))
+        {
+            ViewBag.Chats = new List<ChatMessageViewModel>();
+            return View(property);
+        }
+
+        var chats = await _chatService.GetChatsByPropertyAndUserIdAsync(id, user.Id);
+        ViewBag.Chats = chats ?? new List<ChatMessageViewModel>();
         return View(property);
     }
 
@@ -114,6 +129,28 @@ public class HomeController : Controller
         return Json(new { success = false, message = "Invalid data", errors });
     }
 
+    [HttpPost]
+    public async Task<IActionResult> SendMessage(int propertyId, string message)
+    {
+        var user = HttpContext.Session.Get<AuthenticationResponse>("user");
+        if (user == null || !user.Roles.Contains("Client"))
+        {
+            return Json(new { success = false, message = "User not authenticated or not a client" });
+        }
+
+        var chat = new ChatMessageViewModel
+        {
+            UserId = user.Id,
+            PropertyId = propertyId,
+            Message = message,
+            IsAgent = false,
+            SendDate = DateTime.Now
+        };
+
+        await _chatService.SendMessageAsync(chat);
+        return Json(new { success = true });
+    }
+
     #region login
     [ServiceFilter(typeof(LoginAuthorize))]
     public IActionResult Login()
@@ -134,7 +171,7 @@ public class HomeController : Controller
         if (userVm != null && userVm.HasError != true)
         {
             HttpContext.Session.Set<AuthenticationResponse>("user", userVm); // Guardar el usuario en la sesión
-           
+
             // Redirigir según el rol del usuario
             if (userVm.Roles.Contains("Admin"))
             {
@@ -170,13 +207,97 @@ public class HomeController : Controller
     {
         return View();
     }
+    #region (Register)
 
+    [ServiceFilter(typeof(LoginAuthorize))]
+    public IActionResult JoinApp()
+    {
+        return View(new SaveUserViewModel());
+    }
+
+    [ServiceFilter(typeof(LoginAuthorize))]
+    [HttpPost]
+    public async Task<IActionResult> JoinApp(SaveUserViewModel vm)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(vm);
+        }
+
+        try
+        {
+            var origin = Request.Headers["origin"];
+            RegisterResponse response = await _userService.RegisterAsync(vm, origin);
+            if (response.HasError)
+            {
+                vm.HasError = response.HasError;
+                vm.Error = response.Error;
+                return View(vm);
+            }
+
+            if (vm.UserType == Roles.Client)
+            {
+                return RedirectToAction("ConfirmEmailInfo");
+            }
+        }
+
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("", "An error occurred trying to register the user. " + ex.Message);
+            return View(vm);
+        }
+        return RedirectToRoute(new { controller = "Home", action = "Index" });
+
+    }
+    public IActionResult ConfirmEmailInfo()
+    {
+        return View();
+    }
+
+    [ServiceFilter(typeof(LoginAuthorize))]
+    public async Task<IActionResult> ConfirmEmail(string userId, string token)
+    {
+        string response = await _userService.ConfirmEmailAsync(userId, token);
+        return View("ConfirmEmail", response);
+    }
+    #endregion
+
+    #region LogOut
     public async Task<IActionResult> LogOut()
     {
         await _userService.SignOutAsync();
         HttpContext.Session.Remove("user");
         return RedirectToRoute(new { controller = "Home", action = "Index" });
     }
+    #endregion
 
+    #region Agent
+    [HttpGet]
+    public async Task<IActionResult> Agents(string searchQuery = "")
+    {
+        var agents = await _userService.GetActiveAgentsAsync(searchQuery);
+        return View(agents);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> AgentProperties(string agentId)
+    {
+        Console.WriteLine($"Fetching properties for agentId: {agentId}");
+
+        var properties = await _propertyService.GetPropertiesAvailableByAgentIdAsync(agentId);
+        if (properties == null || !properties.Any())
+        {
+            Console.WriteLine("No properties found for this agent.");
+        }
+
+        return View(properties);  // Devolvemos las propiedades a la vista
+    }
+    #endregion
 
 }
+
+   
+
+
+
+

@@ -1,0 +1,37 @@
+﻿@model List<RealEstateApp.Core.Application.ViewModels.AgentViewModel>
+
+@{
+    ViewData["Title"] = "Listado de Agentes";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<link rel="stylesheet" href="~/css/home.css" />
+
+<div class="banner-container">
+    <div class="banner-content">
+        <h1 class="mb-4">Listado de agentes</h1>
+        <form method="get" asp-action="Agents" class="input-group search-bar">
+            <input type="text" class="form-control" name="searchQuery" placeholder="Buscar por nombre" value="@Context.Request.Query["searchQuery"]" />
+            <button class="btn btn-success" type="submit">
+                <i class="fas fa-search"></i> Buscar
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="container mt-5 agent-card-container">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        @foreach (var agent in Model)
+        {
+            <div class="col">
+                <div class="card border-0 shadow-sm h-100 agent-card">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <a href="@Url.Action("AgentProperties", "Home", new { agentId = agent.Id })" class="text-decoration-none text-dark">
+                            <img src="@agent.PhotoUrl" class="rounded-circle mb-3" width="100" height="100" alt="@agent.FirstName @agent.LastName">
+                            <h5 class="card-title mb-0">@agent.FirstName @agent.LastName</h5>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

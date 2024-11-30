@@ -6,22 +6,34 @@ using RealEstateApp.Core.Domain.Entities;
 
 namespace RealEstateApp.Core.Application.Services
 {
-    public class PropertyTypeService : GenericService<PropertyTypeSaveViewModel, PropertyTypeViewModel, PropertyType>, IPropertyTypeService
+    public class PropertyTypeService : GenericService<PropertyTypeViewModel, PropertyTypeViewModel, PropertyType>, IPropertyTypeService
     {
         private readonly IPropertyTypeRepository _propertyTypeRepository;
         private readonly IMapper _mapper;
-
-        public PropertyTypeService(IPropertyTypeRepository propertyTypeRepository, IMapper mapper)
-            : base(propertyTypeRepository, mapper)
+        public PropertyTypeService(IPropertyTypeRepository propertyTypeRepository, IMapper mapper) : base(propertyTypeRepository, mapper)
         {
             _propertyTypeRepository = propertyTypeRepository;
             _mapper = mapper;
         }
 
+        public async Task<List<PropertyTypeViewModel>> GetAllPropertyTypesNameAsync()
+        {
+            var propertyTypes = await _propertyTypeRepository.GetAllAsync();
+            return propertyTypes.Select(p => new PropertyTypeViewModel
+            {
+                Id = p.Id,
+                Name = p.Name
+            }).ToList();
+        }
         public async Task<List<PropertyTypeViewModel>> GetAllAsync()
         {
             var propertyTypes = await _propertyTypeRepository.GetAllAsync();
             return _mapper.Map<List<PropertyTypeViewModel>>(propertyTypes);
         }
+
     }
+
+
 }
+
+

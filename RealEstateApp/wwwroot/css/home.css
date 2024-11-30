@@ -1,9 +1,9 @@
-﻿/* Reset margins and padding for body and html */
+﻿
 html, body {
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    overflow-x: hidden; 
 }
 
-/* General layout adjustments */
+
 .filters-container label {
     margin-bottom: 0.5rem;
     display: block;
@@ -16,25 +16,25 @@ html, body {
     margin-left: 140px;
 }
 
- .filters-container .form-group {
-    margin-bottom: 2.5rem; 
-}
+    .filters-container .form-group {
+        margin-bottom: 2.5rem;
+    }
 
-.filters-container .d-flex.align-items-end {
-  margin-top: 3.9rem; 
- }
+    .filters-container .d-flex.align-items-end {
+        margin-top: 3.9rem;
+    }
 
-.filters-container .btn-filter {
-        background-color: #28a745; 
-        color: #fff; 
+    .filters-container .btn-filter {
+        background-color: #28a745;
+        color: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
- }
+    }
 
- .filters-container .btn-filter i {
-    margin-right: 0.5rem; /* Space between icon and text */
- }
+        .filters-container .btn-filter i {
+            margin-right: 0.5rem; 
+        }
 
 .filtered-results{
     margin-left: 140px;
@@ -53,7 +53,7 @@ html, body {
         transform: translateY(-5px);
     }
 
-/* Sale type badge */
+
 .sale-type-badge {
     position: absolute;
     top: 10px;
@@ -76,11 +76,11 @@ html, body {
 }
 
 
-    .properties-container .card:hover {
-        transform: translateY(-5px);
-    }
+.properties-container .card:hover {
+    transform: translateY(-5px);
+}
 
-/* Styles for property cards */
+
 .property-code {
     font-size: 1rem;
     font-weight: bold;
@@ -95,7 +95,7 @@ html, body {
     margin-bottom: 1rem;
 }
 
-/* Quitar subrayado y color del enlace */
+
 .card-link {
     text-decoration: none;
     color: inherit;
@@ -107,14 +107,14 @@ html, body {
         text-decoration: none;
     }
 
-        /* Cambiar el cursor al pasar por encima */
+       
         .card-link:hover .card {
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             transform: scale(1.02);
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
-/* Cambiar el color del range slider a verde */
+
 .noUi-connect {
     background: #28a745 !important;
 }
@@ -162,7 +162,7 @@ html, body {
      
     }
 
-    .star-btn {
+  .star-btn {
     background: none;
     border: none;
     cursor: pointer;
@@ -178,7 +178,6 @@ html, body {
 }
 
 
-
 .favorites-title {
     font-family: 'Roboto', sans-serif; 
     font-size: 2rem;
@@ -189,3 +188,140 @@ html, body {
     text-align: left;
     color: #343a40;
 }
+
+/*Agentes*/
+
+.banner-container {
+    position: relative;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    width: 1800px;
+    height: 350px;
+    background: linear-gradient(rgb(18, 114, 18, 0.80), rgb(39, 117, 21, 0.40)), 
+        url('../Images/bannerAgentes.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+.banner-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;  
+}
+
+.banner-content h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.search-bar .form-control {
+    border-radius: 0;
+}
+
+.search-bar .btn-success {
+    border-radius: 0;
+}
+
+
+.agent-card-container {
+    margin-left: 45px;
+}
+
+.agent-card {
+    background-color: #e6f7e6;
+    margin-right: 20px;
+}
+
+.agent-card .card-title {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #28a745;
+}
+
+.agent-card img {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    position:center;
+    object-fit: cover;
+}
+
+.agent-properties-title {
+    margin-top: 60px; 
+    margin-bottom: 40px; 
+    margin-left:120px;
+}
+
+/*Joinapp*/
+
+.joinapp-container {
+    margin-top: 50px;
+    margin-left:100px;
+}
+
+.joinapp-card {
+    border: none;
+    border-radius: 10px;
+    background-color: #84e22d64;
+}
+
+.card-body joinapp {
+    padding: 30px;
+    width: 400px;
+}
+
+.joinapp-title {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.joinapp-label {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.joinapp-input {
+    border: 1px solid #28a745;
+    border-radius: 5px;
+}
+
+.joinapp-input:focus {
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.2);
+    border-color: #28a745;
+}
+
+.joinapp-button {
+    background-color: #28a745;
+    border-color: #28a745;
+    font-weight: bold;
+}
+
+.joinapp-button:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.joinapp-alert {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.joinapp-validation {
+    font-size: 0.875em;
+    color: #dc3545;
+}
+

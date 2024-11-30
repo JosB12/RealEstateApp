@@ -2,7 +2,6 @@
 using RealEstateApp.Core.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
-
 namespace RealEstateApp.Core.Domain.Entities
 {
     public class Property : AuditableBaseEntity
