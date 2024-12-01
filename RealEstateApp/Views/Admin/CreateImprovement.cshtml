@@ -1,0 +1,52 @@
+﻿@model RealEstateApp.Core.Application.ViewModels.SaveImprovementViewModel
+
+@{
+    ViewData["Title"] = "Crear Mejora";
+}
+
+<h2>Crear Mejora</h2>
+<div class="card-body">
+
+    <!-- Mostrar errores de validación si existen -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <h5>Se encontraron los siguientes errores:</h5>
+            <ul>
+                @foreach (var modelState in ViewData.ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                }
+            </ul>
+        </div>
+    }
+
+    <form asp-action="CreateImprovement" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <!-- Campo para el nombre de la mejora -->
+        <div class="form-group">
+            <label asp-for="Name" class="control-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <!-- Campo para la descripción de la mejora -->
+        <div class="form-group">
+            <label asp-for="Description" class="control-label"></label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <!-- Botones para enviar o cancelar -->
+        <button type="submit" class="btn btn-primary mt-3">Registrar</button>
+        <a asp-action="ImprovementList" class="btn btn-secondary mt-3">Cancelar</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

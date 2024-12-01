@@ -9,6 +9,8 @@ namespace RealEstateApp.Core.Application.Interfaces.Repositories
 {
     public interface ISalesTypeRepository : IGenericRepository<SaleType>
     {
+        Task UpdateAsync(SaleType saleType);
         Task<bool> HasAnySaleTypeAsync();
+        Task<int> GetSaleTypeCountByIdAsync(int saleTypeId);
     }
 }
