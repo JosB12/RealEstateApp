@@ -43,8 +43,8 @@ namespace RealEstateApp.Core.Application.Services
 
         public virtual async Task Delete(int id)
         {
-            var product = await _repository.GetByIdAsync(id);
-            await _repository.DeleteAsync(product);
+            var entity = await _repository.GetByIdAsync(id);
+            await _repository.DeleteAsync(entity);
         }
 
         public virtual async Task<SaveViewModel> GetByIdSaveViewModel(int id)

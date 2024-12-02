@@ -19,5 +19,10 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
         {
             return await _dbContext.PropertyTypes.AnyAsync();
         }
+        public async Task<PropertyType> GetByIdAsync(int id)
+        {
+            return await _dbContext.PropertyTypes
+                .FirstOrDefaultAsync(pt => pt.Id == id);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using RealEstateApp.Core.Application.Dtos.PropertyType;
 using RealEstateApp.Core.Application.Interfaces.Repositories;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.ViewModels.PropertyType;
@@ -29,6 +30,20 @@ namespace RealEstateApp.Core.Application.Services
         {
             var propertyTypes = await _propertyTypeRepository.GetAllAsync();
             return _mapper.Map<List<PropertyTypeViewModel>>(propertyTypes);
+        }
+
+        public async Task<SalesTypeDto> GetByIdAsync(int id)
+        {
+            var propertyTypeEntity = await _propertyTypeRepository.GetByIdAsync(id);
+
+            if (propertyTypeEntity == null)
+            {
+                throw new KeyNotFoundException($"PropertyType with Id {id} not found.");
+            }
+
+            var propertyTypeDto = _mapper.Map<SalesTypeDto>(propertyTypeEntity);
+
+            return propertyTypeDto;
         }
 
     }

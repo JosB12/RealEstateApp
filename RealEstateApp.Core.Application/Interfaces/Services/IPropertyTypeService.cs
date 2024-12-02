@@ -1,4 +1,5 @@
-﻿using RealEstateApp.Core.Application.ViewModels;
+﻿using RealEstateApp.Core.Application.Dtos.PropertyType;
+using RealEstateApp.Core.Application.ViewModels;
 using RealEstateApp.Core.Application.ViewModels.PropertyType;
 using RealEstateApp.Core.Domain.Entities;
 
@@ -8,5 +9,6 @@ namespace RealEstateApp.Core.Application.Interfaces.Services
     {
         Task<List<PropertyTypeViewModel>> GetAllPropertyTypesNameAsync();
         Task<List<PropertyTypeViewModel>> GetAllAsync();
+        Task<SalesTypeDto> GetByIdAsync(int id);
     }
 }

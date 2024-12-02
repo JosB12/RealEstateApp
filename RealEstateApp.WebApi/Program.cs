@@ -3,12 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Core.Application;
 using RealEstateApp.Infrastructure.Identity;
 using RealEstateApp.Infrastructure.Persistence;
+using RealEstateApp.Infrastructure.Shared;
+using RealEstateApp.WebApi.Extensions;
+using RealEstateApp.WebApi.Middlewares;
 
 namespace RealEstateApp.WebApi
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -26,35 +29,45 @@ namespace RealEstateApp.WebApi
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddPersistenceInfrastructure(builder.Configuration);
             builder.Services.AddIdentityInfrastructureForWebApi(builder.Configuration);
-            //builder.Services.AddSharedInfrastructure(builder.Configuration);
-            builder.Services.AddApplicationLayerForWebApp(builder.Configuration);
+            builder.Services.AddIdentityInfrastructureForWebApp(builder.Configuration);
+            builder.Services.AddSharedInfrastructure(builder.Configuration);
+            builder.Services.AddApplicationLayerForWebApi();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddHealthChecks();
-            //builder.Services.AddSwaggerExtension();
-            //builder.Services.AddApiVersioningExtension();
+            builder.Services.AddSwaggerExtension();
+            builder.Services.AddApiVersioningExtension();
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession();
-           // builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
-            //builder.Services.AddSwaggerGen();
+
+            builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerExtension(app);
             }
 
+            await app.Services.RunAsyncSeed();
             app.UseHttpsRedirection();
 
+            app.UseRouting();
+
+            app.UseAuthentication();
             app.UseAuthorization();
+            app.UseExceptionHandler();
+            app.UseHealthChecks("/health");
+            app.UseSession();
 
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
 
-            app.MapControllers();
-
-            app.Run();
+            await app.RunAsync();
         }
     }
 }

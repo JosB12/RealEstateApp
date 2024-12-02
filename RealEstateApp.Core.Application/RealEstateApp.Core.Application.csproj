@@ -7,12 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Behaviours\" />
-    <Folder Include="Exceptions\" />
-    <Folder Include="Features\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="FluentValidation" Version="11.10.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
@@ -29,6 +23,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RealEstateApp.Core.Domain\RealEstateApp.Core.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Properties\Commands\" />
   </ItemGroup>
 
 </Project>

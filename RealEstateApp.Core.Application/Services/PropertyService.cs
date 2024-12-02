@@ -19,7 +19,7 @@ namespace RealEstateApp.Core.Application.Services
         private readonly IPropertyTypeRepository _propertyTypeRepository;
         private readonly IImprovementPropertyRepository _improvementPropertyRepository;
         private readonly ISalesTypeRepository _saleTypeRepository;
-        private readonly IWebAppAccountService _accountService;
+        private readonly IUserService _userService;
         private readonly IOfferService _offerService;
         private readonly IImprovementRepository _improvementRepository;
         private readonly IImageRepository _imageRepository;
@@ -27,7 +27,7 @@ namespace RealEstateApp.Core.Application.Services
 
 
         public PropertyService(
-        IWebAppAccountService accountService,
+        IUserService userService,
         IPropertyRepository propertyRepository,
         IPropertyTypeRepository propertyTypeRepository,
         IImprovementPropertyRepository improvementPropertyRepository,
@@ -43,7 +43,7 @@ namespace RealEstateApp.Core.Application.Services
             _propertyTypeRepository = propertyTypeRepository;
             _saleTypeRepository = saleTypeRepository;
             _improvementRepository = improvementRepository;
-            _accountService = accountService;
+            _userService = userService;
 
 
             _offerService = offerService;
@@ -125,7 +125,7 @@ namespace RealEstateApp.Core.Application.Services
                 var entity = properties.FirstOrDefault(p => p.Id == property.Id);
                 property.ImageUrl = entity?.Images?.FirstOrDefault()?.ImageUrl;
                 property.Improvements = entity?.Improvements?.Select(i => i.Name).ToList() ?? new List<string>();
-                var agent = await _accountService.GetUserByIdAsync(entity.UserId);
+                var agent = await _userService.GetUserByIdAsync(entity.UserId);
                 property.AgentName = agent?.FirstName + " " + agent?.LastName;
                 property.AgentPhoneNumber = agent?.PhoneNumber;
                 property.AgentPhotoUrl = agent?.Photo;
@@ -155,7 +155,7 @@ namespace RealEstateApp.Core.Application.Services
             var propertyViewModel = _mapper.Map<PropertySaveViewModel>(property);
 
             propertyViewModel.Improvements = property.Improvements?.Select(i => i.Name).ToList() ?? new List<string>();
-            var agent = await _accountService.GetUserByIdAsync(property.UserId);
+            var agent = await _userService.GetUserByIdAsync(property.UserId);
             propertyViewModel.AgentName = agent?.FirstName + " " + agent?.LastName;
             propertyViewModel.AgentPhoneNumber = agent?.PhoneNumber;
             propertyViewModel.AgentPhotoUrl = agent?.Photo;

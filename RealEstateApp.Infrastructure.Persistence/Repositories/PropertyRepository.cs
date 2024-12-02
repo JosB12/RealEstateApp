@@ -52,6 +52,7 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
 
             return propertyViewModels;
         }
+
         public async Task<List<HomeAgentPropertyViewModel>> GetPropertiesByAgentIdAsync(string agentId)
         {
             var properties = await _dbContext.Properties
@@ -146,7 +147,7 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
         public async Task<List<Property>> GetPropertiesJustByAgentIdAsync(string agentId)
         {
             return await _dbContext.Properties
-                                   .Where(p => p.UserId == agentId)  // Filtra propiedades por el ID del agente
+                                   .Where(p => p.UserId == agentId)  
                                    .ToListAsync();
         }
 
