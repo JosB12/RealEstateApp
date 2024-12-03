@@ -9,6 +9,8 @@ namespace RealEstateApp.Core.Application.ViewModels
 {
     public class HomeAgentPropertyViewModel
     {
+        public int Id { get; set; }
+
         public string PropertyCode { get; set; }
         public string PropertyType { get; set; }
         public string SaleType { get; set; }

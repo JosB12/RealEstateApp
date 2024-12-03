@@ -1,18 +1,10 @@
-﻿@using RealEstateApp.Core.Domain.Enums
-@model List<RealEstateApp.Core.Application.ViewModels.HomeAgentPropertyViewModel>
+﻿@model IEnumerable<RealEstateApp.Core.Application.ViewModels.Property.PropertyViewModel>
 
 @{
-    ViewData["Title"] = "Home del Agente";
+    ViewData["Title"] = "Resultados - Agente";
 }
+<link rel="stylesheet" href="~/css/Home.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-<link rel="stylesheet" href="~/css/home.css" />
-
-<div class="header-section">
-    <div class="header-content">
-        <h1>Propiedades de @ViewData["AgentName"]</h1>
-        <p>Explora las propiedades disponibles y vendidas del agente.</p>
-    </div>
-</div>
 
 <div class="container">
     <!-- Filtros -->
@@ -32,8 +24,8 @@
                     </div>
                     <div class="col-12 col-md-4">
                         <div class="form-group">
-                            <label for="PropertyCode">Código:</label>
-                            <input type="text" name="PropertyCode" class="form-control" id="PropertyCode" placeholder="Código de la Propiedad" />
+                            <label for="PropertyCode">Código de Propiedad:</label>
+                            <input type="text" name="PropertyCode" class="form-control" id="PropertyCode" placeholder="Código de Propiedad" />
                         </div>
                         <div class="form-group position-relative">
                             <label for="PropertyTypesDropdown">Tipo de Propiedad:</label>
@@ -79,55 +71,44 @@
         </div>
     </div>
 
-    <!-- Propiedades Disponibles -->
-    <div class="row properties-container mb-4">
-        <h3>Propiedades Disponibles</h3>
-        @foreach (var property in Model.Where(p => p.Status == (int)PropertyStatus.Available))
+    <!-- Texto "Resultados Filtrados" -->
+    <h3 class="filtered-results mb-4">Resultados para el agente</h3>
+
+    <!-- Tarjetas de propiedades -->
+    <div class="row properties-container">
+        @if (!Model.Any())
         {
-            <div class="col-sm-6 col-md-4 mb-4">
-                <a asp-action="Details" asp-route-id="@property.Id" class="card-link">
-                    <div class="card h-100 shadow-sm">
-                        <div class="sale-type-badge">DISPONIBLE</div>
-                        <img class="card-img-top" src="@property.Images.FirstOrDefault()" alt="Property Image" style="object-fit: cover; height: 200px;">
-                        <div class="card-body">
-                            <p class="property-type"><strong>@property.PropertyType</strong></p>
-                            <p class="property-code">Código: @property.PropertyCode</p>
-                            <p class="property-price">RD$ @property.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO"))</p>
-                            <ul class="list-unstyled">
-                                <li><i class="fas fa-bed"></i> <strong>Habitaciones:</strong> @property.Bedrooms</li>
-                                <li><i class="fas fa-bath"></i> <strong>Baños:</strong> @property.Bathrooms</li>
-                                <li><i class="fas fa-ruler-combined"></i> <strong>Tamaño:</strong> @property.PropertySizeMeters m²</li>
-                            </ul>
-                        </div>
-                    </div>
-                </a>
+            <div class="col-12">
+                <div class="alert alert-warning text-center">
+                    No se encontraron propiedades que coincidan con los criterios de búsqueda.
+                </div>
             </div>
         }
-    </div>
-
-    <!-- Propiedades Vendidas -->
-    <div class="row properties-container">
-        <h3>Propiedades Vendidas</h3>
-        @foreach (var property in Model.Where(p => p.Status == PropertyStatus.Sold))
+        else
         {
-            <div class="col-sm-6 col-md-4 mb-4">
-                <a asp-action="Details" asp-route-id="@property.Id" class="card-link">
-                    <div class="card h-100 shadow-sm">
-                        <div class="sale-type-badge sold">VENDIDA</div>
-                        <img class="card-img-top" src="@property.Images.FirstOrDefault()" alt="Property Image" style="object-fit: cover; height: 200px;">
-                        <div class="card-body">
-                            <p class="property-type"><strong>@property.PropertyType</strong></p>
-                            <p class="property-code">Código: @property.PropertyCode</p>
-                            <p class="property-price">RD$ @property.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO"))</p>
-                            <ul class="list-unstyled">
-                                <li><i class="fas fa-bed"></i> <strong>Habitaciones:</strong> @property.Bedrooms</li>
-                                <li><i class="fas fa-bath"></i> <strong>Baños:</strong> @property.Bathrooms</li>
-                                <li><i class="fas fa-ruler-combined"></i> <strong>Tamaño:</strong> @property.PropertySizeMeters m²</li>
-                            </ul>
+            @foreach (var property in Model)
+            {
+                <div class="col-sm-6 col-md-4 mb-4">
+                    <a asp-action="Details" asp-route-id="@property.Id" class="card-link">
+                        <div class="card h-100 shadow-sm">
+                            <div class="sale-type-badge">
+                                @property.SaleType.ToUpper()
+                            </div>
+                            <img class="card-img-top" src="@property.ImageUrl" alt="Property Image" style="object-fit: cover; height: 200px;">
+                            <div class="card-body">
+                                <p class="property-type"><strong>@property.PropertyType</strong></p>
+                                <p class="property-code">Código: @property.PropertyCode</p>
+                                <p class="property-price">RD$ @property.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO"))</p>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-bed"></i> <strong>Habitaciones:</strong> @property.Bedrooms</li>
+                                    <li><i class="fas fa-bath"></i> <strong>Baños:</strong> @property.Bathrooms</li>
+                                    <li><i class="fas fa-ruler-combined"></i> <strong>Tamaño:</strong> @property.PropertySizeMeters m²</li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                </a>
-            </div>
+                    </a>
+                </div>
+            }
         }
     </div>
 </div>
@@ -135,6 +116,7 @@
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.5.0/nouislider.min.js"></script>
     <script>
+        // Script para el slider de precios (idéntico al anterior)
         var priceSlider = document.getElementById('price-range');
         noUiSlider.create(priceSlider, {
             start: [0, 35000000],
@@ -166,36 +148,43 @@
             document.getElementById('minPriceOutput').innerText = minPrice;
             document.getElementById('maxPriceOutput').innerText = maxPrice;
         });
+
+        var connect = priceSlider.querySelectorAll('.noUi-connect');
+        for (var i = 0; i < connect.length; i++) {
+            connect[i].style.backgroundColor = '#28a745';
+        }
     </script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const dropdownButton = document.getElementById("PropertyTypesDropdown");
-            const dropdownMenu = document.getElementById("PropertyTypesMenu");
+                const dropdownButton = document.getElementById("PropertyTypesDropdown");
+        const dropdownMenu = document.getElementById("PropertyTypesMenu");
 
-            // Mostrar/ocultar el menú desplegable
-            dropdownButton.addEventListener("click", function () {
-                const isVisible = dropdownMenu.style.display === "block";
-                dropdownMenu.style.display = isVisible ? "none" : "block";
+        // Mostrar/ocultar el menú desplegable
+        dropdownButton.addEventListener("click", function () {
+                    const isVisible = dropdownMenu.style.display === "block";
+        dropdownMenu.style.display = isVisible ? "none" : "block";
+                });
+
+        // Cerrar el menú si se hace clic fuera de él
+        document.addEventListener("click", function (event) {
+                    if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+            dropdownMenu.style.display = "none";
+                    }
+                });
+
+        // Actualizar texto del botón con los tipos seleccionados
+        const checkboxes = dropdownMenu.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach((checkbox) => {
+            checkbox.addEventListener("change", function () {
+                const selected = Array.from(checkboxes)
+                    .filter((chk) => chk.checked)
+                    .map((chk) => chk.parentElement.textContent.trim());
+                dropdownButton.textContent = selected.length
+                    ? selected.join(", ")
+                    : "Seleccionar";
             });
-
-            // Cerrar el menú si se hace clic fuera de él
-            document.addEventListener("click", function (event) {
-                if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
-                    dropdownMenu.style.display = "none";
-                }
-            });
-
-            // Función de búsqueda por nombre
-            const searchBox = document.getElementById("AgentNameSearch");
-            searchBox.addEventListener("input", function () {
-                const query = searchBox.value.toLowerCase();
-                const properties = document.querySelectorAll(".property-card");
-                properties.forEach(function (property) {
-                    const name = property.querySelector(".property-title").innerText.toLowerCase();
-                    property.style.display = name.includes(query) ? "" : "none";
                 });
             });
-        });
     </script>
 }

@@ -6,6 +6,7 @@ using RealEstateApp.Core.Application.Interfaces.Repositories;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.Services;
 using RealEstateApp.Core.Application.ViewModels;
+using RealEstateApp.Core.Application.ViewModels.Property;
 using RealEstateApp.Core.Domain.Entities;
 using RealEstateApp.Infrastructure.Persistence.Repositories;
 using System.Security.Claims;
@@ -46,6 +47,9 @@ namespace RealEstateApp.Controllers
         }
 
         #region home
+
+
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -54,8 +58,10 @@ namespace RealEstateApp.Controllers
             {
                 return RedirectToAction("AccessDenied", "Home");
             }
-
             string agentId = user.Id;
+
+            var propertyTypes = await _propertyTypeService.GetAllAsync();
+            ViewBag.PropertyTypes = propertyTypes;
 
             var properties = await _propertyService.GetPropertiesByAgentIdAsync(agentId);
             if (properties == null || !properties.Any())
@@ -76,6 +82,31 @@ namespace RealEstateApp.Controllers
             ViewData["AgentName"] = $"{user.UserName}";
 
             return View(properties);
+        }
+
+        #endregion
+
+        #region filter
+
+        [HttpPost]
+        public async Task<IActionResult> Filter(PropertyFilterViewModel filter)
+        {
+            // Obtén el ID del agente logeado desde el contexto de usuario
+            var user = HttpContext.Session.Get<AuthenticationResponse>("user");
+            if (user == null || !user.Roles.Contains("Agent"))
+            {
+                return RedirectToAction("AccessDenied", "Home");
+            }
+            string agentId = user.Id;
+
+            var propertyTypes = await _propertyTypeService.GetAllAsync();
+            ViewBag.PropertyTypes = propertyTypes;
+
+            var properties = await _propertyService.FilterAgentPropertiesAsync(filter, agentId);
+
+
+            // Renderiza la vista con los resultados filtrados
+            return View("FilterResults", properties);
         }
 
         #endregion

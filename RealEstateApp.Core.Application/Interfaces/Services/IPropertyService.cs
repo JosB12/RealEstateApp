@@ -17,5 +17,6 @@ namespace RealEstateApp.Core.Application.Interfaces.Services
         Task<bool> DeletePropertyAsync(int id);
         Task<EditPropertyViewModel> GetByIdForEditAsync(int id);
         Task<EditPropertyResponse> EditPropertyAsync(EditPropertyViewModel model);
+        Task<List<PropertyViewModel>> FilterAgentPropertiesAsync(PropertyFilterViewModel filter, string agentId);
     }
 }
