@@ -24,5 +24,11 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
         {
             return await _dbContext.Improvements.AnyAsync();
         }
+
+        public async Task UpdateAsync(Improvement improvement)
+        {
+            _dbContext.Improvements.Update(improvement);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

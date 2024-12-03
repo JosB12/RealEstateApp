@@ -19,6 +19,7 @@ namespace RealEstateApp.Core.Application.Interfaces.Repositories
         Task<List<Entity>> AddRangeAsync(List<Entity> entities);
         Task DeleteINTAsync(int id);
         IQueryable<Entity> GetAllAsQueryable();
+        IQueryable<Entity> GetAllQueryWithInclude(List<string> properties);
         Task<bool> ExistsAsync(Expression<Func<Entity, bool>> predicate);
 
     }

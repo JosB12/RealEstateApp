@@ -23,6 +23,7 @@ namespace RealEstateApp.Infrastructure.Identity.Seeds
             defaultUser.PhoneNumberConfirmed = true;
             defaultUser.UserType = Roles.SuperAdmin;
             defaultUser.Identification = "999-00522478-5";
+            defaultUser.PhoneNumber = "333333333333333";
             defaultUser.IsActive = true;
             defaultUser.Photo = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png";
 
