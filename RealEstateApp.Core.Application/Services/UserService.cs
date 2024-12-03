@@ -178,5 +178,45 @@ namespace RealEstateApp.Core.Application.Services
 
         #endregion
 
+        #region Developer
+        public async Task<List<DeveloperListViewModel>> GetAllDeveloperForViewAsync()
+        {
+            try
+            {
+                var developer = await _accountService.GetlAllDeveloperAsync();
+                var developerList = _mapper.Map<List<DeveloperListViewModel>>(developer);
+                return developerList;
+            }
+            catch (Exception ex)
+            {
+                
+                throw new ApplicationException("Error al obtener usuarios", ex);
+            }
+
+        }
+
+        public async Task<RegisterDeveloperResponse> RegisterDeveloperAsync(SaveDeveloperViewModel vm)
+        {
+            var registerDevloperRequest = _mapper.Map<RegisterDeveloperRequest>(vm);
+
+            return await _accountService.CreateDeveloperAsync(registerDevloperRequest);
+        }
+        public async Task<EditDeveloperViewModel> GetDeveloperForEditViewAsync(string userId)
+        {
+            var dto = await _accountService.GetDeveloperForEditAsync(userId);
+            return _mapper.Map<EditDeveloperViewModel>(dto);
+
+        }
+        public async Task<UpdateUserResponse> EditDeveloperAsync(EditDeveloperViewModel vm)
+        {
+            return await _accountService.UpdateDeveloperAsync(vm);
+
+        }
+
+
+
+
+        #endregion
+
     }
 }

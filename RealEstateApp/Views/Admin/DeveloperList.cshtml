@@ -1,7 +1,8 @@
 ﻿@using RealEstateApp.Core.Application.ViewModels.User
-@model List<AdminListViewModel>
+@model List<DeveloperListViewModel>
 
 @if (TempData["Success"] != null)
+
 {
     <div class="alert alert-success">
         @TempData["Success"]
@@ -9,6 +10,7 @@
 }
 
 @if (TempData["Error"] != null)
+
 {
     <div class="alert alert-danger">
         @TempData["Error"]
@@ -16,37 +18,38 @@
 }
 
 <div class="container">
-    <h1 class="text-center mb-4">Gestión de Administradores</h1>
+    <h1 class="text-center mb-4">Gestión de Desarrolladores</h1>
 
-    <!-- Botón para agregar nuevo administrador -->
+    <!-- Botón para agregar nuevo desarrollador -->
     <div class="mb-4 text-end">
-        <a href="@Url.Action("CreateAdmin", "Admin")" class="btn btn-primary">
-            <i class="fas fa-user-plus"></i> Crear Administrador
+        <a href="@Url.Action("CreateDeveloper", "Admin")" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Crear Desarrollador
         </a>
     </div>
 
-    <!-- Tarjetas de administradores -->
+    <!-- Tarjetas de desarrolladores -->
     <div class="user-cards-container">
-        @foreach (var admin in Model)
+        @foreach (var developer in Model)
+
         {
             <div class="user-card">
-                <h5>@admin.FirstName @admin.LastName</h5>
-                <p>Usuario: @admin.UserName</p>
-                <p>Correo: @admin.Email</p>
-                <p>Cédula: @admin.Identification</p>
-                <p class="user-status">@(admin.IsActive ? "Activo" : "Inactivo")</p>
+                <h5>@developer.FirstName @developer.LastName</h5>
+                <p>Usuario: @developer.UserName</p>
+                <p>Correo: @developer.Email</p>
+                <p>Cédula: @developer.Identification</p>
+                <p class="user-status">@(developer.IsActive ? "Activo" : "Inactivo")</p>
 
                 <div>
-                    <!-- Botón de editar administrador -->
-                    <a href="@Url.Action("EditAdmin", "Admin", new { adminId = admin.Id })" class="btn btn-info">Editar</a>
+                    <!-- Botón de editar desarrollador -->
+                    <a href="@Url.Action("EditDeveloper", "Admin", new { developerId = developer.Id })" class="btn btn-info">Editar</a>
 
-                    @if (admin.IsActive)
+                    @if (developer.IsActive)
                     {
-                        <button class="btn btn-warning" onclick="confirmDeactivate('@admin.Id')">Desactivar</button>
+                        <button class="btn btn-warning" onclick="confirmDeactivate('@developer.Id')">Desactivar</button>
                     }
                     else
                     {
-                        <button class="btn btn-success" onclick="confirmActivate('@admin.Id')">Activar</button>
+                        <button class="btn btn-success" onclick="confirmActivate('@developer.Id')">Activar</button>
                     }
                 </div>
             </div>
@@ -60,7 +63,7 @@
         <h4 id="confirmationMessage" class="modal-header"></h4>
         <div class="modal-footer">
             <form id="actionForm" method="post">
-                <input type="hidden" name="adminId" id="adminIdInput" />
+                <input type="hidden" name="developerId" id="developerIdInput" />
                 <button type="submit" class="btn btn-danger">Sí</button>
                 <button type="button" class="btn btn-secondary" onclick="closeModal()">No</button>
             </form>
@@ -69,17 +72,17 @@
 </div>
 
 <script>
-    function confirmDeactivate(adminId) {
-        document.getElementById('confirmationMessage').textContent = "¿Estás seguro de que deseas desactivar este administrador?";
-        document.getElementById('actionForm').action = '@Url.Action("DesactivateAdmin", "Admin")';
-        document.getElementById('adminIdInput').value = adminId;
+    function confirmDeactivate(developerId) {
+        document.getElementById('confirmationMessage').textContent = "¿Estás seguro de que deseas desactivar este desarrollador?";
+        document.getElementById('actionForm').action = '@Url.Action("DesactivateDeveloper", "Admin")';
+        document.getElementById('developerIdInput').value = developerId;
         document.getElementById('confirmationModal').style.display = 'block';
     }
 
-    function confirmActivate(adminId) {
-        document.getElementById('confirmationMessage').textContent = "¿Estás seguro de que deseas activar este administrador?";
-        document.getElementById('actionForm').action = '@Url.Action("ActivateAdmin", "Admin")';
-        document.getElementById('adminIdInput').value = adminId;
+    function confirmActivate(developerId) {
+        document.getElementById('confirmationMessage').textContent = "¿Estás seguro de que deseas activar este desarrollador?";
+        document.getElementById('actionForm').action = '@Url.Action("ActivateDeveloper", "Admin")';
+        document.getElementById('developerIdInput').value = developerId;
         document.getElementById('confirmationModal').style.display = 'block';
     }
 

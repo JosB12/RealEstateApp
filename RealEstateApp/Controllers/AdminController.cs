@@ -144,10 +144,11 @@ namespace RealEstateApp.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Error al obtener los agentes: " + ex.Message);
+                ModelState.AddModelError("", "Error al obtener los admins: " + ex.Message);
                 return View(new List<AdminListViewModel>());
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> DesactivateAdmin(string adminId)
         {
@@ -250,6 +251,14 @@ namespace RealEstateApp.Controllers
         [HttpPost]
         public async Task<IActionResult> EditAdmin(EditAdminViewModel vm)
         {
+            if (!string.IsNullOrEmpty(vm.Password) || !string.IsNullOrEmpty(vm.ConfirmPassword))
+            {
+                if (vm.Password != vm.ConfirmPassword)
+                {
+                    ModelState.AddModelError("ConfirmPassword", "Las contraseñas no coinciden.");
+                    return View(vm);
+                }
+            }
             // Obtener el ID del usuario logueado
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -554,6 +563,148 @@ namespace RealEstateApp.Controllers
 
         #endregion
 
+        #region developer
+        public async Task<IActionResult> DeveloperList()
+        {
+            try
+            {
+                // Obtener los agentes para la vista
+                var developers = await _userService.GetAllDeveloperForViewAsync();
+                return View(developers);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Error al obtener los developers: " + ex.Message);
+                return View(new List<DeveloperListViewModel>());
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DesactivateDeveloper(string developerId)
+        {
+            if (string.IsNullOrEmpty(developerId))
+            {
+                TempData["Error"] = "ID de usuario no válido";
+                return RedirectToAction(nameof(DeveloperList));
+            }
+
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var response = await _userService.DeactivateUserAsync(developerId, loggedInUserId);
+
+            if (response.HasError)
+            {
+                TempData["Error"] = response.Error;
+            }
+            else
+            {
+                TempData["Success"] = "Usuario desactivado exitosamente";
+            }
+
+            return RedirectToAction(nameof(DeveloperList));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ActivateDeveloper(string developerId)
+        {
+            if (string.IsNullOrEmpty(developerId))
+            {
+                TempData["Error"] = "ID de usuario no válido";
+                return RedirectToAction(nameof(DeveloperList));
+            }
+
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var response = await _userService.ActivateUserAsync(developerId, loggedInUserId);
+
+            if (response.HasError)
+            {
+                TempData["Error"] = response.Error;
+            }
+            else
+            {
+                TempData["Success"] = "Usuario activado exitosamente";
+            }
+
+            return RedirectToAction(nameof(DeveloperList));
+        }
+
+        [HttpGet]
+        public IActionResult CreateDeveloper()
+        {
+            return View(new SaveDeveloperViewModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateDeveloper(SaveDeveloperViewModel vm)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
+
+            try
+            {
+                // Llama al servicio para registrar un administrador
+                var registerResponse = await _userService.RegisterDeveloperAsync(vm);
+
+                if (registerResponse.HasError)
+                {
+                    ModelState.AddModelError("", registerResponse.Error);
+                    return View(vm);
+                }
+
+                // Redirige al índice tras una creación exitosa
+                return RedirectToAction(nameof(DeveloperList));
+            }
+            catch (Exception ex)
+            {
+                // Maneja errores y muestra detalles en la vista
+                string errorDetails = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                ModelState.AddModelError("", "Error al crear el developer: " + errorDetails);
+                return View(vm);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditDeveloper(string developerId)
+        {
+            var user = await _userService.GetDeveloperForEditViewAsync(developerId);
+            if (user == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditDeveloper(EditDeveloperViewModel vm)
+        {
+
+            if (!string.IsNullOrEmpty(vm.Password) || !string.IsNullOrEmpty(vm.ConfirmPassword))
+            {
+                if (vm.Password != vm.ConfirmPassword)
+                {
+                    ModelState.AddModelError("ConfirmPassword", "Las contraseñas no coinciden.");
+                    return View(vm);
+                }
+            }
+            var response = await _userService.EditDeveloperAsync(vm);
+
+            if (response.HasError)
+            {
+                ModelState.AddModelError("", response.Error);
+                return View(vm);
+            }
+
+            TempData["Success"] = "Developer actualizado exitosamente.";
+            return RedirectToAction("DeveloperList");
+        }
+
+
+        #endregion
 
     }
 }
