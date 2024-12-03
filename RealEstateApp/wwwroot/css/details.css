@@ -91,11 +91,11 @@
     .improvements-container .improvement-item {
         display: inline-block;
         margin: 5px;
-        padding: 5px 10px; /* Tama�o m�s peque�o */
+        padding: 5px 10px; /* Tamanio mas pequenio */
         border: 1px solid #28a745; /* Color verde */
         border-radius: 10px;
         background-color: lightgreen;
-        font-size: 0.9rem; /* Tama�o de texto m�s peque�o */
+        font-size: 0.9rem; /* Tama�o de texto mas pequenio */
     }
 
         .improvements-container .improvement-item i {

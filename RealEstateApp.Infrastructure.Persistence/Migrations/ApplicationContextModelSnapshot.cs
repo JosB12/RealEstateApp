@@ -431,13 +431,13 @@ namespace RealEstateApp.Infrastructure.Persistence.Migrations
                     b.HasOne("RealEstateApp.Core.Domain.Entities.PropertyType", "PropertyType")
                         .WithMany("Properties")
                         .HasForeignKey("PropertyTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("RealEstateApp.Core.Domain.Entities.SaleType", "SaleType")
                         .WithMany("Properties")
                         .HasForeignKey("SaleTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("PropertyType");

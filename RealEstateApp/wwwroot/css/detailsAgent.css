@@ -1,0 +1,57 @@
+﻿/* Estilos para la lista de clientes que han enviado mensajes */
+.clients-list-container {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+    .clients-list-container h4 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        font-weight: bold;
+        color: #495057;
+    }
+
+    .clients-list-container .list-group {
+        padding: 0;
+    }
+
+    .clients-list-container .list-group-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #ffffff;
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+        .clients-list-container .list-group-item:hover {
+            background-color: #f1f1f1;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .clients-list-container .list-group-item a {
+            display: flex;
+            align-items: center;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .clients-list-container .list-group-item img {
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+
+        .clients-list-container .list-group-item strong {
+            font-size: 1rem;
+            color: #495057;
+        }

@@ -22,6 +22,5 @@ namespace RealEstateApp.Core.Application.Interfaces.Repositories
         Task<string> GenerateUniquePropertyCodeAsync();
         Task DeleteAsync(Property property);
         Task<List<Property>> GetAllAsync();
-
     }
 }

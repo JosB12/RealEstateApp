@@ -14,6 +14,7 @@ namespace RealEstateApp.Core.Application.Services
     public class UserService : IUserService
     {
         private readonly IWebAppAccountService _accountService;
+
         private readonly IMapper _mapper;
         public UserService(IWebAppAccountService accountService, IMapper mapper)
         {
@@ -86,7 +87,7 @@ namespace RealEstateApp.Core.Application.Services
                 }
             }
 
-            return await _accountService.RegisterBasicUserAsync(registerRequest, origin);
+            return await _accountService.RegisterUserAsync(registerRequest, origin);
         }
 
 
@@ -102,10 +103,12 @@ namespace RealEstateApp.Core.Application.Services
         {
             return await _accountService.GetActiveAgentsAsync(searchQuery);
         }
+
         #endregion
 
 
         #region Agent
+      
         public async Task<List<AgentListViewModel>> GetAllAgentForViewAsync()
         {
             try
@@ -116,7 +119,6 @@ namespace RealEstateApp.Core.Application.Services
             }
             catch (Exception ex)
             {
-                // Manejar el error, como registrar el error y/o retornar un mensaje
                 throw new ApplicationException("Error al obtener usuarios", ex);
             }
         }
@@ -227,11 +229,48 @@ namespace RealEstateApp.Core.Application.Services
             return await _accountService.UpdateDeveloperAsync(vm);
 
         }
-
-
-
-
         #endregion
 
+
+        #region DashboardAdmin
+        public async Task<int> GetTotalAgentAssetsAsync()
+        {
+            return await _accountService.GetTotalAgentAssetsAsync();
+        }
+
+        public async Task<int> GetTotalAgentInactiveAsync()
+        {
+            return await _accountService.GetTotalAgentInactiveAsync();
+        }
+
+        public async Task<int> GetTotalClientsAssetsAsync()
+        {
+            return await _accountService.GetTotalClientsAssetsAsync();
+        }
+
+        public async Task<int> GetTotalClientsInactiveAsync()
+        {
+            return await _accountService.GetTotalClientsInactiveAsync();
+        }
+
+        public async Task<int> GetTotalDeveloperAssetsAsync()
+        {
+            return await _accountService.GetTotalDeveloperAssetsAsync();
+        }
+
+        public async Task<int> GetTotalDeveloperInactiveAsync()
+        {
+            return await _accountService.GetTotalDeveloperInactiveAsync();
+        }
+        #endregion
+
+        #region GetById
+        public async Task<UserDto> GetUserByIdAsync(string UserId)
+        {
+           return await _accountService.GetUserByIdAsync(UserId);
+
+        }
+
+        #endregion
     }
 }

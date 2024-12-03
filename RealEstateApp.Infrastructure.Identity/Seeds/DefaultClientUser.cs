@@ -17,6 +17,7 @@ namespace RealEstateApp.Infrastructure.Identity.Seeds
             defaultUser.EmailConfirmed = true;
             defaultUser.PhoneNumberConfirmed = true;
             defaultUser.UserType = Roles.Client;
+            defaultUser.PhoneNumber = "89023241";
             defaultUser.Identification = "444-56412478-9";
             defaultUser.IsActive = true;
             defaultUser.Photo = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png";

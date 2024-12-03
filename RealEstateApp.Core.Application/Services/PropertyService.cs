@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using RealEstateApp.Core.Application.Dtos.Property;
 using RealEstateApp.Core.Application.Interfaces.Repositories;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.ViewModels;
 using RealEstateApp.Core.Application.ViewModels.Property;
-using RealEstateApp.Core.Application.ViewModels.PropertyType;
 using RealEstateApp.Core.Domain.Entities;
 using RealEstateApp.Core.Domain.Enums;
 
@@ -19,7 +17,7 @@ namespace RealEstateApp.Core.Application.Services
         private readonly IPropertyTypeRepository _propertyTypeRepository;
         private readonly IImprovementPropertyRepository _improvementPropertyRepository;
         private readonly ISalesTypeRepository _saleTypeRepository;
-        private readonly IWebAppAccountService _accountService;
+        private readonly IUserService _userService;
         private readonly IOfferService _offerService;
         private readonly IImprovementRepository _improvementRepository;
         private readonly IImageRepository _imageRepository;
@@ -27,7 +25,7 @@ namespace RealEstateApp.Core.Application.Services
 
 
         public PropertyService(
-        IWebAppAccountService accountService,
+        IUserService userService,
         IPropertyRepository propertyRepository,
         IPropertyTypeRepository propertyTypeRepository,
         IImprovementPropertyRepository improvementPropertyRepository,
@@ -43,7 +41,7 @@ namespace RealEstateApp.Core.Application.Services
             _propertyTypeRepository = propertyTypeRepository;
             _saleTypeRepository = saleTypeRepository;
             _improvementRepository = improvementRepository;
-            _accountService = accountService;
+            _userService = userService;
 
 
             _offerService = offerService;
@@ -125,7 +123,7 @@ namespace RealEstateApp.Core.Application.Services
                 var entity = properties.FirstOrDefault(p => p.Id == property.Id);
                 property.ImageUrl = entity?.Images?.FirstOrDefault()?.ImageUrl;
                 property.Improvements = entity?.Improvements?.Select(i => i.Name).ToList() ?? new List<string>();
-                var agent = await _accountService.GetUserByIdAsync(entity.UserId);
+                var agent = await _userService.GetUserByIdAsync(entity.UserId);
                 property.AgentName = agent?.FirstName + " " + agent?.LastName;
                 property.AgentPhoneNumber = agent?.PhoneNumber;
                 property.AgentPhotoUrl = agent?.Photo;
@@ -136,6 +134,71 @@ namespace RealEstateApp.Core.Application.Services
 
             return propertyViewModels;
         }
+
+
+        public async Task<List<PropertyViewModel>> FilterAgentPropertiesAsync(PropertyFilterViewModel filter, string agentId)
+        {
+            var query = _propertyRepository.GetAllAsQueryable()
+                                            .Where(p => p.UserId == agentId);
+
+            if (!string.IsNullOrEmpty(filter.PropertyCode))
+            {
+                query = query.Where(p => p.PropertyCode.Contains(filter.PropertyCode));
+            }
+
+            if (filter.PropertyTypeIds != null && filter.PropertyTypeIds.Any())
+            {
+                query = query.Where(p => filter.PropertyTypeIds.Contains(p.PropertyTypeId));
+            }
+
+            if (filter.MinPrice.HasValue)
+            {
+                query = query.Where(p => p.Price >= filter.MinPrice.Value);
+            }
+
+            if (filter.MaxPrice.HasValue)
+            {
+                query = query.Where(p => p.Price <= filter.MaxPrice.Value);
+            }
+
+            if (filter.Bedrooms.HasValue)
+            {
+                query = query.Where(p => p.Bedrooms == filter.Bedrooms.Value);
+            }
+
+            if (filter.Bathrooms.HasValue)
+            {
+                query = query.Where(p => p.Bathrooms == filter.Bathrooms.Value);
+            }
+
+            query = query.OrderByDescending(p => p.Created);
+
+            var properties = await query.Include(p => p.Images)
+                                         .Include(p => p.Improvements)
+                                         .Include(p => p.PropertyType)
+                                         .Include(p => p.SaleType)
+                                         .ToListAsync();
+
+            var propertyViewModels = _mapper.Map<List<PropertyViewModel>>(properties);
+
+            foreach (var property in propertyViewModels)
+            {
+                var entity = properties.FirstOrDefault(p => p.Id == property.Id);
+                property.ImageUrl = entity?.Images?.FirstOrDefault()?.ImageUrl;
+                property.Improvements = entity?.Improvements?.Select(i => i.Name).ToList() ?? new List<string>();
+                var agent = await _userService.GetUserByIdAsync(entity.UserId);
+                property.AgentName = agent?.FirstName + " " + agent?.LastName;
+                property.AgentPhoneNumber = agent?.PhoneNumber;
+                property.AgentPhotoUrl = agent?.Photo;
+                property.AgentEmail = agent?.Email;
+                property.PropertyType = entity?.PropertyType?.Name;
+                property.SaleType = entity?.SaleType?.Name;
+            }
+
+            return propertyViewModels;
+        }
+
+
 
         public async Task<PropertySaveViewModel> GetByIdSaveViewModel(int id)
         {
@@ -155,7 +218,7 @@ namespace RealEstateApp.Core.Application.Services
             var propertyViewModel = _mapper.Map<PropertySaveViewModel>(property);
 
             propertyViewModel.Improvements = property.Improvements?.Select(i => i.Name).ToList() ?? new List<string>();
-            var agent = await _accountService.GetUserByIdAsync(property.UserId);
+            var agent = await _userService.GetUserByIdAsync(property.UserId);
             propertyViewModel.AgentName = agent?.FirstName + " " + agent?.LastName;
             propertyViewModel.AgentPhoneNumber = agent?.PhoneNumber;
             propertyViewModel.AgentPhotoUrl = agent?.Photo;

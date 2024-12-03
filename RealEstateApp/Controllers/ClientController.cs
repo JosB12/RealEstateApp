@@ -9,6 +9,7 @@ namespace RealEstateApp.Controllers
 {
     public class ClientController : Controller
     {
+
         private readonly IPropertyService _propertyService;
         private readonly IFavoriteService _favoriteService;
 

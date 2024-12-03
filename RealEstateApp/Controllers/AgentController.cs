@@ -1,23 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Core.Application.Dtos.Account;
 using RealEstateApp.Core.Application.Dtos.Account.Edit;
+using RealEstateApp.Core.Application.Dtos.Char;
+using RealEstateApp.Core.Application.Enums;
 using RealEstateApp.Core.Application.Helpers;
 using RealEstateApp.Core.Application.Interfaces.Repositories;
 using RealEstateApp.Core.Application.Interfaces.Services;
-using RealEstateApp.Core.Application.Services;
 using RealEstateApp.Core.Application.ViewModels;
 using RealEstateApp.Core.Application.ViewModels.Chat;
+using RealEstateApp.Core.Application.ViewModels.ChatAgent;
 using RealEstateApp.Core.Application.ViewModels.Offer;
-using RealEstateApp.Core.Domain.Entities;
-using RealEstateApp.Core.Domain.Enums;
-using RealEstateApp.Infrastructure.Persistence.Repositories;
+using RealEstateApp.Core.Application.ViewModels.Property;
 using System.Security.Claims;
 
 namespace RealEstateApp.Controllers
 {
     public class AgentController : Controller
     {
-
+        private readonly ILogger<AgentController> _logger;
         private readonly IPropertyService _propertyService;
         private readonly IPropertyTypeService _propertyTypeService;
         private readonly ISalesTypeService _salesTypeService;
@@ -28,17 +29,24 @@ namespace RealEstateApp.Controllers
         private readonly IUserService _userService;
         private readonly IChatService _chatService;
         private readonly IOfferService _offerService;
+        private readonly IMapper _mapper;
 
 
         public AgentController(
+            IMapper mapper,
+            ILogger<AgentController> logger,
             IHttpContextAccessor httpContextAccessor,
             IPropertyService propertyService,
             IPropertyTypeService propertyTypeService,
             IImprovementService improvementService,
             ISalesTypeService salesTypeService,
             IPropertyRepository propertyRepository,
-            IUserService userService, IChatService chatService, IOfferService offerService)
+            IUserService userService, 
+            IChatService chatService, 
+            IOfferService offerService)
         {
+            _mapper = mapper;
+            _logger = logger;
             _httpContextAccessor = httpContextAccessor;
             _propertyService = propertyService;
             _propertyTypeService = propertyTypeService;
@@ -53,6 +61,9 @@ namespace RealEstateApp.Controllers
         }
 
         #region home
+
+
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -61,8 +72,10 @@ namespace RealEstateApp.Controllers
             {
                 return RedirectToAction("AccessDenied", "Home");
             }
-
             string agentId = user.Id;
+
+            var propertyTypes = await _propertyTypeService.GetAllAsync();
+            ViewBag.PropertyTypes = propertyTypes;
 
             var properties = await _propertyService.GetPropertiesByAgentIdAsync(agentId);
             if (properties == null || !properties.Any())
@@ -83,6 +96,31 @@ namespace RealEstateApp.Controllers
             ViewData["AgentName"] = $"{user.UserName}";
 
             return View(properties);
+        }
+
+        #endregion
+
+        #region filter
+
+        [HttpPost]
+        public async Task<IActionResult> Filter(PropertyFilterViewModel filter)
+        {
+            // Obtén el ID del agente logeado desde el contexto de usuario
+            var user = HttpContext.Session.Get<AuthenticationResponse>("user");
+            if (user == null || !user.Roles.Contains("Agent"))
+            {
+                return RedirectToAction("AccessDenied", "Home");
+            }
+            string agentId = user.Id;
+
+            var propertyTypes = await _propertyTypeService.GetAllAsync();
+            ViewBag.PropertyTypes = propertyTypes;
+
+            var properties = await _propertyService.FilterAgentPropertiesAsync(filter, agentId);
+
+
+            // Renderiza la vista con los resultados filtrados
+            return View("FilterResults", properties);
         }
 
         #endregion
@@ -355,7 +393,7 @@ namespace RealEstateApp.Controllers
         #endregion
 
 
-        #region chat
+        #region Detail
         public async Task<IActionResult> Details(int id)
         {
             // Recuperar la propiedad por su ID, junto con las ofertas relacionadas
@@ -379,44 +417,119 @@ namespace RealEstateApp.Controllers
                 ViewBag.Chats = new List<ChatMessageViewModel>();
                 return View(property);
             }
+            var clientUserIds = await _chatService.GetClientsByPropertyIdAsync(id);
 
-            // Recuperar los chats asociados a la propiedad y al agente actual
-            var chats = await _chatService.GetChatsByPropertyAndUserIdAsync(id, user.Id);
-            ViewBag.Chats = chats ?? new List<ChatMessageViewModel>();
-
-            return View(property);
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> SendMessageAsAgent(int propertyId, string message, string clientId)
-        {
-            var user = HttpContext.Session.Get<AuthenticationResponse>("user");
-            if (user == null || !user.Roles.Contains("Agent"))
+            var clients = new List<ClientViewModel>();
+            foreach (var userId in clientUserIds)
             {
-                return Json(new { success = false, message = "User not authenticated or not an agent" });
+                var client = await _userService.GetUserByIdAsync(userId);  // Usamos el UserService para obtener detalles del usuario
+                if (client != null)
+                {
+                    clients.Add(new ClientViewModel
+                    {
+                        UserId = client.Id,
+                        FirstName = client.FirstName,
+                        LastName = client.LastName,
+                        Photo = client.Photo
+                    });
+                }
             }
 
-            // Validar que el agente tenga acceso a la propiedad
-            var property = await _propertyService.GetByIdSaveViewModel(propertyId);
-
-
-            var chat = new ChatMessageViewModel
-            {
-                UserId = clientId, // El cliente al que se envía el mensaje
-                PropertyId = propertyId,
-                Message = message,
-                IsAgent = true,
-                SendDate = DateTime.Now
-            };
-
-            await _chatService.SendMessageAsync(chat);
-            return Json(new { success = true });
+            ViewBag.Clients = clients;
+            return View(property);
         }
-
         #endregion
 
+        #region Chat
+        // Método que muestra los mensajes entre un cliente y un agente para una propiedad específica
+        public async Task<IActionResult> ChatWithClient(string clientId, int propertyId)
+        {
+            var client = await _userService.GetUserByIdAsync(clientId);
+            // Obtener los mensajes entre el cliente y el agente para la propiedad
+            var messages = await _chatService.GetMessagesByClientAndPropertyAsync(clientId, propertyId);
 
+            
+            // Crear el modelo de vista
+            var chatViewModel = new ChatAgentAndClientsViewModel
+            {
+                ClientId = clientId,
+                ClientName = $"{client.FirstName} {client.LastName}",
+                PropertyId = propertyId,
+                Messages = messages ?? new List<ChatMessageAgentViewModel>() // no pasar null
+            };
+
+            // Retornar la vista con el modelo
+            return View(chatViewModel);
+        }
+        [HttpPost]
+        public async Task<IActionResult> SendMessage(SendMessageDto dto)
+        {
+            var user = HttpContext.Session.Get<AuthenticationResponse>("user");
+            ChatAgentAndClientsViewModel model = null; // Declarar el model fuera del bloque try
+
+            try
+            {
+                // Validar datos básicos
+                if (string.IsNullOrEmpty(dto.ClientId) || dto.PropertyId <= 0)
+                {
+                    throw new ArgumentException("Datos insuficientes para procesar el mensaje.");
+                }
+
+                // Mapear DTO a ViewModel usando AutoMapper
+                model = _mapper.Map<ChatAgentAndClientsViewModel>(dto);
+                model.SenderId = user.Id; // Asignar el SenderId manualmente
+
+
+
+                // Validación del modelo
+                if (!ModelState.IsValid)
+                {
+                    var client = await _userService.GetUserByIdAsync(model.ClientId);
+                    model.ClientName = $"{client.FirstName} {client.LastName}";
+                    model.Messages = await _chatService.GetMessagesByClientAndPropertyAsync(model.ClientId, model.PropertyId);
+
+                    // Registrar los errores de validación
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    throw new InvalidOperationException("Errores del formulario: " + string.Join(", ", errors));
+                }
+
+                // Enviar mensaje
+                await _chatService.SendMessageAsync(
+                    model.SenderId,
+                    model.ClientId,
+                    model.PropertyId,
+                    model.Content
+                );
+
+                // Redirigir tras éxito
+                return RedirectToAction("ChatWithClient", new { clientId = model.ClientId, propertyId = model.PropertyId });
+            }
+            catch (Exception ex)
+            {
+                if (model != null && !string.IsNullOrEmpty(model.ClientId) && model.PropertyId > 0)
+                {
+                    var client = await _userService.GetUserByIdAsync(model.ClientId);
+                    model.ClientName = $"{client.FirstName} {client.LastName}";
+                    model.Messages = await _chatService.GetMessagesByClientAndPropertyAsync(model.ClientId, model.PropertyId);
+                }
+
+                // Mostrar el error tal como lo genera el sistema
+                model ??= new ChatAgentAndClientsViewModel(); // Si model es nulo, inicializarlo aquí
+                model.HasError = true;
+                model.Error = ex.Message;
+                return View("ChatWithClient", model);
+            }
+        }
+
+
+
+
+
+
+        #endregion
 
         #region Offers
         public async Task<IActionResult> GetOffers(int propertyId)
@@ -481,13 +594,6 @@ namespace RealEstateApp.Controllers
             return Json(new { success = true });
         }
         #endregion
-
-
-
-
-
-
-
 
     }
 }
