@@ -18,7 +18,6 @@ public class Program
         builder.Services.AddSession();
         builder.Services.AddPersistenceInfrastructure(builder.Configuration);
         builder.Services.AddIdentityInfrastructureForWebApp(builder.Configuration);
-        builder.Services.AddIdentityInfrastructureForWebApi(builder.Configuration);
         builder.Services.AddSharedInfrastructure(builder.Configuration);
         builder.Services.AddApplicationLayerForWebApp();
         builder.Services.AddScoped<LoginAuthorize>();
