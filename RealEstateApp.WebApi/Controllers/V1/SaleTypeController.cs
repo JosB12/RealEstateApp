@@ -99,7 +99,8 @@ namespace RealEstateApp.WebApi.Controllers.V1
         [Authorize(Roles = "Admin")]
         [SwaggerOperation(
              Summary = "Eliminar un tipo de venta",
-             Description = "Recibe los parametros necesarios para eliminar un tipo de venta existente"
+             Description = "Recibe los parametros necesarios para eliminar un tipo de venta existente, al eliminar un tipo de venta +" +
+            "se eliminan las propiedades asociada con esta"
        )]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
