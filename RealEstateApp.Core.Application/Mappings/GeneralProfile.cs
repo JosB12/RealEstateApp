@@ -43,6 +43,37 @@ namespace RealEstateApp.Core.Application.Mappings
             CreateMap<PropertyTypeSaveViewModel, PropertyType>().ReverseMap();
             #endregion
 
+            #region SalesType
+            CreateMap<SaleType, SaleTypeViewModel>()
+            .ForMember(dest => dest.SaleTypeCount, opt => opt.Ignore());
+            CreateMap<SaveSalesTypeViewModel, SaleType>().ReverseMap();
+
+
+            #endregion
+
+            #region Improvement
+            CreateMap<Improvement, ImprovementViewModel>().ReverseMap()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
+
+            CreateMap<SaveImprovementViewModel, Improvement>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+               .ForMember(dest => dest.Created, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
+
+                .ForMember(dest => dest.LastModified, opt => opt.Ignore())
+
+                .ForMember(dest => dest.LastModifiedBy, opt => opt.Ignore())
+                .ForMember(dest => dest.Properties, opt => opt.Ignore())
+                .ReverseMap();
+
+
+
+            #endregion
+
 
             CreateMap<AgentDto, AgentListViewModel>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

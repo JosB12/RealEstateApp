@@ -91,13 +91,13 @@ namespace RealEstateApp.Infrastructure.Persistence.Contexts
                 .HasMany(pt => pt.Properties)
                 .WithOne(p => p.PropertyType)
                 .HasForeignKey(p => p.PropertyTypeId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<SaleType>()
                 .HasMany(st => st.Properties)
                 .WithOne(p => p.SaleType)
                 .HasForeignKey(p => p.SaleTypeId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Offer>()
                 .HasOne(o => o.Property)

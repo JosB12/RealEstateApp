@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RealEstateApp.Infrastructure.Persistence.Contexts;
 
@@ -11,9 +12,11 @@ using RealEstateApp.Infrastructure.Persistence.Contexts;
 namespace RealEstateApp.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20241201013152_UpdateDeleteBehaviorForPropertyTypeAndSaleType")]
+    partial class UpdateDeleteBehaviorForPropertyTypeAndSaleType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,9 +54,6 @@ namespace RealEstateApp.Infrastructure.Persistence.Migrations
 
                     b.Property<int>("PropertyId")
                         .HasColumnType("int");
-
-                    b.Property<string>("ReceiverId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("SendDate")
                         .HasColumnType("datetime2");
