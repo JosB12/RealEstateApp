@@ -13,16 +13,13 @@ using RealEstateApp.Infrastructure.Identity.Contexts;
 using RealEstateApp.Infrastructure.Identity.Entities;
 using RealEstateApp.Infrastructure.Identity.Seeds;
 using RealEstateApp.Infrastructure.Identity.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace RealEstateApp.Infrastructure.Identity
 {
     public static class ServiceRegistration
     {
+        #region webApp
         public static void AddIdentityInfrastructureForWebApp(this IServiceCollection services, IConfiguration configuration)
         {
             #region Contexts
@@ -63,7 +60,7 @@ namespace RealEstateApp.Infrastructure.Identity
             .AddCookie(IdentityConstants.ApplicationScheme, options =>
             {
                 options.ExpireTimeSpan = TimeSpan.FromHours(24);
-                options.LoginPath = "/Home/Login";
+                options.LoginPath = "/Home";
                 options.AccessDeniedPath = "/Home/AccessDenied";
             });
             #endregion
@@ -73,6 +70,9 @@ namespace RealEstateApp.Infrastructure.Identity
             #endregion
         }
 
+        #endregion
+
+        #region WebApi
         public static void AddIdentityInfrastructureForWebApi(this IServiceCollection services, IConfiguration configuration)
         {
             #region Contexts
@@ -140,13 +140,17 @@ namespace RealEstateApp.Infrastructure.Identity
                     }
                 };
             });
+
             #endregion
 
             #region Services
-            //services.AddTransient<IWebAppAccountService, AccountServiceForWebApp>();
+            services.AddTransient<IWebApiAccountService, AccountServiceForWebApi>();
+
             #endregion
         }
+        #endregion
 
+        #region Runaync
         public static async Task RunAsyncSeed(this IServiceProvider serviceProvider)
         {
             using (var scope = serviceProvider.CreateScope())
@@ -173,6 +177,9 @@ namespace RealEstateApp.Infrastructure.Identity
             }
         }
 
+        #endregion
+
+        #region configure
         private static void ConfigureContext(IServiceCollection services, IConfiguration configuration)
         {
             #region Contexts
@@ -191,5 +198,6 @@ namespace RealEstateApp.Infrastructure.Identity
             }
             #endregion
         }
+        #endregion
     }
 }

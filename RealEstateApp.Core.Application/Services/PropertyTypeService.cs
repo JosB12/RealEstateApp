@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using RealEstateApp.Core.Application.Dtos.PropertyType;
 using RealEstateApp.Core.Application.Interfaces.Repositories;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.ViewModels.PropertyType;

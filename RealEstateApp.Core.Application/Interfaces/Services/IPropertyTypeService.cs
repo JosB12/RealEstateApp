@@ -1,4 +1,5 @@
-﻿using RealEstateApp.Core.Application.ViewModels;
+﻿using RealEstateApp.Core.Application.Dtos.PropertyType;
+using RealEstateApp.Core.Application.ViewModels;
 using RealEstateApp.Core.Application.ViewModels.PropertyType;
 using RealEstateApp.Core.Domain.Entities;
 
