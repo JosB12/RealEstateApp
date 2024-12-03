@@ -1,4 +1,5 @@
-﻿@using RealEstateApp.Core.Domain.Enums
+﻿@using System.Linq
+@using RealEstateApp.Core.Domain.Enums
 @model RealEstateApp.Core.Application.ViewModels.Property.PropertySaveViewModel
 
 @{
@@ -7,6 +8,8 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 <link rel="stylesheet" href="~/css/details.css" />
+<link rel="stylesheet" href="~/css/detailsAgent.css" />
+
 
 <h2 class="property-details-title">Detalles de la Propiedad</h2>
 
@@ -66,8 +69,18 @@
     </div>
 </div>
 
+
+
 <!-- Lista de Clientes que han hecho ofertas -->
-@if (Model.Offers != null && Model.Offers.Any())
+@if (Model.Offers == null)
+{
+    <div class="alert alert-warning">No se han cargado las ofertas.</div>
+}
+else if (!Model.Offers.Any())
+{
+    <div class="alert alert-info">No hay ofertas disponibles para esta propiedad.</div>
+}
+else
 {
     <div class="clients-offers-container">
         <h4><i class="fas fa-users"></i> Clientes que han hecho ofertas</h4>
@@ -99,4 +112,29 @@
             }
         </ul>
     </div>
+    <!-- Lista de Clientes que han enviado mensajes -->
+    @if (ViewBag.Clients != null && (ViewBag.Clients as List<RealEstateApp.Core.Application.ViewModels.ChatAgent.ClientViewModel>)?.Any() == true)
+    {
+        <div class="clients-list-container">
+            <h4><i class="fas fa-users"></i> Clientes que han enviado mensajes</h4>
+            <ul class="list-group mt-3">
+                @foreach (var client in ViewBag.Clients as List<RealEstateApp.Core.Application.ViewModels.ChatAgent.ClientViewModel>)
+                {
+                    <li class="list-group-item">
+                        <a href="@Url.Action("ChatWithClient", "Agent", new { clientId = client.UserId, propertyId = Model.Id })" class="d-flex align-items-center">
+                            <img src="@client.Photo" alt="Client Photo" width="30" height="30" />
+                            <strong>@client.FirstName @client.LastName</strong>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+    else
+    {
+        <p>ningún cliente ha enviado mensaje</p>
+    }
+
+
+
 }

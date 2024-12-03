@@ -23,6 +23,8 @@ using RealEstateApp.Core.Application.Features.Improvements.Commands.UpdateImprov
 using RealEstateApp.Core.Application.Features.PropertiesTypes.Commands.CreatePropertyType;
 using RealEstateApp.Core.Application.Features.PropertiesTypes.Commands.UpdatePropertieType;
 using RealEstateApp.Core.Application.Features.SalesTypes.Commands.CreateSaleType;
+using RealEstateApp.Core.Application.Dtos.Char;
+using RealEstateApp.Core.Application.ViewModels.ChatAgent;
 
 
 namespace RealEstateApp.Core.Application.Mappings
@@ -229,12 +231,17 @@ namespace RealEstateApp.Core.Application.Mappings
 
             #region Chat
             CreateMap<Chat, ChatMessageViewModel>().ReverseMap();
+
+            CreateMap<SendMessageDto, ChatAgentAndClientsViewModel>()
+                .ForMember(dest => dest.SenderId, opt => opt.Ignore()) // Ignorar SenderId ya que se asignará manualmente
+                .ReverseMap();
+
+
             #endregion
 
             #region CQRS
 
             CreateMap<CreateImprovementCommand, Improvement>()
-              .ForMember(x => x.Created, opt => opt.Ignore())
               .ForMember(x => x.CreatedBy, opt => opt.Ignore())
               .ForMember(x => x.LastModified, opt => opt.Ignore())
               .ForMember(x => x.LastModifiedBy, opt => opt.Ignore())

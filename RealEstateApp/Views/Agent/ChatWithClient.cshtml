@@ -1,0 +1,49 @@
+﻿@model RealEstateApp.Core.Application.ViewModels.ChatAgent.ChatAgentAndClientsViewModel
+<link rel="stylesheet" href="~/css/chat.css" />
+
+@if (Model.HasError)
+{
+    <div class="alert alert-danger">
+        <strong>@Model.Error</strong>
+    </div>
+}
+
+<h2 class="chat-title">Chat con el cliente @Model.ClientName</h2>
+
+<div class="chat-container">
+    <!-- Mostrar los mensajes -->
+    <div class="chat-messages">
+        @foreach (var message in Model.Messages)
+        {
+            <div class="chat-message @(message.SenderName.Contains("Agente") ? "agent-message" : "client-message")">
+                <strong>@message.SenderName</strong> <span class="message-time">@message.DateSent.ToString("dd/MM/yyyy HH:mm")</span>
+                <p>@message.Content</p>
+            </div>
+        }
+    </div>
+
+    <!-- Formulario para enviar un nuevo mensaje -->
+    <div class="chat-input">
+        <form asp-action="SendMessage" method="post">
+            <input type="hidden" name="SenderId" value="@Model.SenderId" />
+            <input type="hidden" name="ReceiverId" value="@Model.ClientId" />
+            <input type="hidden" name="ClientId" value="@Model.ClientId" />
+            <input type="hidden" name="PropertyId" value="@Model.PropertyId" />
+
+            <textarea name="Content" placeholder="Escribe un mensaje..." required></textarea>
+            <span class="text-danger" id="content-error" style="display:none;">El mensaje no puede estar vacío.</span>
+
+            <button type="submit" class="btn btn-send">Enviar</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.querySelector("form").addEventListener("submit", function (e) {
+        const content = document.querySelector("textarea[name='Content']").value.trim();
+        if (!content) {
+            e.preventDefault();
+            document.getElementById("content-error").style.display = "block";
+        }
+    });
+</script>
