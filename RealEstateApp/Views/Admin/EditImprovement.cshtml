@@ -1,0 +1,47 @@
+﻿@model RealEstateApp.Core.Application.ViewModels.SaveImprovementViewModel
+
+<h2>Editar Mejora</h2>
+
+<!-- Mensajes de éxito o error -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<!-- Formulario de edición -->
+<form asp-action="EditImprovement" method="post">
+    <!-- Campo oculto para el ID de la mejora -->
+    <input type="hidden" asp-for="Id" />
+
+    <!-- Campo para el nombre de la mejora -->
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <!-- Campo para la descripción de la mejora -->
+    <div class="form-group">
+        <label asp-for="Description" class="control-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <!-- Botones de acción -->
+    <button type="submit" class="btn btn-primary mt-3">Guardar Cambios</button>
+    <a asp-action="ImprovementList" class="btn btn-secondary mt-3">Cancelar</a>
+</form>
+
+<!-- Scripts de validación -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>

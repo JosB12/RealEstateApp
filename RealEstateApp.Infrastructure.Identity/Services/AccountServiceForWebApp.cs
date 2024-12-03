@@ -1,8 +1,6 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using RealEstateApp.Core.Application.Dtos.Account;
 using RealEstateApp.Core.Application.Enums;
 using RealEstateApp.Core.Application.Dtos.Account.Get;
@@ -10,13 +8,11 @@ using RealEstateApp.Core.Application.Dtos.Update;
 using RealEstateApp.Core.Application.Interfaces.Repositories;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.ViewModels;
-using RealEstateApp.Core.Domain.Settings;
 using RealEstateApp.Infrastructure.Identity.Entities;
 using System.Text;
 using RealEstateApp.Core.Application.Dtos.Account.Create;
 using RealEstateApp.Core.Application.Dtos.Account.EditUsers;
 using RealEstateApp.Core.Application.ViewModels.User;
-using System.Security.Claims;
 using RealEstateApp.Core.Application.Dtos.Account.Edit;
 
 
@@ -28,13 +24,12 @@ namespace RealEstateApp.Infrastructure.Identity.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IPropertyRepository _propertyRepository;
         private readonly IEmailService _emailService;
-        private object _httpContextAccessor ;
 
         public AccountServiceForWebApp(
                      UserManager<ApplicationUser> userManager,
                      SignInManager<ApplicationUser> signInManager,
                      IEmailService emailService,
-                     IOptions<JWTSettings> jwtSettings, IPropertyRepository propertyRepository)
+                     IPropertyRepository propertyRepository)
                    
         {
 
@@ -43,6 +38,7 @@ namespace RealEstateApp.Infrastructure.Identity.Services
             _propertyRepository = propertyRepository;
             _emailService = emailService;
         }
+
 
         
         #region login
@@ -71,6 +67,12 @@ namespace RealEstateApp.Infrastructure.Identity.Services
                 response.Error = $"Account no confirmed for {request.UserName}";
                 return response;
             }
+            if (user.UserType == Roles.Developer)
+            {
+                response.HasError = true;
+                response.Error = $"El rol {user.UserType} no tiene permiso para entrar en la WebApp";
+                return response;
+            }
 
             response.Id = user.Id;
             response.Email = user.Email;
@@ -97,7 +99,7 @@ namespace RealEstateApp.Infrastructure.Identity.Services
         #endregion
 
         #region register (JoinApp)
-        public async Task<RegisterResponse> RegisterBasicUserAsync(RegisterRequest request, string origin)
+        public async Task<RegisterResponse> RegisterUserAsync(RegisterRequest request, string origin)
         {
             RegisterResponse response = new()
             {
@@ -119,13 +121,14 @@ namespace RealEstateApp.Infrastructure.Identity.Services
                 response.Error = $"Email '{request.Email}' is already registered.";
                 return response;
             }
+           
 
             var user = new ApplicationUser
             {
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 PhoneNumber = request.Phone,
-                Photo = request.PhotoUrl ?? "default_profile_image_url",
+                Photo = request.PhotoUrl,
                 UserName = request.UserName,
                 Email = request.Email,
                 UserType = request.UserType,
@@ -354,12 +357,12 @@ namespace RealEstateApp.Infrastructure.Identity.Services
         #endregion
 
         #region Agent
+        //base
         public async Task<List<AgentDto>> GetAllAgentsAsync()
         {
-            // Obtener todos los usuarios con el rol de Agente, ordenados por Id
             var users = await _userManager.Users
-                .Where(u => u.UserType == Roles.Agent) // Filtra solo agentes
-                .OrderBy(u => u.Id) // Ordena por Id (en orden de creación aproximado)
+                .Where(u => u.UserType == Roles.Agent) 
+                .OrderBy(u => u.Id) 
                 .ToListAsync();
 
             var agentDtoList = new List<AgentDto>();
@@ -918,6 +921,7 @@ namespace RealEstateApp.Infrastructure.Identity.Services
         }
 
 
+        #region userById
         public async Task<UserDto> GetUserByIdAsync(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -936,7 +940,10 @@ namespace RealEstateApp.Infrastructure.Identity.Services
                 Email = user.Email
             };
         }
+        #endregion
 
-        
+
+
+
     }
 }

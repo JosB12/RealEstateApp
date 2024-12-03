@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using RealEstateApp.Core.Application.Enums;
 using RealEstateApp.Infrastructure.Identity.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RealEstateApp.Infrastructure.Identity.Seeds
 {
@@ -22,6 +17,7 @@ namespace RealEstateApp.Infrastructure.Identity.Seeds
             defaultUser.EmailConfirmed = true;
             defaultUser.PhoneNumberConfirmed = true;
             defaultUser.UserType = Roles.Agent;
+            defaultUser.PhoneNumber = "1687289361";
             defaultUser.Identification = "555-23412478-9";
             defaultUser.IsActive = true;
             defaultUser.Photo = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png";

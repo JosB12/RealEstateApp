@@ -21,14 +21,11 @@ namespace RealEstateApp.Core.Application.Interfaces.Services
         Task<RegisterAdminResponse> RegisterAdminAsync(SaveAdminViewModel vm);
         Task<RegisterDeveloperResponse> RegisterDeveloperAsync(SaveDeveloperViewModel vm);
 
-
         Task<EditAdminViewModel> GetAdminForEditViewAsync(string userId);
         Task<EditDeveloperViewModel> GetDeveloperForEditViewAsync(string userId);
 
         Task<UpdateUserResponse> EditAdminAsync(EditAdminViewModel vm, string loggedInUserId);
         Task<UpdateUserResponse> EditDeveloperAsync(EditDeveloperViewModel vm);
-
-
 
         Task<UpdateUserResponse> DeactivateUserAsync(string userId, string loggedInUserId);
         Task<UpdateUserResponse> ActivateUserAsync(string userId, string loggedInUserId);
@@ -38,5 +35,13 @@ namespace RealEstateApp.Core.Application.Interfaces.Services
         Task<List<AgentViewModel>> GetActiveAgentsAsync(string searchQuery = "");
         Task<EditProfileResponse> UpdateUserProfileAsync(string userId, EditProfileRequest request);
         Task<EditProfileRequest> GetUserProfileToEditAsync(string userId);
+        Task<int> GetTotalAgentAssetsAsync();
+        Task<int> GetTotalAgentInactiveAsync();
+        Task<int> GetTotalClientsAssetsAsync();
+        Task<int> GetTotalClientsInactiveAsync();
+        Task<int> GetTotalDeveloperAssetsAsync();
+        Task<int> GetTotalDeveloperInactiveAsync();
+        Task<UserDto> GetUserByIdAsync(string UserId);
     }
+    
 }

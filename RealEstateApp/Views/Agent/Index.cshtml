@@ -4,74 +4,198 @@
 @{
     ViewData["Title"] = "Home del Agente";
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<link rel="stylesheet" href="~/css/home.css" />
 
-<div class="container">
-    <h2>Propiedades de @ViewData["AgentName"]</h2>
-
-    @if (Model == null || !Model.Any())
-    {
-        <div class="alert alert-warning">No se encontraron propiedades para este agente.</div>
-    }
-
-    <div class="row">
-        <!-- Propiedades Disponibles -->
-        <div class="col-12 mb-4">
-            <h3>Propiedades Disponibles</h3>
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-                @foreach (var property in Model.Where(p => p.Status == (int)PropertyStatus.Available))
-                {
-                    <div class="col">
-                        <div class="card border-0 shadow-sm h-100">
-                            <img src="@property.Images.FirstOrDefault()" class="card-img-top img-property" alt="Imagen de la propiedad">
-                            <div class="card-body">
-                                <p class="card-text">@property.PropertyType</p>
-                                <h5 class="card-title">Código: @property.PropertyCode</h5>
-                                <p class="card-text">@property.SaleType</p>
-                                <p class="card-text">Precio: @property.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO"))</p>
-                                <p class="card-text">Habitaciones: @property.Bedrooms</p>
-                                <p class="card-text">Baños: @property.Bathrooms</p>
-                                <p class="card-text">Tamaño: @property.PropertySizeMeters m²</p>
-                                <a asp-action="Details" asp-route-id="@property.Id" class="btn btn-primary btn-sm mt-2">Ver Detalles</a>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
-
-        <!-- Propiedades Vendidas -->
-        <div class="col-12">
-            <h3>Propiedades Vendidas</h3>
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-                @foreach (var property in Model.Where(p => p.Status == PropertyStatus.Sold))
-                {
-                    <div class="col">
-                        <div class="card border-0 shadow-sm h-100">
-                            <img src="@property.Images.FirstOrDefault()" class="card-img-top img-property" alt="Imagen de la propiedad">
-                            <div class="card-body">
-                                <p class="card-text">@property.PropertyType</p>
-                                <h5 class="card-title">Código: @property.PropertyCode</h5>
-                                <p class="card-text">@property.SaleType</p>
-                                <p class="card-text">Precio: @property.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO"))</p>
-                                <p class="card-text">Habitaciones: @property.Bedrooms</p>
-                                <p class="card-text">Baños: @property.Bathrooms</p>
-                                <p class="card-text">Tamaño: @property.PropertySizeMeters m²</p>
-                                <span class="badge bg-danger">Vendida</span>
-                                <a asp-action="Details" asp-route-id="@property.Id" class="btn btn-secondary btn-sm mt-2">Ver Detalles</a>
-
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
+<div class="header-section">
+    <div class="header-content">
+        <h1>Propiedades de @ViewData["AgentName"]</h1>
+        <p>Explora las propiedades disponibles y vendidas del agente.</p>
     </div>
 </div>
 
-<style>
-    .img-property {
-        width: 100%;
-        height: 200px;
-        object-fit: contain;
-    }
-</style>
+<div class="container">
+    <!-- Filtros -->
+    <div class="row mb-4 filters-container">
+        <div class="col-12">
+            <form asp-action="Filter" method="post">
+                <div class="row">
+                    <div class="col-12 col-md-4">
+                        <div class="form-group">
+                            <label for="Bedrooms">Habitaciones:</label>
+                            <input type="number" name="Bedrooms" class="form-control" id="Bedrooms" placeholder="Cantidad de habitaciones" />
+                        </div>
+                        <div class="form-group">
+                            <label for="Bathrooms">Baños:</label>
+                            <input type="number" name="Bathrooms" class="form-control" id="Bathrooms" placeholder="Cantidad de baños" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="form-group">
+                            <label for="PropertyCode">Código:</label>
+                            <input type="text" name="PropertyCode" class="form-control" id="PropertyCode" placeholder="Código de la Propiedad" />
+                        </div>
+                        <div class="form-group position-relative">
+                            <label for="PropertyTypesDropdown">Tipo de Propiedad:</label>
+                            <button type="button" class="btn btn-light dropdown-toggle w-100 text-start" id="PropertyTypesDropdown">
+                                Seleccionar
+                            </button>
+                            <div class="dropdown-menu w-100 p-3" id="PropertyTypesMenu">
+                                @if (ViewBag.PropertyTypes != null)
+                                {
+                                    @foreach (var type in ViewBag.PropertyTypes)
+                                    {
+                                        <div class="form-check">
+                                            <input type="checkbox" name="PropertyTypeIds" value="@type.Id" class="form-check-input" id="type-@type.Id" />
+                                            <label class="form-check-label" for="type-@type.Id">@type.Name</label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p>No hay tipos de propiedad disponibles</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="form-group">
+                            <label>Rango de Precio:</label>
+                            <div id="price-range"></div>
+                            <input type="hidden" id="minPrice" name="MinPrice" />
+                            <input type="hidden" id="maxPrice" name="MaxPrice" />
+                            <div class="d-flex justify-content-between">
+                                <span id="minPriceOutput">0</span> - <span id="maxPriceOutput">35,000,000+</span>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-end">
+                            <button type="submit" class="btn btn-filter w-100">
+                                <i class="fas fa-search"></i> Filtrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Propiedades Disponibles -->
+    <div class="row properties-container mb-4">
+        <h3>Propiedades Disponibles</h3>
+        @foreach (var property in Model.Where(p => p.Status == (int)PropertyStatus.Available))
+        {
+            <div class="col-sm-6 col-md-4 mb-4">
+                <a asp-action="Details" asp-route-id="@property.Id" class="card-link">
+                    <div class="card h-100 shadow-sm">
+                        <div class="sale-type-badge">DISPONIBLE</div>
+                        <img class="card-img-top" src="@property.Images.FirstOrDefault()" alt="Property Image" style="object-fit: cover; height: 200px;">
+                        <div class="card-body">
+                            <p class="property-type"><strong>@property.PropertyType</strong></p>
+                            <p class="property-code">Código: @property.PropertyCode</p>
+                            <p class="property-price">RD$ @property.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO"))</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-bed"></i> <strong>Habitaciones:</strong> @property.Bedrooms</li>
+                                <li><i class="fas fa-bath"></i> <strong>Baños:</strong> @property.Bathrooms</li>
+                                <li><i class="fas fa-ruler-combined"></i> <strong>Tamaño:</strong> @property.PropertySizeMeters m²</li>
+                            </ul>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+
+    <!-- Propiedades Vendidas -->
+    <div class="row properties-container">
+        <h3>Propiedades Vendidas</h3>
+        @foreach (var property in Model.Where(p => p.Status == PropertyStatus.Sold))
+        {
+            <div class="col-sm-6 col-md-4 mb-4">
+                <a asp-action="Details" asp-route-id="@property.Id" class="card-link">
+                    <div class="card h-100 shadow-sm">
+                        <div class="sale-type-badge sold">VENDIDA</div>
+                        <img class="card-img-top" src="@property.Images.FirstOrDefault()" alt="Property Image" style="object-fit: cover; height: 200px;">
+                        <div class="card-body">
+                            <p class="property-type"><strong>@property.PropertyType</strong></p>
+                            <p class="property-code">Código: @property.PropertyCode</p>
+                            <p class="property-price">RD$ @property.Price.ToString("C0", new System.Globalization.CultureInfo("es-DO"))</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-bed"></i> <strong>Habitaciones:</strong> @property.Bedrooms</li>
+                                <li><i class="fas fa-bath"></i> <strong>Baños:</strong> @property.Bathrooms</li>
+                                <li><i class="fas fa-ruler-combined"></i> <strong>Tamaño:</strong> @property.PropertySizeMeters m²</li>
+                            </ul>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.5.0/nouislider.min.js"></script>
+    <script>
+        var priceSlider = document.getElementById('price-range');
+        noUiSlider.create(priceSlider, {
+            start: [0, 35000000],
+            connect: true,
+            range: {
+                'min': 0,
+                'max': 35000000
+            },
+            step: 1000,
+            format: {
+                to: function (value) {
+                    return Math.round(value);
+                },
+                from: function (value) {
+                    return Number(value);
+                }
+            }
+        });
+
+        function formatPrice(value) {
+            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        priceSlider.noUiSlider.on('update', function (values, handle) {
+            var minPrice = formatPrice(values[0]);
+            var maxPrice = formatPrice(values[1]) + (values[1] == 35000000 ? "+" : "");
+            document.getElementById('minPrice').value = values[0];
+            document.getElementById('maxPrice').value = values[1];
+            document.getElementById('minPriceOutput').innerText = minPrice;
+            document.getElementById('maxPriceOutput').innerText = maxPrice;
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const dropdownButton = document.getElementById("PropertyTypesDropdown");
+            const dropdownMenu = document.getElementById("PropertyTypesMenu");
+
+            // Mostrar/ocultar el menú desplegable
+            dropdownButton.addEventListener("click", function () {
+                const isVisible = dropdownMenu.style.display === "block";
+                dropdownMenu.style.display = isVisible ? "none" : "block";
+            });
+
+            // Cerrar el menú si se hace clic fuera de él
+            document.addEventListener("click", function (event) {
+                if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                    dropdownMenu.style.display = "none";
+                }
+            });
+
+            // Función de búsqueda por nombre
+            const searchBox = document.getElementById("AgentNameSearch");
+            searchBox.addEventListener("input", function () {
+                const query = searchBox.value.toLowerCase();
+                const properties = document.querySelectorAll(".property-card");
+                properties.forEach(function (property) {
+                    const name = property.querySelector(".property-title").innerText.toLowerCase();
+                    property.style.display = name.includes(query) ? "" : "none";
+                });
+            });
+        });
+    </script>
+}

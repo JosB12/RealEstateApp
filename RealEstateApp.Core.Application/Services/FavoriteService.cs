@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using RealEstateApp.Core.Application.Dtos.Account;
+using RealEstateApp.Core.Application.Helpers;
 using RealEstateApp.Core.Application.Interfaces.Repositories;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.Services;
@@ -10,16 +13,21 @@ public class FavoriteService : GenericService<FavoriteSaveViewModel, FavoriteVie
 {
     private readonly IFavoriteRepository _favoriteRepository;
     private readonly IPropertyRepository _propertyRepository;
-    private readonly IWebAppAccountService _accountService;
+    private readonly IUserService _userService;
     private readonly IMapper _mapper;
 
-    public FavoriteService(IFavoriteRepository favoriteRepository, IPropertyRepository propertyRepository, IMapper mapper, IWebAppAccountService accountService)
+    public FavoriteService( 
+        IFavoriteRepository favoriteRepository, 
+        IPropertyRepository propertyRepository, 
+        IMapper mapper,
+        IUserService userService)
         : base(favoriteRepository, mapper)
     {
         _favoriteRepository = favoriteRepository;
         _propertyRepository = propertyRepository;
         _mapper = mapper;
-        _accountService = accountService;
+        _userService = userService;
+
     }
 
     public async Task MarkAsFavoriteAsync(string userId, int propertyId)
@@ -63,7 +71,7 @@ public class FavoriteService : GenericService<FavoriteSaveViewModel, FavoriteVie
             var entity = favoriteProperties.FirstOrDefault(p => p.Id == property.Id);
             property.ImageUrl = entity?.Images?.FirstOrDefault()?.ImageUrl;
             property.Improvements = entity?.Improvements?.Select(i => i.Name).ToList() ?? new List<string>();
-            var agent = await _accountService.GetUserByIdAsync(entity.UserId);
+            var agent = await _userService.GetUserByIdAsync(entity.UserId);
             property.AgentName = agent?.FirstName + " " + agent?.LastName;
             property.AgentPhoneNumber = agent?.PhoneNumber;
             property.IsFavorite = true; // Marcar como favorito

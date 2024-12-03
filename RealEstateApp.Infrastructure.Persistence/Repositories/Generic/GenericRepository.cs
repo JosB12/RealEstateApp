@@ -82,6 +82,17 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories.Generic
         {
             return _dbSet.AsQueryable();
         }
+        public virtual IQueryable<Entity> GetAllQueryWithInclude(List<string> properties)
+        {
+            var query = _dbContext.Set<Entity>().AsQueryable();
+
+            foreach (string property in properties)
+            {
+                query = query.Include(property);
+            }
+
+            return query.AsQueryable();
+        }
 
         public async Task<bool> ExistsAsync(Expression<Func<Entity, bool>> predicate)
         {
