@@ -1,7 +1,6 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using RealEstateApp.Core.Application.Dtos.Property;
 using RealEstateApp.Core.Application.Features.Properties.Queries.GetAllProperties;
 using RealEstateApp.Core.Application.Features.Properties.Queries.GetAllPropertyByCode;

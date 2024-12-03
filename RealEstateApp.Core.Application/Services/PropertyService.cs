@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using RealEstateApp.Core.Application.Dtos.Property;
 using RealEstateApp.Core.Application.Interfaces.Repositories;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.ViewModels;
 using RealEstateApp.Core.Application.ViewModels.Property;
-using RealEstateApp.Core.Application.ViewModels.PropertyType;
 using RealEstateApp.Core.Domain.Entities;
 using RealEstateApp.Core.Domain.Enums;
 

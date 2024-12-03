@@ -13,11 +13,11 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
         builder.Services.AddControllersWithViews();
         builder.Services.AddSession();
         builder.Services.AddPersistenceInfrastructure(builder.Configuration);
         builder.Services.AddIdentityInfrastructureForWebApp(builder.Configuration);
+        builder.Services.AddIdentityInfrastructureForWebApi(builder.Configuration);
         builder.Services.AddSharedInfrastructure(builder.Configuration);
         builder.Services.AddApplicationLayerForWebApp(builder.Configuration);
         builder.Services.AddScoped<LoginAuthorize>();
