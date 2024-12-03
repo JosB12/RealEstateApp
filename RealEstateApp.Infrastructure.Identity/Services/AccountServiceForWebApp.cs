@@ -536,6 +536,7 @@ namespace RealEstateApp.Infrastructure.Identity.Services
                     UserName = user.UserName,
                     Identification = user.Identification,
                     Email = user.Email,
+                    
                     IsActive = user.IsActive
                 });
             }
@@ -567,26 +568,37 @@ namespace RealEstateApp.Infrastructure.Identity.Services
                 UserType = Roles.Admin,
             };
 
-            
+            // Crear el usuario
             var result = await _userManager.CreateAsync(user, request.Password);
             if (!result.Succeeded)
             {
                 response.HasError = true;
-                response.Error = $"Error creating user: {string.Join(", ", result.Errors.Select(e => e.Description))}";
+                response.Error = $"Error al crear el usuario: {string.Join(", ", result.Errors.Select(e => e.Description))}";
+                return response;
+            }
+
+            // Confirmar el correo del usuario automáticamente
+            user.EmailConfirmed = true; // Establece el correo como confirmado
+            var updateResult = await _userManager.UpdateAsync(user); // Actualiza el usuario con el correo confirmado
+            if (!updateResult.Succeeded)
+            {
+                response.HasError = true;
+                response.Error = "Hubo un error al confirmar el correo del usuario.";
                 return response;
             }
 
             // Asignar el rol de administrador
             var roleResult = await _userManager.AddToRoleAsync(user, "Admin");
-
             if (!roleResult.Succeeded)
             {
                 response.HasError = true;
                 response.Error = "Hubo un error al asignar el rol de administrador.";
                 return response;
             }
+
             return response;
         }
+
 
         public async Task<EditAdminDto> GetAdminForEditAsync(string adminId)
         {
@@ -742,26 +754,37 @@ namespace RealEstateApp.Infrastructure.Identity.Services
                 UserType = Roles.Developer,
             };
 
-
+            // Crear el usuario
             var result = await _userManager.CreateAsync(user, request.Password);
             if (!result.Succeeded)
             {
                 response.HasError = true;
-                response.Error = $"Error creating user: {string.Join(", ", result.Errors.Select(e => e.Description))}";
+                response.Error = $"Error al crear el usuario: {string.Join(", ", result.Errors.Select(e => e.Description))}";
                 return response;
             }
 
-            // Asignar el rol de administrador
-            var roleResult = await _userManager.AddToRoleAsync(user, "Developer");
+            // Confirmar el correo del usuario automáticamente
+            user.EmailConfirmed = true; // Establece el correo como confirmado
+            var updateResult = await _userManager.UpdateAsync(user); // Actualiza el usuario con el correo confirmado
+            if (!updateResult.Succeeded)
+            {
+                response.HasError = true;
+                response.Error = "Hubo un error al confirmar el correo del usuario.";
+                return response;
+            }
 
+            // Asignar el rol de Developer
+            var roleResult = await _userManager.AddToRoleAsync(user, "Developer");
             if (!roleResult.Succeeded)
             {
                 response.HasError = true;
                 response.Error = "Hubo un error al asignar el rol de Developer.";
                 return response;
             }
+
             return response;
         }
+
         public async Task<EditDeveloperDto> GetDeveloperForEditAsync(string developerId)
         {
             var user = await _userManager.FindByIdAsync(developerId);
