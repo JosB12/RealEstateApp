@@ -16,7 +16,7 @@
                         <i class="fas fa-user"></i> @ViewData["Title"]
                     </h2>
 
-                    <!-- Mostrar errores generales -->
+                    <!--errores generales -->
                     @if (Model.HasError)
                     {
                         <div class="alert alert-danger joinapp-alert">
@@ -24,7 +24,7 @@
                         </div>
                     }
 
-            <!-- Formulario de registro -->
+            <!-- registro -->
             <form method="post" asp-action="JoinApp" enctype="multipart/form-data">
                 <div class="form-group">
                     <label asp-for="FirstName">Nombre</label>
