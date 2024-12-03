@@ -11,7 +11,6 @@ namespace RealEstateApp.Core.Application.Interfaces.Services
         Task<List<OfferViewModel>> GetOffersByPropertyIdAsync(int propertyId);
         Task<Offer> GetOfferByIdAsync(int offerId);
         Task<List<Offer>> GetOffersForClientAsync(int propertyId, string clientId);
-        Task RespondToOfferAsync(int offerId, OfferStatus status);
         Task AcceptOfferAsync(Offer offer);
         Task RejectOfferAsync(Offer offer);
     }

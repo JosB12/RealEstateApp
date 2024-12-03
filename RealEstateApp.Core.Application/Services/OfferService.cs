@@ -69,41 +69,7 @@ namespace RealEstateApp.Core.Application.Services
             return await _offerRepository.GetOffersByClientAndPropertyAsync(propertyId, clientId);
         }
 
-        public async Task RespondToOfferAsync(int offerId, OfferStatus status)
-        {
-            var offer = await _offerRepository.GetByIdAsync(offerId);
-            if (offer == null) throw new Exception("Offer not found");
-
-            if (status == OfferStatus.Accepted)
-            {
-                // Cambiar el estado de la oferta a aceptada
-                offer.Status = OfferStatus.Accepted;
-
-                // Rechazar otras ofertas pendientes de la misma propiedad
-                var pendingOffers = await _offerRepository.GetPendingOffersByPropertyIdAsync(offer.PropertyId);
-                foreach (var pendingOffer in pendingOffers)
-                {
-                    if (pendingOffer.Id != offerId)
-                    {
-                        pendingOffer.Status = OfferStatus.Rejected;
-                    }
-                }
-
-                // Cambiar el estado de la propiedad a Vendida
-                var property = offer.Property;
-                if (property != null)
-                {
-                    property.Status = PropertyStatus.Sold;
-                }
-            }
-            else if (status == OfferStatus.Rejected)
-            {
-                // Cambiar el estado de la oferta a rechazada
-                offer.Status = OfferStatus.Rejected;
-            }
-
-            await _offerRepository.SaveAsync();
-        }
+        
 
         public async Task AcceptOfferAsync(Offer offer)
         {

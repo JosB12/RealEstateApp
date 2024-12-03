@@ -455,29 +455,6 @@ namespace RealEstateApp.Controllers
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> RespondToOffer(int offerId, string response, int propertyId, string clientId)
-        {
-            try
-            {
-                OfferStatus status = response.ToLower() switch
-                {
-                    "accept" => OfferStatus.Accepted,
-                    "reject" => OfferStatus.Rejected,
-                    _ => throw new ArgumentException("Invalid response")
-                };
-
-                await _offerService.RespondToOfferAsync(offerId, status);
-
-                TempData["SuccessMessage"] = "Response successfully processed.";
-                return RedirectToAction(nameof(ClientOffers), new { propertyId, clientId });
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = $"Error processing response: {ex.Message}";
-                return RedirectToAction(nameof(ClientOffers), new { propertyId, clientId });
-            }
-        }
 
         [HttpPost]
         public async Task<IActionResult> AcceptOffer(int offerId)
