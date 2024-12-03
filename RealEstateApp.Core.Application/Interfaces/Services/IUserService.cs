@@ -12,6 +12,7 @@ namespace RealEstateApp.Core.Application.Interfaces.Services
     {
         Task<AuthenticationResponse> LogginAsync(LoginViewModel vm);
         Task SignOutAsync();
+        Task<string> GetUserNameByIdAsync(string userId);
 
         Task<List<AgentListViewModel>> GetAllAgentForViewAsync();
         Task<List<AdminListViewModel>> GetAllAdminForViewAsync();

@@ -9,5 +9,6 @@ namespace RealEstateApp.Core.Application.Interfaces.Repositories
         Task<List<Chat>> GetChatsByPropertyIdAsync(int propertyId);
         Task<List<Chat>> GetChatsByPropertyAndUserIdAsync(int propertyId, string userId);
         Task<Chat> SendMessageAsync(Chat chat);
+        Task<List<Chat>> GetMessagesForAgentAsync(string agentId);
     }
 }

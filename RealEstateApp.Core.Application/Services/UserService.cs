@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Core.Application.Dtos.Account;
 using RealEstateApp.Core.Application.Dtos.Account.Create;
@@ -18,6 +19,20 @@ namespace RealEstateApp.Core.Application.Services
         {
             _accountService = accountService;
             _mapper = mapper;
+        }
+
+        public async Task<string> GetUserNameByIdAsync(string userId)
+        {
+            // Llamar al AccountService para obtener el nombre del usuario
+            var userName = await _accountService.GetUserNameByIdAsync(userId);
+
+            // Verificar si el nombre de usuario se obtuvo correctamente
+            if (string.IsNullOrEmpty(userName))
+            {
+                throw new Exception("Usuario no encontrado");
+            }
+
+            return userName;
         }
 
         #region login - SignOut

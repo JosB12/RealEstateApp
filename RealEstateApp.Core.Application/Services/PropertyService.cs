@@ -488,5 +488,20 @@ namespace RealEstateApp.Core.Application.Services
 
 
         #endregion
+
+        public async Task MarkAsSoldAsync(int propertyId)
+        {
+            var property = await _propertyRepository.GetByIdAsync(propertyId);
+
+            if (property == null)
+            {
+                throw new Exception("Propiedad no encontrada.");
+            }
+
+            // Cambiar el estado de la propiedad a "vendida"
+            property.Status = PropertyStatus.Sold;
+            await _propertyRepository.UpdateAsync(property, property.Id);
+        }
+
     }
 }

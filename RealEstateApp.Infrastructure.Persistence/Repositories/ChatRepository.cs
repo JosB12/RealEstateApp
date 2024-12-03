@@ -38,5 +38,14 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
             await _dbContext.SaveChangesAsync();
             return chat;
         }
+
+        public async Task<List<Chat>> GetMessagesForAgentAsync(string agentId)
+        {
+            return await _dbContext.Chats
+                .Where(c => c.ReceiverId == agentId)
+                .OrderBy(c => c.SendDate)
+                .ToListAsync();
+        }
+
     }
 }

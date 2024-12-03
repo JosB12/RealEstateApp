@@ -10,5 +10,6 @@ namespace RealEstateApp.Core.Application.Interfaces.Services
         Task<List<ChatMessageViewModel>> GetChatsByPropertyIdAsync(int propertyId);
         Task<List<ChatMessageViewModel>> GetChatsByPropertyAndUserIdAsync(int propertyId, string userId);
         Task<ChatMessageViewModel> SendMessageAsync(ChatMessageViewModel chatMessage);
+        Task<List<ChatMessageViewModel>> GetMessagesForAgentAsync(string agentId);
     }
 }

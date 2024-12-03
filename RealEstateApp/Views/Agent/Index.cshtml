@@ -31,6 +31,7 @@
                                 <p class="card-text">Habitaciones: @property.Bedrooms</p>
                                 <p class="card-text">Baños: @property.Bathrooms</p>
                                 <p class="card-text">Tamaño: @property.PropertySizeMeters m²</p>
+                                <a asp-action="Details" asp-route-id="@property.Id" class="btn btn-primary btn-sm mt-2">Ver Detalles</a>
                             </div>
                         </div>
                     </div>
@@ -56,6 +57,8 @@
                                 <p class="card-text">Baños: @property.Bathrooms</p>
                                 <p class="card-text">Tamaño: @property.PropertySizeMeters m²</p>
                                 <span class="badge bg-danger">Vendida</span>
+                                <a asp-action="Details" asp-route-id="@property.Id" class="btn btn-secondary btn-sm mt-2">Ver Detalles</a>
+
                             </div>
                         </div>
                     </div>

@@ -6,7 +6,10 @@ using RealEstateApp.Core.Application.Interfaces.Repositories;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using RealEstateApp.Core.Application.Services;
 using RealEstateApp.Core.Application.ViewModels;
+using RealEstateApp.Core.Application.ViewModels.Chat;
+using RealEstateApp.Core.Application.ViewModels.Offer;
 using RealEstateApp.Core.Domain.Entities;
+using RealEstateApp.Core.Domain.Enums;
 using RealEstateApp.Infrastructure.Persistence.Repositories;
 using System.Security.Claims;
 
@@ -23,6 +26,8 @@ namespace RealEstateApp.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IPropertyRepository _propertyRepository;
         private readonly IUserService _userService;
+        private readonly IChatService _chatService;
+        private readonly IOfferService _offerService;
 
 
         public AgentController(
@@ -32,7 +37,7 @@ namespace RealEstateApp.Controllers
             IImprovementService improvementService,
             ISalesTypeService salesTypeService,
             IPropertyRepository propertyRepository,
-            IUserService userService)
+            IUserService userService, IChatService chatService, IOfferService offerService)
         {
             _httpContextAccessor = httpContextAccessor;
             _propertyService = propertyService;
@@ -42,6 +47,8 @@ namespace RealEstateApp.Controllers
             userViewModel = _httpContextAccessor.HttpContext.Session.Get<AuthenticationResponse>("user");
             _propertyRepository = propertyRepository;
             _userService = userService;
+            _chatService = chatService;
+            _offerService = offerService;
 
         }
 
@@ -346,5 +353,164 @@ namespace RealEstateApp.Controllers
             return View(request);
         }
         #endregion
+
+
+        #region chat
+        public async Task<IActionResult> Details(int id)
+        {
+            // Recuperar la propiedad por su ID, junto con las ofertas relacionadas
+            var property = await _propertyService.GetByIdSaveViewModel(id);
+
+            if (property == null)
+            {
+                return NotFound();
+            }
+
+            // Recuperar las ofertas si no están en el modelo de la propiedad
+            if (property.Offers == null)
+            {
+                property.Offers = await _offerService.GetOffersByPropertyIdAsync(id);
+            }
+
+            // Verificar si el usuario está autenticado y si es un Agente
+            var user = HttpContext.Session.Get<AuthenticationResponse>("user");
+            if (user == null || !user.Roles.Contains("Agent"))
+            {
+                ViewBag.Chats = new List<ChatMessageViewModel>();
+                return View(property);
+            }
+
+            // Recuperar los chats asociados a la propiedad y al agente actual
+            var chats = await _chatService.GetChatsByPropertyAndUserIdAsync(id, user.Id);
+            ViewBag.Chats = chats ?? new List<ChatMessageViewModel>();
+
+            return View(property);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> SendMessageAsAgent(int propertyId, string message, string clientId)
+        {
+            var user = HttpContext.Session.Get<AuthenticationResponse>("user");
+            if (user == null || !user.Roles.Contains("Agent"))
+            {
+                return Json(new { success = false, message = "User not authenticated or not an agent" });
+            }
+
+            // Validar que el agente tenga acceso a la propiedad
+            var property = await _propertyService.GetByIdSaveViewModel(propertyId);
+
+
+            var chat = new ChatMessageViewModel
+            {
+                UserId = clientId, // El cliente al que se envía el mensaje
+                PropertyId = propertyId,
+                Message = message,
+                IsAgent = true,
+                SendDate = DateTime.Now
+            };
+
+            await _chatService.SendMessageAsync(chat);
+            return Json(new { success = true });
+        }
+
+        #endregion
+
+
+
+        #region Offers
+        public async Task<IActionResult> GetOffers(int propertyId)
+        {
+            // Obtén las ofertas actualizadas desde la base de datos
+            var offers = await _offerService.GetOffersByPropertyIdAsync(propertyId);
+
+            // Asegúrate de que la vista reciba el modelo con las ofertas actualizadas
+            return View(offers);
+        }
+
+        [HttpGet]
+        
+        public async Task<IActionResult> ClientOffers(int propertyId, string clientId)
+        {
+            var offers = await _offerService.GetOffersForClientAsync(propertyId, clientId);
+
+            if (offers == null || !offers.Any())
+            {
+                return NotFound("No offers found for the specified property and client.");
+            }
+
+            // Convertir manualmente las ofertas a ViewModel
+            var offerViewModels = offers.Select(offer => new OfferViewModel
+            {
+                Id = offer.Id,
+                Amount = offer.Amount,
+                CreateDate = offer.CreateDate,
+                PropertyId = offer.PropertyId,
+                // Aquí mapeas las demás propiedades necesarias
+            }).ToList();
+
+            ViewData["PropertyId"] = propertyId;
+
+            return View(offerViewModels);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> RespondToOffer(int offerId, string response, int propertyId, string clientId)
+        {
+            try
+            {
+                OfferStatus status = response.ToLower() switch
+                {
+                    "accept" => OfferStatus.Accepted,
+                    "reject" => OfferStatus.Rejected,
+                    _ => throw new ArgumentException("Invalid response")
+                };
+
+                await _offerService.RespondToOfferAsync(offerId, status);
+
+                TempData["SuccessMessage"] = "Response successfully processed.";
+                return RedirectToAction(nameof(ClientOffers), new { propertyId, clientId });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error processing response: {ex.Message}";
+                return RedirectToAction(nameof(ClientOffers), new { propertyId, clientId });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AcceptOffer(int offerId)
+        {
+            var offer = await _offerService.GetOfferByIdAsync(offerId);
+
+            // Aceptar la oferta
+            await _offerService.AcceptOfferAsync(offer);
+
+            // Cambiar el estado de la propiedad a "vendida"
+            await _propertyService.MarkAsSoldAsync(offer.PropertyId);
+
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RejectOffer(int offerId)
+        {
+            var offer = await _offerService.GetOfferByIdAsync(offerId);
+
+            // Rechazar la oferta
+            await _offerService.RejectOfferAsync(offer);
+
+            return Json(new { success = true });
+        }
+        #endregion
+
+
+
+
+
+
+
+
     }
 }

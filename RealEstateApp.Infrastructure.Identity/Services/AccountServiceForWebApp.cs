@@ -902,6 +902,21 @@ namespace RealEstateApp.Infrastructure.Identity.Services
 
         #endregion
 
+        public async Task<string> GetUserNameByIdAsync(string userId)
+        {
+            // Buscar el usuario por ID
+            var user = await _userManager.FindByIdAsync(userId);
+
+            // Verificar si el usuario fue encontrado
+            if (user == null)
+            {
+                throw new Exception("Usuario no encontrado");
+            }
+
+            
+            return user.UserName;  
+        }
+
 
         public async Task<UserDto> GetUserByIdAsync(string userId)
         {

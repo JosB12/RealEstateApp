@@ -75,6 +75,7 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
 
             var propertyViewModels = properties.Select(p => new HomeAgentPropertyViewModel
             {
+                Id = p.Id,
                 PropertyCode = p.PropertyCode,
                 PropertyType = p.PropertyType.Name,
                 SaleType = p.SaleType.Name,

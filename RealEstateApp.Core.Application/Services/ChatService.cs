@@ -37,5 +37,12 @@ namespace RealEstateApp.Core.Application.Services
             var savedChat = await _chatRepository.SendMessageAsync(chat);
             return _mapper.Map<ChatMessageViewModel>(savedChat);
         }
+
+        public async Task<List<ChatMessageViewModel>> GetMessagesForAgentAsync(string agentId)
+        {
+            var chats = await _chatRepository.GetMessagesForAgentAsync(agentId);
+            return _mapper.Map<List<ChatMessageViewModel>>(chats);
+        }
+
     }
 }
