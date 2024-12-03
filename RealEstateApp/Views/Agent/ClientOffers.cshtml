@@ -25,14 +25,20 @@
                 <tr>
                     <td>@offer.CreateDate</td>
                     <td>@offer.Amount</td>
-                    <td>@offer.Status</td>
+                    
+                    <td>@offer.Status.ToString()</td> <!-- Muestra el valor directamente -->
+                    
                     <td>
-                        
+                        @if (offer.Status == OfferStatus.Pending)
+                        {
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#acceptRejectModal" data-offer-id="@offer.Id">Responder</button>
+                        }
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+
 }
 
 <!-- Modal de respuesta a la oferta -->

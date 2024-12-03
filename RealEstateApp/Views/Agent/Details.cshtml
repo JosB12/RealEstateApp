@@ -83,7 +83,6 @@
                         @if (offer.Status == OfferStatus.Pending)
                         {
                             <span class="badge bg-warning">Pendiente</span>
-                            <a href="@Url.Action("RespondToOffer", "Property", new { offerId = offer.Id, propertyId = Model.Id })" class="btn btn-sm btn-primary float-end ms-2">Responder</a>
                         }
                         else if (offer.Status == OfferStatus.Accepted)
                         {
