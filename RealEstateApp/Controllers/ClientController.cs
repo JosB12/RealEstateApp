@@ -18,7 +18,6 @@ namespace RealEstateApp.Controllers
             _favoriteService = favoriteService;
         }
 
-        // Acción para mostrar la lista de propiedades disponibles
         public async Task<IActionResult> Index()
         {
             var properties = await _propertyService.GetAvailablePropertiesAsync();
