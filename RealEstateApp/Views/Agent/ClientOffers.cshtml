@@ -25,9 +25,22 @@
                 <tr>
                     <td>@offer.CreateDate</td>
                     <td>@offer.Amount</td>
-                    
-                    <td>@offer.Status.ToString()</td> <!-- Muestra el valor directamente -->
-                    
+
+                    <td id="status-@offer.Id">
+                        @if (offer.Status == OfferStatus.Pending)
+                        {
+                            <span class="badge bg-warning">Pendiente</span>
+                        }
+                        else if (offer.Status == OfferStatus.Accepted)
+                        {
+                            <span class="badge bg-success">Aceptada</span>
+                        }
+                        else if (offer.Status == OfferStatus.Rejected)
+                        {
+                            <span class="badge bg-danger">Rechazada</span>
+                        }
+                    </td>
+
                     <td>
                         @if (offer.Status == OfferStatus.Pending)
                         {
@@ -38,7 +51,6 @@
             }
         </tbody>
     </table>
-
 }
 
 <!-- Modal de respuesta a la oferta -->
@@ -59,7 +71,6 @@
 </div>
 <a href="@Url.Action("Details", "Agent", new { id = ViewData["PropertyId"] })" class="btn btn-secondary">Volver atrás</a>
 
-
 @section Scripts {
     <script>
         var currentOfferId;
@@ -78,9 +89,15 @@
                 data: { offerId: currentOfferId },
                 success: function (response) {
                     if (response.success) {
-                        // Realizar alguna acción, como recargar la página o mostrar un mensaje
+                        // Actualizar el estado de la oferta en la tabla
+                        $('#status-' + currentOfferId).html('<span class="badge bg-success">Aceptada</span>');
+
+                        // Opcionalmente, cambiar el botón de acción para mostrar que la oferta ya ha sido aceptada
+                        $('button[data-offer-id="' + currentOfferId + '"]').prop('disabled', true).text('Oferta Aceptada');
+
                         alert('Oferta aceptada');
-                        location.reload(); // Recargar la página para ver el estado actualizado
+                    } else {
+                        alert('Error al aceptar la oferta');
                     }
                 },
                 error: function () {
@@ -97,9 +114,15 @@
                 data: { offerId: currentOfferId },
                 success: function (response) {
                     if (response.success) {
-                        // Realizar alguna acción, como recargar la página o mostrar un mensaje
+                        // Actualizar el estado de la oferta en la tabla
+                        $('#status-' + currentOfferId).html('<span class="badge bg-danger">Rechazada</span>');
+
+                        // Opcionalmente, cambiar el botón de acción para mostrar que la oferta ya ha sido rechazada
+                        $('button[data-offer-id="' + currentOfferId + '"]').prop('disabled', true).text('Oferta Rechazada');
+
                         alert('Oferta rechazada');
-                        location.reload(); // Recargar la página para ver el estado actualizado
+                    } else {
+                        alert('Error al rechazar la oferta');
                     }
                 },
                 error: function () {

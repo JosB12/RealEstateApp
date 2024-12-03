@@ -17,6 +17,5 @@ namespace RealEstateApp.Core.Application.Interfaces.Services
         Task<RegisterResponse> RegisterAdminUserAsync(RegisterApiRequest request, ClaimsPrincipal currentUser);
         Task<RegisterResponse> RegisterDeveloperUserAsync(RegisterApiRequest request, string origin);
 
-
     }
 }

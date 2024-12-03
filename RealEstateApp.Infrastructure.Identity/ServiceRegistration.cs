@@ -80,6 +80,19 @@ namespace RealEstateApp.Infrastructure.Identity
             #endregion
 
             #region Identity
+            services.AddIdentityCore<ApplicationUser>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 3;
+            })
+             .AddRoles<IdentityRole>()
+             .AddSignInManager()
+             .AddEntityFrameworkStores<IdentityContext>()
+             .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>(TokenOptions.DefaultProvider);
+
             services.AddIdentityCore<ApplicationUser>()
                 .AddRoles<IdentityRole>()
                 .AddSignInManager()

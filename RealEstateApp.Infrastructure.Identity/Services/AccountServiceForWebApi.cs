@@ -151,8 +151,7 @@ namespace RealEstateApp.Infrastructure.Identity.Services
 
             return response;
         }
-
-
+       
 
         public async Task<RegisterResponse> RegisterDeveloperUserAsync(RegisterApiRequest request, string origin)
         {
@@ -293,7 +292,8 @@ namespace RealEstateApp.Infrastructure.Identity.Services
                     LastName = user.LastName,
                     NumberOfProperties = numberOfProperties,
                     Email = user.Email,
-                    IsActive = user.IsActive
+                    IsActive = user.IsActive,
+                    Phone = user.PhoneNumber
                 });
             }
 
@@ -320,7 +320,8 @@ namespace RealEstateApp.Infrastructure.Identity.Services
                 LastName = user.LastName,
                 NumberOfProperties = numberOfProperties,
                 Email = user.Email,
-                IsActive = user.IsActive
+                IsActive = user.IsActive,
+                Phone = user.PhoneNumber
             };
         }
 
