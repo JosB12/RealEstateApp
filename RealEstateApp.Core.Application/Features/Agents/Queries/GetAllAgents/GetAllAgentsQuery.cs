@@ -4,23 +4,23 @@ using RealEstateApp.Core.Application.Interfaces.Services;
 
 namespace RealEstateApp.Core.Application.Features.Agents.Queries.GetAllAgents
 {
-    public class GetAllAgentsQuery : IRequest<IList<AgentApiDto>>
+    public class GetAllAgentsQuery : IRequest<IList<AgentApiDto>>  // Verifica que esta sea la firma correcta
     {
     }
 
-    public class GetAllAgentsQueryHandler : IRequestHandler<GetAllAgentsQuery, IList<AgentApiDto>>
+    public class GetAllAgentsQueryHandler : IRequestHandler<GetAllAgentsQuery, IList<AgentApiDto>>  // Debe implementar IRequestHandler correctamente
     {
-        private readonly IWebApiAccountService _accountService;
+        private readonly IUserApiService _userApiService;
 
-        public GetAllAgentsQueryHandler(IWebApiAccountService accountService)
+        public GetAllAgentsQueryHandler(IUserApiService userApiService)
         {
-            _accountService = accountService;
+            _userApiService = userApiService;
         }
 
         public async Task<IList<AgentApiDto>> Handle(GetAllAgentsQuery request, CancellationToken cancellationToken)
         {
-            var agentList = await _accountService.GetAllAgentsForApiAsync();
-            return agentList ?? new List<AgentApiDto>();
+            var agentList = await _userApiService.GetAllAgentsForApiAsync();
+            return agentList ?? new List<AgentApiDto>();  
         }
     }
 }

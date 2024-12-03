@@ -140,10 +140,12 @@ namespace RealEstateApp.Infrastructure.Identity
                     }
                 };
             });
+
             #endregion
 
             #region Services
             services.AddTransient<IWebApiAccountService, AccountServiceForWebApi>();
+
             #endregion
         }
         #endregion

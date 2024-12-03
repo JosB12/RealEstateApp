@@ -15,15 +15,16 @@ namespace RealEstateApp.Core.Application.Features.Agents.Queries.GetAgentById
 
     public class GetAgentsByIdQueryHandler : IRequestHandler<GetAgentsByIdQuery, AgentApiDto>
     {
-        private readonly IWebApiAccountService _accountService;
+        private readonly IUserApiService _userApiService;
 
-        public GetAgentsByIdQueryHandler(IWebApiAccountService accountService)
+        public GetAgentsByIdQueryHandler(IUserApiService userApiService)
         {
-            _accountService = accountService;
+            _userApiService = userApiService;
+
         }
         public async Task<AgentApiDto> Handle(GetAgentsByIdQuery request, CancellationToken cancellationToken)
         {
-            var agent = await _accountService.GetAgentByIdAsync(request.Id);
+            var agent = await _userApiService.GetAgentByIdAsync(request.Id);
 
             if (agent == null)
             {

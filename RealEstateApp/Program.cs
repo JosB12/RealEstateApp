@@ -13,17 +13,16 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+
         builder.Services.AddControllersWithViews();
         builder.Services.AddSession();
         builder.Services.AddPersistenceInfrastructure(builder.Configuration);
         builder.Services.AddIdentityInfrastructureForWebApp(builder.Configuration);
-        builder.Services.AddIdentityInfrastructureForWebApi(builder.Configuration);
         builder.Services.AddSharedInfrastructure(builder.Configuration);
-        builder.Services.AddApplicationLayerForWebApp(builder.Configuration);
+        builder.Services.AddApplicationLayerForWebApp();
         builder.Services.AddScoped<LoginAuthorize>();
         builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         builder.Services.AddTransient<ValidateUserSession, ValidateUserSession>();
-
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.

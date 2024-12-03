@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using RealEstateApp.Core.Application.Dtos.Account;
 using RealEstateApp.Core.Application.Dtos.Account.Create;
 using RealEstateApp.Core.Application.Dtos.Account.Edit;

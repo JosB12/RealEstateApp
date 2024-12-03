@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using RealEstateApp.Core.Application.Dtos.Property;
 using RealEstateApp.Core.Application.Interfaces.Repositories;
 using RealEstateApp.Core.Application.Interfaces.Services;
+using RealEstateApp.Core.Application.Services;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 
@@ -21,16 +22,16 @@ namespace RealEstateApp.Core.Application.Features.Properties.Queries.GetAllPrope
     {
         private readonly IPropertyRepository _propertyRepository;
         private readonly IMapper _mapper;
-        private readonly IWebApiAccountService _accountService;
+        private readonly IUserApiService _userApiService;
 
         public GetPropertyByCodeQueryHandler(
             IPropertyRepository propertyRepository,
             IMapper mapper,
-            IWebApiAccountService accountService)
+            IUserApiService userApiService)
         {
             _propertyRepository = propertyRepository;
             _mapper = mapper;
-            _accountService = accountService;
+            _userApiService = userApiService;
         }
 
         public async Task<PropertyDto> Handle(GetPropertyByCodeQuery request, CancellationToken cancellationToken)
@@ -53,7 +54,7 @@ namespace RealEstateApp.Core.Application.Features.Properties.Queries.GetAllPrope
                 Bathrooms = property.Bathrooms,
                 Description = property.Description,
                 Improvements = property.Improvements.Select(imp => imp.Name).ToList(),
-                AgentName = await _accountService.GetUserNameByIdAsync(property.UserId),
+                AgentName = await _userApiService.GetUserNameByIdAsync(property.UserId),
                 AgentId = property.UserId,
                 Status = property.Status.ToString()
             };

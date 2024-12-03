@@ -58,8 +58,8 @@ namespace RealEstateApp.Infrastructure.Identity.Services
                 return response;
             }
 
-            var result = await _signInManager.PasswordSignInAsync(user.UserName, request.Password, false, lockoutOnFailure: false);
-            if (!result.Succeeded)
+            var isPasswordValid = await _userManager.CheckPasswordAsync(user, request.Password);
+            if (!isPasswordValid)
             {
                 response.HasError = true;
                 response.Error = $"Invalid credentials for {request.UserName}";
@@ -69,12 +69,6 @@ namespace RealEstateApp.Infrastructure.Identity.Services
             {
                 response.HasError = true;
                 response.Error = $"Account no confirmed for {request.UserName}";
-                return response;
-            }
-            if(user.UserType == Roles.Agent || user.UserType == Roles.Client)
-            {
-                response.HasError = true;
-                response.Error = $"El rol {user.UserType} no tiene permiso para entrar en la api";
                 return response;
             }
 

@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using RealEstateApp.Core.Application.Interfaces.Services;
+using RealEstateApp.Core.Application.Services;
 
 namespace RealEstateApp.Core.Application.Features.Agents.Commands.ChangeStatus
 {
@@ -11,11 +12,11 @@ namespace RealEstateApp.Core.Application.Features.Agents.Commands.ChangeStatus
     }
     public class ChangeAgentStatusCommandHandler : IRequestHandler<ChangeAgentStatusCommand, Unit>
     {
-        private readonly IWebApiAccountService _accountService;
+        private readonly IUserApiService _userApiService;
 
-        public ChangeAgentStatusCommandHandler(IWebApiAccountService accountService)
+        public ChangeAgentStatusCommandHandler(IUserApiService userApiService)
         {
-            _accountService = accountService;
+            _userApiService = userApiService;
         }
 
         public async Task<Unit> Handle(ChangeAgentStatusCommand request, CancellationToken cancellationToken)
@@ -24,7 +25,7 @@ namespace RealEstateApp.Core.Application.Features.Agents.Commands.ChangeStatus
 
             try
             {
-                await _accountService.ChangeUserStatusAsync(request.AgentId, request.IsActive);
+                await _userApiService.ChangeUserStatusAsync(request.AgentId, request.IsActive);
 
                 return Unit.Value;
             }

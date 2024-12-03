@@ -1,5 +1,7 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using RealEstateApp.Core.Application.Dtos.PropertyType;
+using RealEstateApp.Core.Application.Interfaces.Repositories;
 using RealEstateApp.Core.Application.Interfaces.Services;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
@@ -14,17 +16,23 @@ namespace RealEstateApp.Core.Application.Features.PropertiesTypes.Queries.GetAll
     }
     public class GetPropertyTypeByIdQueryHandler : IRequestHandler<GetPropertyTypeByIdQuery, SalesTypeDto>
     {
-        private readonly IPropertyTypeService _propertyTypeService;
+        private readonly IPropertyTypeRepository _propertyTypeRepository;
+        private readonly IMapper _mapper;
 
-        public GetPropertyTypeByIdQueryHandler(IPropertyTypeService propertyTypeService)
+        public GetPropertyTypeByIdQueryHandler(
+            IPropertyTypeRepository propertyTypeRepository,
+            IMapper mapper)
         {
-            _propertyTypeService = propertyTypeService;
+            _propertyTypeRepository = propertyTypeRepository;
+            _mapper = mapper;
+
         }
 
         public async Task<SalesTypeDto> Handle(GetPropertyTypeByIdQuery request, CancellationToken cancellationToken)
         {
-            var propertyTypeDto = await _propertyTypeService.GetByIdAsync(request.Id);
-            return propertyTypeDto;
+            var propertyTypeDto = await _propertyTypeRepository.GetByIdAsync(request.Id);
+            var propertyTypeMap = _mapper.Map<SalesTypeDto>(propertyTypeDto);
+            return propertyTypeMap;
         }
     }
 }

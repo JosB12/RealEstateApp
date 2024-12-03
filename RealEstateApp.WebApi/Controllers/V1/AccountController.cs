@@ -24,7 +24,7 @@ namespace RealEstateApp.WebApi.Controllers.V1
         [SwaggerOperation(
       Summary = "Login de usuario",
       Description = "Autentica un usuario en el sistema y le retorna un JWT"
-  )]
+      )]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AuthenticateAsync(AuthenticationRequest request)
