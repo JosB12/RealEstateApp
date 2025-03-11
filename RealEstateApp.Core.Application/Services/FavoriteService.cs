@@ -59,18 +59,25 @@ public class FavoriteService : GenericService<FavoriteSaveViewModel, FavoriteVie
 
     public async Task<List<PropertyViewModel>> GetFavoritePropertiesAsync(string userId)
     {
+        //*se obtienen todas las propiedades favoritas del usuario
         var favorites = await _favoriteRepository.GetAllWithPropertiesAsync();
         var favoriteProperties = favorites
             .Where(f => f.UserId == userId)
             .Select(f => f.Property)
             .Where(p => p != null) // Asegúrate de que la propiedad no sea null
             .ToList();
+
+        //*se mapean las propiedades favoritas a la vista
         var propertyViewModels = _mapper.Map<List<PropertyViewModel>>(favoriteProperties);
+
+        //*se obtiene la imagen, mejoras, nombre y número de teléfono del agente de cada propiedad
         foreach (var property in propertyViewModels)
         {
             var entity = favoriteProperties.FirstOrDefault(p => p.Id == property.Id);
             property.ImageUrl = entity?.Images?.FirstOrDefault()?.ImageUrl;
             property.Improvements = entity?.Improvements?.Select(i => i.Name).ToList() ?? new List<string>();
+
+            //*se obtiene el nombre y número de teléfono del agente
             var agent = await _userService.GetUserByIdAsync(entity.UserId);
             property.AgentName = agent?.FirstName + " " + agent?.LastName;
             property.AgentPhoneNumber = agent?.PhoneNumber;

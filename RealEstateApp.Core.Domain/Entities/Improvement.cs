@@ -4,8 +4,8 @@ namespace RealEstateApp.Core.Domain.Entities
 {
     public class Improvement : AuditableBaseEntity
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public virtual ICollection<Property> Properties { get; set; }
+        public required string Name { get; set; }
+        public string? Description { get; set; }
+        public virtual ICollection<Property>? Properties { get; set; }
     }
 }

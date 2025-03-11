@@ -18,7 +18,7 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<Image> GetByImageUrlAsync(string imageUrl)
+        public async Task<Image?> GetByImageUrlAsync(string imageUrl)
         {
             return await _dbContext.Images
                 .FirstOrDefaultAsync(img => img.ImageUrl == imageUrl);

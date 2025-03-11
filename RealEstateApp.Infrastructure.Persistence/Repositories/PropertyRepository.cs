@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using RealEstateApp.Core.Application.Interfaces.Repositories;
 using RealEstateApp.Core.Application.ViewModels;
 using RealEstateApp.Core.Domain.Entities;
@@ -12,6 +13,7 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
     public class PropertyRepository : GenericRepository<Property>, IPropertyRepository
     {
         private readonly ApplicationContext _dbContext;
+        private static Random random = new Random();
 
         public PropertyRepository(ApplicationContext dbContext) : base(dbContext)
         {
@@ -106,7 +108,6 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
 
         public async Task<string> GenerateUniquePropertyCodeAsync()
         {
-            Random random = new Random();
             string propertyCode;
 
             bool codeIsUnique;

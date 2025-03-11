@@ -1,7 +1,7 @@
 ﻿
 namespace RealEstateApp.Core.Application.Dtos.Account
 {
-    public class UserDto
+    public class    UserDto
     {
         public string Id { get; set; }
         public string FirstName { get; set; }

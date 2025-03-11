@@ -13,13 +13,13 @@ namespace RealEstateApp.Core.Domain.Entities
 
         [Required]
         public int PropertyTypeId { get; set; }
-        public PropertyType PropertyType { get; set; }
+        public PropertyType? PropertyType { get; set; }
         
         [Required]
         public int SaleTypeId { get; set; }
         public SaleType SaleType { get; set; }  
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Required]
         [MaxLength(6)]
@@ -30,8 +30,8 @@ namespace RealEstateApp.Core.Domain.Entities
         [Required]
         public decimal Price { get; set; }
         public double PropertySizeMeters { get; set; }
-        public virtual ICollection<Improvement> Improvements { get; set; }
-        public virtual ICollection<Image> Images { get; set; }
+        public virtual ICollection<Improvement>? Improvements { get; set; }
+        public virtual ICollection<Image>? Images { get; set; }
         
     }
 }

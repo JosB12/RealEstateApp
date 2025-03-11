@@ -22,8 +22,6 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
             return await _dbContext.SaleTypes.AnyAsync();
         }
         
-
-
         public async Task UpdateAsync(SaleType saleType)
         {
             _dbContext.SaleTypes.Update(saleType);

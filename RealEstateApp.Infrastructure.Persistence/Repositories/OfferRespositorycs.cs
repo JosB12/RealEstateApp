@@ -69,11 +69,5 @@ namespace RealEstateApp.Infrastructure.Persistence.Repositories
         {
             await _dbContext.SaveChangesAsync();
         }
-
-        
-
-
-
-
     }
 }
